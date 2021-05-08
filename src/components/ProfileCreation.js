@@ -1,26 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import axios from "axios";
 
-class ProfileCreation extends React.Component {
+function ProfileCreation(){
 
-    constructor(props) {
-        super(props);
+    const [profile, setProfile] = useState({name: "", pass: ""});
 
-        this.state = {
-            name: "",
-            pass: "",
-            message: ""
-        }
-    }
-
-    handleChange = e => {
-        this.setState({[e.target.id]: e.target.value})
-    }
-
-    handleSubmit = e => {
-        e.preventDefault();
-        console.log(this.state);
-        axios.post("/cryptoProfile", this.state)
+    const handleSubmit = event => {
+        event.preventDefault();
+        console.log(profile);
+        axios.post("/cryptoProfile", {profile})
             .then((response) => {
                 console.log(response.status);
             }, (error) => {
@@ -28,36 +16,32 @@ class ProfileCreation extends React.Component {
             });
     };
 
-    render() {
-        const {name, pass} = this.state;
-        return (
-            <div>
-                <h1 className={"title"}>Profile Creation</h1>
-                <form
-                    onSubmit={this.handleSubmit}>
-                    <div>
-                        <label htmlFor={"name"}>
-                            Profile Name
-                            <input type="text" id={"name"} value={name}
-                                   onChange={this.handleChange}/>
-                        </label>
-                    </div>
+    return (
+        <div>
+            <h1 className={"title"}>Profile Creation</h1>
+            <form
+                onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor={"name"}>
+                        Profile Name
+                        <input type="text" id={"name"} value={profile.name}
+                               onChange={e => setProfile({...profile, name: e.target.value})}/>
+                    </label>
+                </div>
 
-                    <div>
-                        <label htmlFor={"pass"}>
-                            Password
-                            <input type={"text"} id={"pass"} value={pass}
-                                   onChange={this.handleChange}/>
-                        </label>
-                    </div>
+                <div>
+                    <label htmlFor={"pass"}>
+                        Password
+                        <input type={"text"} id={"pass"} value={profile.pass}
+                               onChange={e => setProfile({...profile, pass: e.target.value})}/>
+                    </label>
+                </div>
 
-                    <div>
-                        <input type={"submit"} id={"submit"} value={"Create New Profile"}/>
-                    </div>
-                </form>
-            </div>
-        )
-    }
+                <div>
+                    <input type={"submit"} id={"submit"} value={"Create New Profile"}/>
+                </div>
+            </form>
+        </div>
+    )
 }
-
-export default ProfileCreation
+    export default ProfileCreation
