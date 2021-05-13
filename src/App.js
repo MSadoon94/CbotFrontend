@@ -1,7 +1,7 @@
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 import './App.css';
 
-import ProfileCreation from "./components/ProfileCreation";
+import ProfileCreation from "./components/profile/ProfileCreation";
 import Login from './components/Login';
 
 
