@@ -1,8 +1,8 @@
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 import './App.css';
 
-import ProfileCreation from "./components/profile/ProfileCreation";
-import Login from './components/Login';
+import UserCreation from "./components/user/UserCreation";
+
 
 
 function App() {
@@ -12,13 +12,11 @@ function App() {
                     <main>
                         <nav>
                             <ul>
-                                <li><Link to="/cryptoProfile">Profile Creation</Link></li>
-                                <li><Link to="/login">Login</Link></li>
+                                <li><Link to="/authenticate">User Creation</Link></li>
                             </ul>
                         </nav>
                         <Switch>
-                            <Route path="/cryptoProfile" component={ProfileCreation} />
-                            <Route path="/login" component={Login}/>
+                            <Route path="/authenticate" component={UserCreation} />
                         </Switch>
                     </main>
                 </BrowserRouter>
