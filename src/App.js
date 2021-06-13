@@ -1,7 +1,7 @@
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 import './App.css';
 
-import UserCreation from "./components/user/UserCreation";
+import UserStart from "./components/user/UserStart";
 
 
 
@@ -12,11 +12,11 @@ function App() {
                     <main>
                         <nav>
                             <ul>
-                                <li><Link to="/authenticate">User Creation</Link></li>
+                                <li><Link to={"/start"}>User Start</Link></li>
                             </ul>
                         </nav>
                         <Switch>
-                            <Route path="/authenticate" component={UserCreation} />
+                            <Route path={"/start"} component={UserStart} />
                         </Switch>
                     </main>
                 </BrowserRouter>

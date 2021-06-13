@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import axios from "axios";
+import { login } from "./UserApi";
 
-function UserCreation(){
+function UserStart(){
 
     const [user, setUser] = useState({username: "", password: "", authority: "USER"});
     const [outcome, setOutcome] = useState();
@@ -10,7 +11,7 @@ function UserCreation(){
 
     const createUser = () => {
         console.log(user);
-        axios.post("/authenticate/signup", user)
+        axios.post("/signup", user)
             .then((response) => {
                 console.log(response.status);
                 setOutcome(`${user.username} was created successfully.`);
@@ -20,22 +21,16 @@ function UserCreation(){
             });
     };
 
-    const login = () => {
-        console.log(user);
-        axios.post("/authenticate/login", user)
-            .then((response) => {
-                console.log(response.status);
-                setOutcome(`Welcome back, ${user.username}`);
-                setJwt(response.data);
-            }, (error) => {
-                console.log(error);
-                setOutcome("Error: user could not be logged in.");
-            })
+    const loginRequest = async () => {
+        let response;
+        await login(user, (res) => response = JSON.parse(res));
+        setOutcome(response.message);
+        setJwt(response.jwt);
     };
 
     return (
         <div>
-            <h1 className={"title"}>User Creation</h1>
+            <h1 className={"title"}>User Start</h1>
             <form>
                 <div>
                     <label htmlFor={"name"}>
@@ -54,7 +49,7 @@ function UserCreation(){
                     <button type={"button"} id={"createButton"}
                             onClick={createUser}>Create User</button>
                     <button type={"button"} id={"loginButton"}
-                            onClick={login}>Login</button>
+                            onClick={loginRequest}>Login</button>
 
                     <label className={"outcome"} >{outcome}</label>
                 </div>
@@ -62,4 +57,4 @@ function UserCreation(){
         </div>
     )
 }
-    export default UserCreation
+    export default UserStart
