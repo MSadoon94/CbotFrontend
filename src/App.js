@@ -1,7 +1,7 @@
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 import './App.css';
 
-import UserStart from "./components/user/UserStart";
+import {UserStart} from "./components/user/UserStart";
 
 
 
