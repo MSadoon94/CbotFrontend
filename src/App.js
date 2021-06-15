@@ -2,6 +2,7 @@ import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 import './App.css';
 
 import {UserStart} from "./components/user/UserStart";
+import {UserHome} from "./components/user/UserHome";
 
 
 
@@ -10,13 +11,9 @@ function App() {
             <div>
                 <BrowserRouter>
                     <main>
-                        <nav>
-                            <ul>
-                                <li><Link to={"/start"}>User Start</Link></li>
-                            </ul>
-                        </nav>
                         <Switch>
-                            <Route path={"/start"} component={UserStart} />
+                            <Route exact path={"/start"} component={UserStart} />
+                            <Route exact path={"/user-home"} component={UserHome} />
                         </Switch>
                     </main>
                 </BrowserRouter>

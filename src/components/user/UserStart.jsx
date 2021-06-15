@@ -1,24 +1,39 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 import {login, signup} from "./UserApi";
 
 export function UserStart() {
 
-    const [user, setUser] = useState({username: "", password: "", authority: "USER"});
-    const [outcome, setOutcome] = useState();
-    const [jwt, setJwt] = useState("");
+    const history = useHistory();
+
+    const [user, setUser] = useState(
+        {
+            username: "",
+            password: "",
+            authority: "USER",
+            jwt: "",
+            outcome: ""
+        });
 
     const signupRequest = async () => {
         let response;
         await signup(user, (res) => response = JSON.parse(res));
-        setOutcome(response.message);
-    }
+        setUser({...user, outcome: response.message})
+    };
 
     const loginRequest = async () => {
         let response;
         await login(user, (res) => response = JSON.parse(res));
-        setOutcome(response.message);
-        setJwt(response.jwt);
+        setUser({...user, jwt: response.jwt, outcome: response.message});
     };
+    useEffect(() =>{
+        setTimeout(() => {
+            if(user.outcome === `Welcome back, ${user.username}`){
+                history.push(`/user-home`);
+            }
+        }, 2000)
+
+    }, [user.outcome]);
 
     return (
         <div>
@@ -43,7 +58,7 @@ export function UserStart() {
                             onClick={loginRequest}>Login
                     </button>
 
-                    <label className={"outcome"}>{outcome}</label>
+                    <label className={"outcome"}>{user.outcome}</label>
                 </div>
             </form>
         </div>
