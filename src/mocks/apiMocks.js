@@ -10,7 +10,11 @@ const apiMocks = [
     rest.post(`${URL}/signup`,
         (req, res, context) => {
             return res(context.status(200));
-        })
+        }),
+    rest.post(`${URL}/home/card`,
+        (req, res, context) => {
+        return res(context.status(200));
+    })
 ];
 
 export {apiMocks, rest};

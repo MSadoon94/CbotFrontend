@@ -26,10 +26,11 @@ export function UserStart() {
         await login(user, (res) => response = JSON.parse(res));
         setUser({...user, jwt: response.jwt, outcome: response.message});
     };
+
     useEffect(() =>{
         setTimeout(() => {
             if(user.outcome === `Welcome back, ${user.username}`){
-                history.push(`/user-home`);
+                history.push("/home", user.jwt);
             }
         }, 2000)
 
