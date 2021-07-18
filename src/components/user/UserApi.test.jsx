@@ -28,7 +28,13 @@ describe("login api", () => {
     test("should return jwt for successful logins", async () => {
         await apiRequest(login, user);
 
-        expect(outcome.jwt).toBe("jwtMock");
+        expect(outcome.body.jwt).toBe("jwtMock");
+    });
+
+    test("should return jwt expiration for successful logins", async () => {
+        await apiRequest(login, user);
+
+        expect(outcome.body.expiration).toBe("expirationMock");
     });
 
     test("should return error message for failed logins", async () => {
@@ -55,6 +61,7 @@ describe("signup api", () => {
         expect(outcome.message).toBe(`Error: ${user.username} could not be created.`);
     });
 });
+
 
 
 

@@ -1,15 +1,23 @@
 import React, {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {KrakenCard} from "../card/KrakenCard";
 
 export function Home() {
     const location = useLocation();
-    const [jwt, setJwt] = useState("");
+    const history = useHistory();
+    const [user, setUser] = useState(location.state);
     const [brokerageForm, setBrokerageForm] = useState(null);
 
     useEffect(() => {
-        setJwt(location.state);
+        setUser(location.state);
     }, [location]);
+
+    useEffect(() => {
+        if (location.state.jwt === undefined) {
+            history.push("/start")
+        }
+    }, []);
+
 
     const options = [
         {
@@ -18,10 +26,11 @@ export function Home() {
         },
         {
             type: "Kraken",
-            form: <KrakenCard  jwt={jwt}/>
+            form: <KrakenCard user={user}/>
         }
 
     ];
+
     function getOption(selected) {
         return options.find(option => option.type === selected).form
     }
@@ -34,7 +43,7 @@ export function Home() {
                 <select
                     id={"brokerageSelect"}
                     name={"brokerageSelect"}
-                    onChange={e =>{
+                    onChange={e => {
                         setBrokerageForm(getOption(e.target.value));
                     }}>
                     {options.map((op) => (

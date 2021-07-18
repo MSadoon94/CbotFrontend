@@ -3,10 +3,23 @@ import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Home} from "./Home";
 
+let user = {
+    username: "username",
+    password: "password",
+    authority: "USER",
+    jwt: "jwt",
+    expiration: "expiration",
+    outcome: ""
+};
+
+
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
     useLocation: () => ({
-        state: "jwt"
+        state: user
+    }),
+    useHistory: () => ({
+        push: jest.fn()
     })
 }));
 
@@ -14,7 +27,7 @@ describe("kraken form", () => {
     let brokerageSelect;
 
     beforeEach(() => {
-        render(<Home />);
+        render(<Home/>);
         brokerageSelect = screen.getByRole("combobox", {name: "Add Brokerage"});
         userEvent.selectOptions(brokerageSelect, ["Kraken"]);
     });

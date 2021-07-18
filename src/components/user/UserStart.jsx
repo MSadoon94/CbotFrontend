@@ -12,29 +12,35 @@ export function UserStart() {
             password: "",
             authority: "USER",
             jwt: "",
+            expiration: "",
             outcome: ""
         });
 
-    const signupRequest = async () => {
+    useEffect(() => {
+        setTimeout(() => {
+            if (user.outcome === `Welcome back, ${user.username}`) {
+                history.push("/home", user);
+            }
+        }, 2000)
+
+    }, [history, user]);
+
+    async function signupRequest() {
         let response;
         await signup(user, (res) => response = JSON.parse(res));
         setUser({...user, outcome: response.message})
     };
 
-    const loginRequest = async () => {
+    async function loginRequest() {
         let response;
         await login(user, (res) => response = JSON.parse(res));
-        setUser({...user, jwt: response.jwt, outcome: response.message});
+        setUser({
+            ...user,
+            jwt: response.body.jwt,
+            expiration: response.body.expiration,
+            outcome: response.message
+        });
     };
-
-    useEffect(() =>{
-        setTimeout(() => {
-            if(user.outcome === `Welcome back, ${user.username}`){
-                history.push("/home", user.jwt);
-            }
-        }, 2000)
-
-    }, [user.outcome]);
 
     return (
         <div>
@@ -60,8 +66,10 @@ export function UserStart() {
                     </button>
 
                     <label className={"outcome"}>{user.outcome}</label>
+
                 </div>
             </form>
+
         </div>
     )
 }
