@@ -23,6 +23,10 @@ jest.mock("react-router-dom", () => ({
     })
 }));
 
+jest.mock("../user/UserApi");
+
+window.alert = jest.fn();
+
 describe("kraken form", () => {
     let brokerageSelect;
 

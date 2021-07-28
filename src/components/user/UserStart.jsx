@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {login, signup} from "./UserApi";
 
-export function UserStart() {
+export const UserStart = () => {
 
     const history = useHistory();
 
@@ -25,13 +25,13 @@ export function UserStart() {
 
     }, [history, user]);
 
-    async function signupRequest() {
+    const signupRequest = async () => {
         let response;
         await signup(user, (res) => response = JSON.parse(res));
         setUser({...user, outcome: response.message})
-    };
+    }
 
-    async function loginRequest() {
+    const loginRequest = async () => {
         let response;
         await login(user, (res) => response = JSON.parse(res));
         setUser({
@@ -40,7 +40,7 @@ export function UserStart() {
             expiration: response.body.expiration,
             outcome: response.message
         });
-    };
+    }
 
     return (
         <div>

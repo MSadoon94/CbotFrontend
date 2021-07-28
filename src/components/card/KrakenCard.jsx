@@ -2,11 +2,9 @@ import React, {useEffect, useState} from "react";
 import {addCard, getCard} from "./CardApi";
 import "./card.css"
 import {postReqInterceptor, refreshTokenInterceptor} from "../common_api/RequestInterceptors";
-import {refreshJwt} from "../common_api/TokenRefreshApi";
-import {useHistory} from "react-router-dom";
+import {refreshJwt} from "../common_api/RefreshTokenApi";
 
-export function KrakenCard(props) {
-    const history = useHistory();
+export const KrakenCard = (props) => {
 
     const [card, setCard] = useState(
         {
@@ -22,10 +20,10 @@ export function KrakenCard(props) {
     useEffect(() => {
         if (isLoggedIn) {
             getKrakenCard();
-        } else history.push("/start")
+        }
     }, [isLoggedIn]);
 
-    async function addKraken() {
+    const addKraken = async () => {
         let response;
 
         await addCard(card, postReqInterceptor, (res) => response = JSON.parse(res));
@@ -38,7 +36,7 @@ export function KrakenCard(props) {
         }
     };
 
-    async function refresh() {
+    const refresh = async () => {
         let outcome;
         await refreshJwt(card, refreshTokenInterceptor, (res) => outcome = JSON.parse(res));
         if (outcome.message === "Successfully refreshed jwt token") {
@@ -48,15 +46,15 @@ export function KrakenCard(props) {
             alert("Session has ended, logging out.");
             setLogIn(false);
         }
-    }
+    };
 
-    async function getKrakenCard() {
+    const getKrakenCard = async () =>{
         let response;
         await getCard(card, props.user, (res) => response = JSON.parse(res));
         setCard({...card, balance: response.balance});
     };
 
-    function cardForm() {
+    const cardForm = () => {
         return (
             <form>
                 <label htmlFor={"apiKey"}>API Key</label>
@@ -69,7 +67,7 @@ export function KrakenCard(props) {
             </form>)
     };
 
-    function displayCard() {
+    const displayCard = () => {
         return (
             <form>
                 <label htmlFor={"balance"}>Current Balance</label>
@@ -85,4 +83,4 @@ export function KrakenCard(props) {
                 : cardForm()}
         </div>
     )
-}
+};

@@ -25,3 +25,22 @@ export const signup = async (user, callback) => {
                 callback(JSON.stringify({message: `Error: ${user.username} could not be created.`}))
             });
 };
+
+export const logout = async (user, interceptor, callback) => {
+
+    const reqInterceptor = axios.interceptors.request.use(
+        request => interceptor({jwt: user.jwt, request}),
+        (err) => {
+            return Promise.reject(err)
+        });
+
+    await axios.delete("/logout/")
+        .then(() => {
+            callback(JSON.stringify({message: `${user.username} has been logged out.`}));
+        }, (err) => {
+            console.log(err);
+            callback(JSON.stringify({message: `${user.username} is already logged out.`}));
+        });
+
+    axios.interceptors.request.eject(reqInterceptor);
+};

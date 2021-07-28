@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import {KrakenCard} from "../card/KrakenCard";
+import {customReqInterceptor} from "../common_api/RequestInterceptors";
+import {logout} from "../user/UserApi";
 
-export function Home() {
+export const Home = () => {
     const location = useLocation();
     const history = useHistory();
     const [user, setUser] = useState(location.state);
@@ -31,9 +33,16 @@ export function Home() {
 
     ];
 
-    function getOption(selected) {
+    const getOption = (selected) => {
         return options.find(option => option.type === selected).form
-    }
+    };
+
+    const logoutUser = async () => {
+        let outcome;
+        await logout(user, customReqInterceptor, (res) => outcome = JSON.parse(res));
+        window.alert(outcome.message + " Redirecting to start page.");
+        history.push("/start");
+    };
 
     return (
         <div>
@@ -52,6 +61,12 @@ export function Home() {
                 </select>
             </form>
             {brokerageForm}
+            <button
+                type={"button"}
+                id={"logoutButton"}
+                onClick={logoutUser}>
+                Log Out
+            </button>
         </div>
     )
 }

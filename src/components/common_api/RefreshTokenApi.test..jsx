@@ -1,4 +1,4 @@
-import {refreshJwt} from "./TokenRefreshApi";
+import {refreshJwt} from "./RefreshTokenApi";
 import {refreshTokenInterceptor} from "./RequestInterceptors";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
@@ -37,7 +37,7 @@ describe("token refresh api", () => {
     test("should return message for successful token refreshes", async () => {
         await apiRequest(refreshJwt, refreshTokenInterceptor, user);
 
-        expect(outcome.message).toBe("Successfully refreshed jwt token");
+        expect(outcome.message).toBe("Successfully refreshed jwt token.");
     });
 
     test("should return message if refresh token has expired", async () => {

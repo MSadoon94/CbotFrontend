@@ -1,7 +1,7 @@
 import {addCard, getCard} from "./CardApi";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
-import {getReqInterceptor, postReqInterceptor} from "../common_api/RequestInterceptors";
+import {customReqInterceptor, postReqInterceptor} from "../common_api/RequestInterceptors";
 
 let outcome;
 
@@ -45,7 +45,7 @@ describe("add card api", () => {
 });
 describe("get card", () => {
     test("should return card when request is successful", async () => {
-        await apiRequest(getCard, getReqInterceptor, card);
+        await apiRequest(getCard, customReqInterceptor, card);
 
         card = {account: card.account, password: card.password};
 
@@ -57,7 +57,7 @@ describe("get card", () => {
 
         card = {account: "accoun", password: card.password};
 
-        await apiRequest(getCard, getReqInterceptor, card);
+        await apiRequest(getCard, customReqInterceptor, card);
 
         expect(outcome.message).toBe(`Error: ${card.account} could not be retrieved`);
     })

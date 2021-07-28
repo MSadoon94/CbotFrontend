@@ -2,7 +2,7 @@ import {CancelToken} from "axios";
 
 let cancel;
 
-export function postReqInterceptor(request) {
+export const postReqInterceptor = (request) => {
     request.headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + request.data.jwt
@@ -18,7 +18,8 @@ export function postReqInterceptor(request) {
         request.data = {
             account: request.data.account,
             password: request.data.password,
-            balance: request.data.balance};
+            balance: request.data.balance
+        };
 
         return JSON.stringify(request.data);
     };
@@ -26,19 +27,7 @@ export function postReqInterceptor(request) {
     return request;
 };
 
-export function getReqInterceptor(request, card) {
-    request.headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + card.jwt
-    };
-
-    request.url = `/home/card/${card.account}`;
-    request.method = "get";
-
-    return request;
-}
-
-export function refreshTokenInterceptor(request) {
+export const refreshTokenInterceptor = (request) => {
     request.headers = {
         "Content-Type": "application/json",
         "isRefreshToken": true
@@ -50,5 +39,12 @@ export function refreshTokenInterceptor(request) {
     };
 
     return request;
-}
+};
 
+export const customReqInterceptor = (data) => {
+    data.request.headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + data.jwt
+    };
+    return data.request;
+};

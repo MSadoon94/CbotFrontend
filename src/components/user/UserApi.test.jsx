@@ -1,7 +1,8 @@
 import React from "react";
-import {login, signup} from "./UserApi";
+import {login, logout, signup} from "./UserApi";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
+import {customReqInterceptor} from "../common_api/RequestInterceptors";
 
 const user = {username: "user", password: "pass", authority: "USER"};
 
@@ -13,6 +14,13 @@ const apiRequest = async (apiCall, model) => {
 
 const failedPostRequest = (endpoint) => {
     testServer.use(rest.post(`http://localhost/${endpoint}`,
+        (req, res, context) => {
+            return res(context.status(400));
+        }))
+};
+
+const failedDeleteRequest = (endpoint) => {
+    testServer.use(rest.delete(`http://localhost/${endpoint}`,
         (req, res, context) => {
             return res(context.status(400));
         }))
@@ -60,6 +68,24 @@ describe("signup api", () => {
 
         expect(outcome.message).toBe(`Error: ${user.username} could not be created.`);
     });
+});
+
+describe("logout api", () => {
+
+    test("should return user logged out message for successful log outs", async () => {
+        await logout(user, customReqInterceptor, (res) => outcome = JSON.parse(res));
+
+        expect(outcome.message).toBe(`${user.username} has been logged out.`);
+    });
+
+    test("should return error message for failed log outs", async () => {
+        failedDeleteRequest("logout");
+
+        await logout(user, customReqInterceptor, (res) => outcome = JSON.parse(res));
+
+        expect(outcome.message).toBe(`${user.username} is already logged out.`);
+    });
+
 });
 
 

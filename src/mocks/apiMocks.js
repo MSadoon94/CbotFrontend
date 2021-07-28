@@ -28,7 +28,11 @@ const apiMocks = [
         (req, res, context) => {
             return res(context.status(200), context.json({jwt: "refreshedJwt", expiration: "newExpiration"}))
         }
-    )
+    ),
+    rest.delete(`${URL}/logout`,
+        (req, res, context) => {
+            return res(context.status(200));
+        })
 ];
 
 export {apiMocks, rest};

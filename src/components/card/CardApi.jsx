@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function addCard(card, interceptor, callback) {
+export const addCard = async (card, interceptor, callback) => {
 
     const reqInterceptor = axios.interceptors.request.use(
         request => interceptor(request),
@@ -27,16 +27,15 @@ export async function addCard(card, interceptor, callback) {
 
 }
 
-export async function getCard(card, interceptor, callback) {
-    let request;
+export const getCard = async (card, interceptor, callback) => {
 
     const reqInterceptor = axios.interceptors.request.use(
-        req => request = interceptor(req, card),
+        request => interceptor({jwt: card.jwt, request}),
         (err) => {
             return Promise.reject(err);
         });
 
-    await axios(request)
+    await axios.get(`/home/card/${card.account}`)
         .then((response) => {
             callback(JSON.stringify({message: response.data}));
         }, (err) => {
