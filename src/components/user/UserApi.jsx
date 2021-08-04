@@ -9,7 +9,9 @@ export const login = async (user, callback) => {
             }
             , (err) => {
                 console.log(err);
-                callback(JSON.stringify({message: "Error: user could not be logged in.", body: ""}))
+                if (err.request.status >= 500) {
+                    callback(JSON.stringify({message: "Sorry, the server did not respond, please try again later."}))
+                } else callback(JSON.stringify({message: "Error: user could not be logged in."}))
             });
 };
 

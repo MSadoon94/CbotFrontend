@@ -12,10 +12,10 @@ const apiRequest = async (apiCall, model) => {
     await apiCall((model), (res) => outcome = JSON.parse(res))
 };
 
-const failedPostRequest = (endpoint) => {
+const failedPostRequest = (endpoint, statusCode = 400) => {
     testServer.use(rest.post(`http://localhost/${endpoint}`,
         (req, res, context) => {
-            return res(context.status(400));
+            return res(context.status(statusCode));
         }))
 };
 
@@ -52,6 +52,14 @@ describe("login api", () => {
 
         expect(outcome.message).toBe("Error: user could not be logged in.")
     });
+
+    test("should return server error message if server is down", async () => {
+        failedPostRequest("login", 500);
+
+        await apiRequest(login, user);
+
+        expect(outcome.message).toBe("Sorry, the server did not respond, please try again later.")
+    })
 });
 
 describe("signup api", () => {
