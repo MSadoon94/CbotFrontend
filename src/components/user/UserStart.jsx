@@ -29,18 +29,21 @@ export const UserStart = () => {
         let response;
         await signup(user, (res) => response = JSON.parse(res));
         setUser({...user, outcome: response.message})
-    }
+    };
 
     const loginRequest = async () => {
         let response;
         await login(user, (res) => response = JSON.parse(res));
+        if(response.body === undefined){
+            response.body = {jwt: "", expiration: ""};
+        }
         setUser({
             ...user,
             jwt: response.body.jwt,
             expiration: response.body.expiration,
             outcome: response.message
         });
-    }
+    };
 
     return (
         <div>
