@@ -3,16 +3,18 @@ import {login, logout, signup} from "./UserApi";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {customReqInterceptor} from "../common_api/RequestInterceptors";
+import {HttpCodes} from "../common/httpCodes";
 
 const user = {username: "user", password: "pass", authority: "USER"};
 
 let outcome;
 
+
 const apiRequest = async (apiCall, model) => {
     await apiCall((model), (res) => outcome = JSON.parse(res))
 };
 
-const failedPostRequest = (endpoint, statusCode = 400) => {
+const failedPostRequest = (endpoint, statusCode = HttpCodes.badRequest) => {
     testServer.use(rest.post(`http://localhost/${endpoint}`,
         (req, res, context) => {
             return res(context.status(statusCode));
@@ -22,7 +24,7 @@ const failedPostRequest = (endpoint, statusCode = 400) => {
 const failedDeleteRequest = (endpoint) => {
     testServer.use(rest.delete(`http://localhost/${endpoint}`,
         (req, res, context) => {
-            return res(context.status(400));
+            return res(context.status(HttpCodes.badRequest));
         }))
 };
 
@@ -54,7 +56,7 @@ describe("login api", () => {
     });
 
     test("should return server error message if server is down", async () => {
-        failedPostRequest("login", 500);
+        failedPostRequest("login", HttpCodes.internalServerError);
 
         await apiRequest(login, user);
 
@@ -75,6 +77,14 @@ describe("signup api", () => {
         await apiRequest(signup, user);
 
         expect(outcome.message).toBe(`Error: ${user.username} could not be created.`);
+    });
+
+    test("should return error message for failed requests due to username duplicate", async () => {
+        failedPostRequest("signup", HttpCodes.conflict);
+
+        await apiRequest(signup, user);
+
+        expect(outcome.message).toBe("Username has been taken, please choose another.")
     });
 });
 
