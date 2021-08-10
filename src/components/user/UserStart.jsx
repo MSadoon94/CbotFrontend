@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {login, signup} from "./UserApi";
-import {validateUsername} from "./validator";
+import {validatePassword, validateUsername} from "./validator";
 
 export const UserStart = () => {
 
     const history = useHistory();
 
-    const [valid, setValid] = useState({username: null, confirmPass: null,});
+    const [valid, setValid] = useState({username: null, password: null, confirmPass: null,});
 
     const [user, setUser] = useState(
         {
@@ -19,10 +19,14 @@ export const UserStart = () => {
             outcome: ""
         });
 
-    const [usernameTextbox, setUsernameTextbox] = useState();
+    const [textBox, setTextBox] = useState({usernameBox: null, passwordBox: null});
 
     useEffect(() => {
-        const usernameTextBoxTimeout = setTimeout(setUsernameTextbox(user.username), 500);
+        const textBoxTimeout =
+            setTimeout(setTextBox({
+                usernameBox: user.username,
+                passwordBox: user.password
+            }), 500);
 
         const homePageTimeout = setTimeout(() => {
             if (user.outcome === `Welcome back, ${user.username}`) {
@@ -31,27 +35,28 @@ export const UserStart = () => {
         }, 2000);
 
         return () => {
-            clearTimeout(usernameTextBoxTimeout);
+            clearTimeout(textBoxTimeout);
             clearTimeout(homePageTimeout);
         }
     }, [history, user]);
 
     useEffect(() => {
-        checkUsername();
-    }, [usernameTextbox]);
+        checkTextBoxes();
+    }, [textBox]);
 
 
-    const checkUsername = () => {
-        setValid({...valid, username: validateUsername(user.username)});
+    const checkTextBoxes = () => {
+        setValid({
+            ...valid,
+            username: validateUsername(textBox.usernameBox),
+            password: validatePassword(textBox.passwordBox)
+        });
     };
 
     const signupRequest = async () => {
         let response;
         await signup(user, (res) => response = JSON.parse(res));
         setUser({...user, outcome: response.message});
-        if(response.message === "Username has been taken, please choose another."){
-            setValid({...valid, username: response.message});
-        }
     };
 
     const loginRequest = async () => {
@@ -78,23 +83,23 @@ export const UserStart = () => {
                         <input type="text" id={"name"} value={user.username}
                                onChange={e => setUser({...user, username: e.target.value})}/>
                     </label>
-                    <output id={"usernameValidity"}>{valid.username}</output><br/>
-
+                    <output data-testid={"usernameValidity"}>{valid.username}</output><br/>
 
                     <label htmlFor={"pass"}>
                         Password
                         <input type={"text"} id={"pass"} value={user.password}
                                onChange={e => setUser({...user, password: e.target.value})}/>
-                    </label><br/>
+                    </label>
+                    <output data-testid={"passwordValidity"}>{valid.password}</output><br/>
 
-                    <button type={"button"} id={"createButton"} disabled={valid.username !== "✔"}
+                    <button type={"button"} id={"createButton"} disabled={valid.username !== "✔" || valid.password !== "✔"}
                             onClick={signupRequest}>Create User
                     </button>
-                    <button type={"button"} id={"loginButton"}  disabled={valid.username !== "✔"}
+                    <button type={"button"} id={"loginButton"}  disabled={valid.username !== "✔" ||  valid.password !== "✔"}
                             onClick={loginRequest}>Login
                     </button>
 
-                    <label className={"outcome"} id={"requestOutcome"}>{user.outcome}</label>
+                    <output data-testid={"requestOutcome"} id={"requestOutcome"}>{user.outcome}</output>
 
                 </div>
             </form>

@@ -5,14 +5,20 @@ import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import {HttpCodes} from "../common/httpCodes";
 
-let usernameTextbox, usernameValidityOutput, signupButton, loginButton;
+let usernameTextBox, passwordTextBox, requestOutcome, usernameValidityOutput, passwordValidityOutput, signupButton,
+    loginButton;
 
 jest.mock("axios");
 
 beforeEach(() => {
     render(<UserStart/>);
-    usernameTextbox = screen.getByRole("textbox", {name: "User Name"});
-    usernameValidityOutput = screen.getByRole("status", {id: "usernameValidity"});
+    usernameTextBox = screen.getByRole("textbox", {name: "User Name"});
+    passwordTextBox = screen.getByRole("textbox", {name: "Password"});
+
+    requestOutcome = screen.getByTestId("requestOutcome");
+    usernameValidityOutput = screen.getByTestId("usernameValidity");
+    passwordValidityOutput = screen.getByTestId("passwordValidity");
+
     signupButton = screen.getByRole("button", {name: "Create User"});
     loginButton = screen.getByRole("button", {name: "Login"});
 });
@@ -22,10 +28,11 @@ describe("api responses", () => {
     test("should respond to duplicate usernames in sign up requests with error message", async () => {
         axios.post.mockImplementation(() => Promise.reject({request: {status: HttpCodes.conflict}}));
 
-        userEvent.type(usernameTextbox, "TestUser");
+        userEvent.type(usernameTextBox, "TestUser");
+        userEvent.type(passwordTextBox, "TestPassword1-");
         await waitFor(() => userEvent.click(screen.getByRole("button", {name: "Create User"})));
 
-        expect(usernameValidityOutput).toHaveTextContent("Username has been taken, please choose another.");
+        expect(requestOutcome).toHaveTextContent("Username has been taken, please choose another.");
     });
 
 });
@@ -33,8 +40,8 @@ describe("api responses", () => {
 describe("entering username", () => {
 
     test.concurrent.each(["TestUser", "testuser", "TestUser1", "testuser2", "TestUser_1"])
-    ("should set username validity to checkmark for acceptable username: %s", async (input) => {
-        userEvent.type(usernameTextbox, input);
+    ("should set username outputValidity to checkmark for acceptable username: %s", async (input) => {
+        userEvent.type(usernameTextBox, input);
 
         expect(usernameValidityOutput).toHaveTextContent("✔");
     });
@@ -45,24 +52,61 @@ describe("entering username", () => {
     ${">20 characters"} |${"abcdefghijklmnopqrstu"}|${"Username cannot be longer than 20 characters."}
     ${"!alphanumeric"}  |${"34g+5d"}               |${"Username can only contain letters, numbers, or underscores."}
     
-    `("should set username validity error for $type", async ({input, error}) => {
-        userEvent.type(usernameTextbox, input);
+    `("should set username outputValidity error for: $type", async ({input, error}) => {
+        userEvent.type(usernameTextBox, input);
         expect(usernameValidityOutput).toHaveTextContent(error);
     });
 
-    test("should enable sign up and login buttons when username is acceptable",  () => {
-        userEvent.type(usernameTextbox, "TestUser");
+});
 
+describe("entering password", () => {
+
+    test.concurrent.each`
+    type                     |input                     |error
+    ${"null/blank"}          |${" "}                    |${"Password cannot be null or blank."}
+    ${">20 characters"}      |${"Abcdefghijklmnopqrs1-"}|${"Password cannot be longer than 20 characters."}
+    ${"<8 characters"}       |${"Abc1-"}                |${"Password cannot be shorter than 8 characters."}
+    ${"!special character"}  |${"Abcdef11"}             |${"Password must contain at least 1 special character, e.g. '-', '%', etc..."}
+    ${"!uppercase"}          |${"abcdef1-"}             |${"Password must contain at least 1 uppercase letter."}
+    ${"has white space"}     |${"Abcdef1 -"}            |${"Password cannot contain any white space."}
+    ${"!number"}             |${"Abcdeff-"}             |${"Password must contain at least 1 number."}
+    
+    `("should set password outputValidity error for: $type", async ({input, error}) => {
+        userEvent.type(passwordTextBox, input);
+
+        expect(passwordValidityOutput).toHaveTextContent(error);
+    });
+
+});
+
+describe("button function", () => {
+
+    beforeEach(() => {
+        userEvent.clear(usernameTextBox);
+        userEvent.clear(passwordTextBox);
+        userEvent.type(usernameTextBox, "TestUser");
+        userEvent.type(passwordTextBox, "TestPassword1-");
+    });
+
+    test("should enable sign up and login buttons when text box values are acceptable", () => {
         expect(signupButton).toBeEnabled();
         expect(loginButton).toBeEnabled();
     });
 
-
     test("should disable sign up and login buttons when username is unacceptable", () => {
-        userEvent.type(usernameTextbox, "#");
+        userEvent.clear(usernameTextBox);
+        userEvent.type(usernameTextBox, "#");
 
         expect(signupButton).not.toBeEnabled();
         expect(loginButton).not.toBeEnabled();
     });
+
+    test("should disable sign up and login buttons when password is unacceptable", () => {
+        userEvent.clear(passwordTextBox);
+        userEvent.type(passwordTextBox, "TestPassword");
+
+        expect(signupButton).not.toBeEnabled();
+        expect(loginButton).not.toBeEnabled();
+    })
 
 });
