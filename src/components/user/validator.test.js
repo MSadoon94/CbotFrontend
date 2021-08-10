@@ -46,19 +46,23 @@ describe("password validation", () => {
 
     test("should contain at least 1 special character", () => {
         expect(validatePassword("Abcdef11"))
-            .toBe("Password must contain at least 1 special character, e.g. '-', '%', etc...")
+            .toBe("Password must contain at least 1 special character, e.g. '-', '%', etc...");
     });
 
     test("should contain at least 1 uppercase letter", () => {
-        expect(validatePassword("abcdef1-")).toBe("Password must contain at least 1 uppercase letter.")
+        expect(validatePassword("abcdef1-")).toBe("Password must contain at least 1 uppercase letter.");
     });
 
     test("should not contain any white space", () => {
-       expect(validatePassword("Abcdef1 -")).toBe("Password cannot contain any white space.")
-    })
+       expect(validatePassword("Abcdef1 -")).toBe("Password cannot contain any white space.");
+    });
 
     test("should contain at least 1 number", () => {
-        expect(validatePassword("Abcdeff-")).toBe("Password must contain at least 1 number.")
-    })
+        expect(validatePassword("Abcdeff-")).toBe("Password must contain at least 1 number.");
+    });
+
+    test("second password should match first", () => {
+        expect(validatePassword("Abcdef1-", "Abcdef-1")).toBe("Passwords do not match.");
+    });
 
 });

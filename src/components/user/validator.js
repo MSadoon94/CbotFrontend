@@ -12,7 +12,7 @@ export function validateUsername(name) {
     return "✔";
 }
 
-export function validatePassword(password) {
+export function validatePassword(password, secondPassword) {
     let validation = "Password";
     const validator = new Validator(password, validation);
     try {
@@ -23,7 +23,8 @@ export function validatePassword(password) {
             .hasAtLeastOneSpecialCharacter()
             .hasAtLeastOneUpperCaseLetter()
             .hasNoWhiteSpace()
-            .containsAtLeast1Number();
+            .containsAtLeast1Number()
+            .matchesSecondPassword(secondPassword);
 
     } catch (err) {
         return err;
@@ -112,6 +113,15 @@ function Validator(input, validation) {
     Validator.prototype.containsAtLeast1Number = function () {
         if (!/[\d]/gm.test(input)) {
             throw `${validation} must contain at least 1 number.`
+        } else {
+            this.result = input;
+            return this;
+        }
+    }
+
+    Validator.prototype.matchesSecondPassword = function (secondPassword) {
+        if(input !== secondPassword){
+            throw `${validation}s do not match.`
         } else {
             this.result = input;
             return this;

@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import {HttpCodes} from "../common/httpCodes";
 
-let usernameTextBox, passwordTextBox, requestOutcome, usernameValidityOutput, passwordValidityOutput, signupButton,
+let usernameTextBox, passwordTextBox, confirmPasswordTextBox, requestOutcome, usernameValidityOutput, passwordValidityOutput, signupButton,
     loginButton;
 
 jest.mock("axios");
@@ -14,6 +14,7 @@ beforeEach(() => {
     render(<UserStart/>);
     usernameTextBox = screen.getByRole("textbox", {name: "User Name"});
     passwordTextBox = screen.getByRole("textbox", {name: "Password"});
+    confirmPasswordTextBox = screen.getByRole("textbox", {name: "Confirm Password"});
 
     requestOutcome = screen.getByTestId("requestOutcome");
     usernameValidityOutput = screen.getByTestId("usernameValidity");
@@ -30,6 +31,7 @@ describe("api responses", () => {
 
         userEvent.type(usernameTextBox, "TestUser");
         userEvent.type(passwordTextBox, "TestPassword1-");
+        userEvent.type(confirmPasswordTextBox, "TestPassword1-");
         await waitFor(() => userEvent.click(screen.getByRole("button", {name: "Create User"})));
 
         expect(requestOutcome).toHaveTextContent("Username has been taken, please choose another.");
@@ -84,12 +86,23 @@ describe("button function", () => {
     beforeEach(() => {
         userEvent.clear(usernameTextBox);
         userEvent.clear(passwordTextBox);
+        userEvent.clear(confirmPasswordTextBox);
+
         userEvent.type(usernameTextBox, "TestUser");
         userEvent.type(passwordTextBox, "TestPassword1-");
+        userEvent.type(confirmPasswordTextBox, "TestPassword1-")
     });
 
     test("should enable sign up and login buttons when text box values are acceptable", () => {
         expect(signupButton).toBeEnabled();
+        expect(loginButton).toBeEnabled();
+    });
+
+    test("should disable sign up but not login button when both password entries don't match", () => {
+        userEvent.clear(confirmPasswordTextBox);
+        userEvent.type(confirmPasswordTextBox,"TestPassword1");
+
+        expect(signupButton).not.toBeEnabled();
         expect(loginButton).toBeEnabled();
     });
 
@@ -107,6 +120,5 @@ describe("button function", () => {
 
         expect(signupButton).not.toBeEnabled();
         expect(loginButton).not.toBeEnabled();
-    })
-
+    });
 });
