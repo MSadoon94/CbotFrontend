@@ -3,26 +3,28 @@ import {login, logout, signup} from "./UserApi";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {customReqInterceptor} from "../common_api/RequestInterceptors";
+import {HttpCodes} from "../common/httpCodes";
 
 const user = {username: "user", password: "pass", authority: "USER"};
 
 let outcome;
 
+
 const apiRequest = async (apiCall, model) => {
     await apiCall((model), (res) => outcome = JSON.parse(res))
 };
 
-const failedPostRequest = (endpoint) => {
+const failedPostRequest = (endpoint, statusCode = HttpCodes.badRequest) => {
     testServer.use(rest.post(`http://localhost/${endpoint}`,
         (req, res, context) => {
-            return res(context.status(400));
+            return res(context.status(statusCode));
         }))
 };
 
 const failedDeleteRequest = (endpoint) => {
     testServer.use(rest.delete(`http://localhost/${endpoint}`,
         (req, res, context) => {
-            return res(context.status(400));
+            return res(context.status(HttpCodes.badRequest));
         }))
 };
 
@@ -52,6 +54,14 @@ describe("login api", () => {
 
         expect(outcome.message).toBe("Error: user could not be logged in.")
     });
+
+    test("should return server error message if server is down", async () => {
+        failedPostRequest("login", HttpCodes.internalServerError);
+
+        await apiRequest(login, user);
+
+        expect(outcome.message).toBe("Sorry, the server did not respond, please try again later.")
+    })
 });
 
 describe("signup api", () => {
@@ -68,6 +78,22 @@ describe("signup api", () => {
 
         expect(outcome.message).toBe(`Error: ${user.username} could not be created.`);
     });
+
+    test("should return error message for failed requests due to username duplicate", async () => {
+        failedPostRequest("signup", HttpCodes.conflict);
+
+        await apiRequest(signup, user);
+
+        expect(outcome.message).toBe("Username has been taken, please choose another.")
+    });
+
+    test("should return server error message if server is down", async () => {
+        failedPostRequest("signup", HttpCodes.internalServerError);
+
+        await apiRequest(signup, user);
+
+        expect(outcome.message).toBe("Sorry, the server did not respond, please try again later.")
+    })
 });
 
 describe("logout api", () => {

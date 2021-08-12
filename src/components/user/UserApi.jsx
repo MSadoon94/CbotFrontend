@@ -1,4 +1,5 @@
 import axios from "axios";
+import {HttpCodes} from "../common/httpCodes";
 
 export const login = async (user, callback) => {
 
@@ -9,7 +10,11 @@ export const login = async (user, callback) => {
             }
             , (err) => {
                 console.log(err);
-                callback(JSON.stringify({message: "Error: user could not be logged in.", body: ""}))
+                if (err.request.status >= HttpCodes.internalServerError) {
+                    callback(JSON.stringify({message: "Sorry, the server did not respond, please try again later."}))
+                } else {
+                    callback(JSON.stringify({message: "Error: user could not be logged in."}))
+                }
             });
 };
 
@@ -22,7 +27,14 @@ export const signup = async (user, callback) => {
             }
             , (err) => {
                 console.log(err);
-                callback(JSON.stringify({message: `Error: ${user.username} could not be created.`}))
+
+                if (err.request.status === HttpCodes.conflict) {
+                    callback(JSON.stringify({message: "Username has been taken, please choose another."}))
+                } else if (err.request.status >= HttpCodes.internalServerError) {
+                    callback(JSON.stringify({message: "Sorry, the server did not respond, please try again later."}));
+                } else {
+                    callback(JSON.stringify({message: `Error: ${user.username} could not be created.`}))
+                }
             });
 };
 

@@ -30,11 +30,12 @@ export const postReqInterceptor = (request) => {
 export const refreshTokenInterceptor = (request) => {
     request.headers = {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + request.data.jwt,
         "isRefreshToken": true
     };
 
     request.transformRequest = () => {
-        request.data = {username: request.data.username, jwt: request.data.jwt};
+        request.data = {username: request.data.username};
         return JSON.stringify(request.data);
     };
 
