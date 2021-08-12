@@ -86,6 +86,14 @@ describe("signup api", () => {
 
         expect(outcome.message).toBe("Username has been taken, please choose another.")
     });
+
+    test("should return server error message if server is down", async () => {
+        failedPostRequest("signup", HttpCodes.internalServerError);
+
+        await apiRequest(signup, user);
+
+        expect(outcome.message).toBe("Sorry, the server did not respond, please try again later.")
+    })
 });
 
 describe("logout api", () => {

@@ -12,7 +12,9 @@ export const login = async (user, callback) => {
                 console.log(err);
                 if (err.request.status >= HttpCodes.internalServerError) {
                     callback(JSON.stringify({message: "Sorry, the server did not respond, please try again later."}))
-                } else callback(JSON.stringify({message: "Error: user could not be logged in."}))
+                } else {
+                    callback(JSON.stringify({message: "Error: user could not be logged in."}))
+                }
             });
 };
 
@@ -25,9 +27,14 @@ export const signup = async (user, callback) => {
             }
             , (err) => {
                 console.log(err);
-                if (err.request.status === HttpCodes.conflict){
+
+                if (err.request.status === HttpCodes.conflict) {
                     callback(JSON.stringify({message: "Username has been taken, please choose another."}))
-                } else callback(JSON.stringify({message: `Error: ${user.username} could not be created.`}))
+                } else if (err.request.status >= HttpCodes.internalServerError) {
+                    callback(JSON.stringify({message: "Sorry, the server did not respond, please try again later."}));
+                } else {
+                    callback(JSON.stringify({message: `Error: ${user.username} could not be created.`}))
+                }
             });
 };
 
