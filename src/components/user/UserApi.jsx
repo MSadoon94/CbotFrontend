@@ -3,7 +3,7 @@ import {HttpCodes} from "../common/httpCodes";
 
 export const login = async (user, callback) => {
 
-    await axios.post("/login", user)
+    await axios.post("api/login", user)
         .then((response) => {
                 callback(JSON.stringify({message: `Welcome back, ${user.username}`, body: response.data})
                 )
@@ -20,7 +20,7 @@ export const login = async (user, callback) => {
 
 export const signup = async (user, callback) => {
 
-    await axios.post("/signup", user)
+    await axios.post("api/signup", user)
         .then(() => {
                 callback(JSON.stringify({message: `${user.username} was created successfully.`})
                 )
@@ -46,7 +46,7 @@ export const logout = async (user, interceptor, callback) => {
             return Promise.reject(err)
         });
 
-    await axios.delete("/logout/")
+    await axios.delete("api/logout/")
         .then(() => {
             callback(JSON.stringify({message: `${user.username} has been logged out.`}));
         }, (err) => {

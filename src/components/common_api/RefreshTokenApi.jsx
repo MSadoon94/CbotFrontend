@@ -8,7 +8,7 @@ export const refreshJwt = async (user, interceptor, callback) => {
             return Promise.reject(err);
         });
 
-    await axios.post("/refreshjwt", user)
+    await axios.post("api/refreshjwt", user)
         .then((response) => {
             callback(JSON.stringify({message: "Successfully refreshed jwt token.", body: response.data}));
         }, (err) => {
@@ -17,4 +17,4 @@ export const refreshJwt = async (user, interceptor, callback) => {
         });
 
     axios.interceptors.request.eject(reqInterceptor);
-}
+};

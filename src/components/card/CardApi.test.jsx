@@ -13,14 +13,14 @@ const apiRequest = async (apiCall, interceptor, model) => {
 };
 
 const failedPostRequest = (endpoint) => {
-    testServer.use(rest.post(`http://localhost/${endpoint}`,
+    testServer.use(rest.post(`http://localhost/api/${endpoint}`,
         (req, res, context) => {
             return res(context.status(400));
         }))
 };
 
 const failedGetRequest = (endpoint) => {
-    testServer.use(rest.get(`http://localhost/${endpoint}`,
+    testServer.use(rest.get(`http://localhost/api/${endpoint}`,
         (req, res, context) => {
             const {card} = req.params;
             return res(context.status(400));

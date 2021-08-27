@@ -15,14 +15,14 @@ const apiRequest = async (apiCall, model) => {
 };
 
 const failedPostRequest = (endpoint, statusCode = HttpCodes.badRequest) => {
-    testServer.use(rest.post(`http://localhost/${endpoint}`,
+    testServer.use(rest.post(`http://localhost/api/${endpoint}`,
         (req, res, context) => {
             return res(context.status(statusCode));
         }))
 };
 
 const failedDeleteRequest = (endpoint) => {
-    testServer.use(rest.delete(`http://localhost/${endpoint}`,
+    testServer.use(rest.delete(`http://localhost/api/${endpoint}`,
         (req, res, context) => {
             return res(context.status(HttpCodes.badRequest));
         }))

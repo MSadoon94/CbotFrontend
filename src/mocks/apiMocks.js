@@ -1,6 +1,6 @@
 import {rest} from "msw";
 
-const URL = "http://localhost";
+const URL = "http://localhost/api";
 const card = {account: "account", password: "password"};
 const apiMocks = [
     rest.post(`${URL}/login`,

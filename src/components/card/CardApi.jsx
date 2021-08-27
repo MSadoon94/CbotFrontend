@@ -8,7 +8,7 @@ export const addCard = async (card, interceptor, callback) => {
             return Promise.reject(err);
         });
 
-    await axios.post("/home/card", card)
+    await axios.post("api/home/card", card)
         .then(() => {
                 callback(JSON.stringify({message: `${card.account} was created successfully.`})
                 );
@@ -25,7 +25,7 @@ export const addCard = async (card, interceptor, callback) => {
 
     axios.interceptors.request.eject(reqInterceptor);
 
-}
+};
 
 export const getCard = async (card, interceptor, callback) => {
 
@@ -35,7 +35,7 @@ export const getCard = async (card, interceptor, callback) => {
             return Promise.reject(err);
         });
 
-    await axios.get(`/home/card/${card.account}`)
+    await axios.get(`api/home/card/${card.account}`)
         .then((response) => {
             callback(JSON.stringify({message: response.data}));
         }, (err) => {
@@ -44,6 +44,6 @@ export const getCard = async (card, interceptor, callback) => {
         });
 
     axios.interceptors.request.eject(reqInterceptor);
-}
+};
 
 
