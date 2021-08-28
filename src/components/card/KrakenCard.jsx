@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {addCard, getCard} from "./CardApi";
-import "./card.css"
 import {postReqInterceptor, refreshTokenInterceptor} from "../common_api/RequestInterceptors";
 import {refreshJwt} from "../common_api/RefreshTokenApi";
+import "./card.css"
 
 export const KrakenCard = (props) => {
 

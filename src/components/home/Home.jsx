@@ -69,4 +69,4 @@ export const Home = () => {
             </button>
         </div>
     )
-}
+};

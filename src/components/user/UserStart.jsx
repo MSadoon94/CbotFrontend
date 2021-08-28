@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {login, signup} from "./UserApi";
 import {validatePassword, validateUsername} from "./validator";
+import "./start.css"
 
 export const UserStart = () => {
 
@@ -75,46 +76,50 @@ export const UserStart = () => {
         });
     };
 
-    const isNotValidUsername = () => {return valid.username !== "✔"};
+    const isNotValidUsername = () => {
+        return valid.username !== "✔"
+    };
 
-    const isNotValidPassword = () => {return valid.password !== "✔"};
+    const isNotValidPassword = () => {
+        return valid.password !== "✔"
+    };
 
-    const isNotMatchingPassword = () => {return valid.password !== "Passwords do not match."};
+    const isNotMatchingPassword = () => {
+        return valid.password !== "Passwords do not match."
+    };
 
     return (
         <div>
             <h1 className={"title"}>User Start</h1>
             <form>
                 <div>
-                    <label htmlFor={"name"}>
-                        User Name
+                    <div className={"inputBlock"}>
+                        <label htmlFor={"name"}>User Name</label>
                         <input type="text" id={"name"} value={user.username}
                                onChange={e => setUser({...user, username: e.target.value})}/>
-                    </label>
-                    <output data-testid={"usernameValidity"}>{valid.username}</output>
-                    <br/>
+                        <output data-testid={"usernameValidity"} className={(valid.username === "✔" ? "checkmark": "invalid")}>{valid.username}</output>
+                    </div>
 
-                    <label htmlFor={"pass"}>
-                        Password
+                    <div className={"inputBlock"}>
+                        <label htmlFor={"pass"}>Password</label>
                         <input type={"text"} id={"pass"} value={user.password}
                                onChange={e => setUser({...user, password: e.target.value})}/>
-                    </label>
-                    <label htmlFor={"confirmPass"}>
-                        Confirm Password
+                        <output data-testid={"passwordValidity"} className={(valid.password === "✔" ? "checkmark": "invalid")}>{valid.password}</output>
+                    </div>
+
+                    <div className={"inputBlock"}>
+                        <label htmlFor={"confirmPass"}>Confirm Password</label>
                         <input type={"text"} id={"confirmPass"} value={user.confirmPassword}
                                onChange={e => setUser({...user, confirmPassword: e.target.value})}/>
-                    </label>
-                    <output data-testid={"passwordValidity"}>{valid.password}</output>
-                    <br/>
-
-                    <button type={"button"} id={"createButton"}
-                            disabled={isNotValidUsername() || isNotValidPassword()}
-                            onClick={signupRequest}>Create User
-                    </button>
-                    <button type={"button"} id={"loginButton"}
-                            disabled={(isNotValidUsername()) || (isNotValidPassword() && isNotMatchingPassword())}
-                            onClick={loginRequest}>Login
-                    </button>
+                        <button type={"button"} id={"createButton"}
+                                disabled={isNotValidUsername() || isNotValidPassword()}
+                                onClick={signupRequest}>Create User
+                        </button>
+                        <button type={"button"} id={"loginButton"}
+                                disabled={(isNotValidUsername()) || (isNotValidPassword() && isNotMatchingPassword())}
+                                onClick={loginRequest}>Login
+                        </button>
+                    </div>
 
                     <output data-testid={"requestOutcome"} id={"requestOutcome"}>{user.outcome}</output>
 

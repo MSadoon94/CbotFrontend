@@ -1,0 +1,26 @@
+h1 {
+    text-align: center;
+}
+
+input {
+    margin: 5px 25px 5px 15px ;
+}
+
+button {
+    width: 100px;
+    margin: auto 10px;
+}
+
+.inputBlock {
+    width: 55%;
+    margin: auto;
+}
+
+.checkmark {
+    color: lightgreen;
+}
+
+.invalid{
+    color: crimson;
+}
+
