@@ -1,7 +1,10 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Home} from "./Home";
+import ReactModal from 'react-modal'
+
+ReactModal.setAppElement(document.createElement('div'));
 
 let user = {
     username: "username",
@@ -43,5 +46,16 @@ describe("kraken form", () => {
     test("should create text box for private key", () => {
         expect(screen.getByRole("textbox", {name: "Private Key"})).toBeVisible();
     });
+});
+
+describe("new strategy button",  () => {
+
+    test("should pop-up strategy modal after being clicked", async () => {
+        render(<Home/>);
+        let strategyButton = screen.getByRole("button", {name: "New Strategy"});
+        userEvent.click(strategyButton);
+        await waitFor(() => {expect(screen.getByRole("dialog")).toBeVisible()});
+    })
+
 });
 

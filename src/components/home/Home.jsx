@@ -3,13 +3,14 @@ import {useHistory, useLocation} from "react-router-dom";
 import {KrakenCard} from "../card/KrakenCard";
 import {customReqInterceptor} from "../common_api/RequestInterceptors";
 import {logout} from "../user/UserApi";
+import {StrategyModal} from "../strategy/StrategyModal";
 
 export const Home = () => {
     const location = useLocation();
     const history = useHistory();
     const [user, setUser] = useState(location.state);
     const [brokerageForm, setBrokerageForm] = useState(null);
-
+    const [strategyModal, setStrategyModal] = useState(false);
     useEffect(() => {
         setUser(location.state);
     }, [location]);
@@ -62,11 +63,11 @@ export const Home = () => {
             </form>
             {brokerageForm}
             <button
-                type={"button"}
-                id={"logoutButton"}
-                onClick={logoutUser}>
+                type={"button"} id={"logoutButton"} onClick={logoutUser}>
                 Log Out
             </button>
+            <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy</button>
+            <StrategyModal isOpen={strategyModal}/>
         </div>
     )
 };
