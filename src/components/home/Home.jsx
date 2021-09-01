@@ -67,7 +67,7 @@ export const Home = () => {
                 Log Out
             </button>
             <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy</button>
-            <StrategyModal isOpen={strategyModal}/>
+            <StrategyModal id={"strategyModal"} isOpen={strategyModal}/>
         </div>
     )
 };

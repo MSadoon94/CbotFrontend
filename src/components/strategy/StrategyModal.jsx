@@ -5,10 +5,9 @@ import {CryptoSelection} from "./CryptoSelection";
 export const StrategyModal = (props) => {
 
     return (
-        <Modal isOpen={props.isOpen}
+        <Modal id={props.id} isOpen={props.isOpen}
                appElement={document.getElementById('app')}>
-            <h2>Modal Title</h2>
-            <p>Modal Body</p>
+            <h2>Strategy Creator</h2>
             <CryptoSelection/>
         </Modal>
     )
