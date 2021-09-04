@@ -42,19 +42,19 @@ describe("api responses", () => {
 describe("entering username", () => {
 
     test.concurrent.each(["TestUser", "testuser", "TestUser1", "testuser2", "TestUser_1"])
-    ("should set username outputValidity to checkmark for acceptable username: %s", async (input) => {
+    ("should set username output validity to checkmark for acceptable username: %s", async (input) => {
         userEvent.type(usernameTextBox, input);
 
         expect(usernameValidityOutput).toHaveTextContent("✔");
     });
 
     test.concurrent.each`
-    type                |   input                  |error
-    ${"null/blank"}     |${" "}                     |${"Username cannot be null or blank."}
+    type                |input                     |error
+    ${"null/blank"}     |${" "}                    |${"Username cannot be null or blank."}
     ${">20 characters"} |${"abcdefghijklmnopqrstu"}|${"Username cannot be longer than 20 characters."}
     ${"!alphanumeric"}  |${"34g+5d"}               |${"Username can only contain letters, numbers, or underscores."}
     
-    `("should set username outputValidity error for: $type", async ({input, error}) => {
+    `("should set username output validity error for: $type", async ({input, error}) => {
         userEvent.type(usernameTextBox, input);
         expect(usernameValidityOutput).toHaveTextContent(error);
     });
@@ -73,7 +73,7 @@ describe("entering password", () => {
     ${"has white space"}     |${"Abcdef1 -"}            |${"Password cannot contain any white space."}
     ${"!number"}             |${"Abcdeff-"}             |${"Password must contain at least 1 number."}
     
-    `("should set password outputValidity error for: $type", async ({input, error}) => {
+    `("should set password output validity error for: $type", async ({input, error}) => {
         userEvent.type(passwordTextBox, input);
 
         expect(passwordValidityOutput).toHaveTextContent(error);

@@ -10,7 +10,7 @@ describe("dynamic text box", () => {
 
 
     beforeEach(() => {
-        render(<DynamicTextBox onTyping={(res) => {update = res}}/>);
+        render(<DynamicTextBox timeout={500} onTyping={(res) => {update = res}}/>);
         textBox = screen.getByRole("textbox");
         userEvent.type(textBox, "TestEntry");
     });
@@ -25,5 +25,5 @@ describe("dynamic text box", () => {
 
     test("should return typed text", async () => {
         await waitFor(() => {expect(update.entry).toBe("TestEntry")});
-    })
+    });
 });

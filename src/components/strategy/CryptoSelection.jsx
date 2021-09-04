@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {DynamicTextBox} from "../common/DynamicTextBox";
 
 export const CryptoSelection = () => {
@@ -11,11 +11,19 @@ export const CryptoSelection = () => {
             <form>
                 <div>
                     <label htmlFor={"baseInput"}>Base Symbol</label>
-                    <DynamicTextBox id={"baseInput"} onTyping={(update) => {setBaseEntry(update)}}/>
+                    <DynamicTextBox id={"baseInput"}
+                                    timeout={1000}
+                                    onTyping={(update) => {
+                                        setBaseEntry(update)
+                                    }}/>
                 </div>
                 <div>
                     <label htmlFor={"quoteInput"}>Quote Symbol</label>
-                    <DynamicTextBox id={"quoteInput"} onTyping={(update) => {setQuoteEntry(update)}}/>
+                    <DynamicTextBox id={"quoteInput"}
+                                    timeout={1000}
+                                    onTyping={(update) => {
+                                        setQuoteEntry(update)
+                                    }}/>
                 </div>
             </form>
         </div>

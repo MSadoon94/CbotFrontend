@@ -1,5 +1,5 @@
 import {refreshJwt} from "./RefreshTokenApi";
-import {refreshTokenInterceptor} from "./RequestInterceptors";
+import {refreshTokenInterceptor} from "./requestInterceptors";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 
