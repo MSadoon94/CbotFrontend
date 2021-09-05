@@ -18,12 +18,12 @@ export const apiRequest = async (config, handler) => {
         .then(() => {
             handler.onSuccess(handler.templates.success)
         })
-        .catch(async (error) => {
+        .catch((error) => {
                 if (axios.isCancel(error)) {
                     console.log(error.message);
                 } else {
-                    failSafe(error, handler);
                     console.log(error.message);
+                    failSafe(error, handler);
                 }
             }
         );

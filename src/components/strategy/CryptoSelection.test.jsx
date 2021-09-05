@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import {CryptoSelection} from "./CryptoSelection";
 import userEvent from "@testing-library/user-event";
 
@@ -9,17 +9,17 @@ describe("api interactions", () => {
     let assetsResponse;
 
     beforeEach(() => {
-        render(<CryptoSelection/>);
+        render(<CryptoSelection username={"username"} jwt={{token: "mockJwt", expiration: new Date(Date.now() + 10000).toUTCString()}}/>);
 
-        baseInput = screen.getByRole("input", {name: "Base Symbol"});
-        quoteInput = screen.getByRole("input", {name: "Quote Symbol"});
-        assetsResponse = screen.getByTestId("assetsResponse");
+        baseInput = screen.getByRole("textbox", {name: "Base Symbol"});
+        quoteInput = screen.getByRole("textbox", {name: "Quote Symbol"});
+        assetsResponse = screen.getByTestId("validity");
     });
-    test("should respond with checkmark for valid asset pairs", async () => {
+    test("should display checkmark for valid asset pairs", async () => {
         userEvent.type(baseInput, "BTC");
-        userEvent.type(quoteInput, "BTC");
+        userEvent.type(quoteInput, "USD");
 
-        expect(assetsResponse).toBe("✔")
-    })
+        await waitFor(() => expect(assetsResponse).toHaveTextContent("✔"));
+    });
 
 });

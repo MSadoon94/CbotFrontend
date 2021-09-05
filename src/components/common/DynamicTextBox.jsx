@@ -14,7 +14,7 @@ export const DynamicTextBox = (props) => {
         return () => {
             clearTimeout(textBoxTimeout);
         }
-    }, [isTyping, props]);
+    }, [isTyping]);
 
     const textBoxTimeout = () => {
         setTimeout(() => {
