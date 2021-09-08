@@ -1,14 +1,20 @@
 import React from "react";
 import Modal from "react-modal";
 import {CryptoSelection} from "./CryptoSelection";
+import "./modal.css"
 
 export const StrategyModal = (props) => {
 
     return (
-        <Modal id={props.id} isOpen={props.isOpen}
-               appElement={document.getElementById('app')}>
+        <Modal id={"strategyModal"} isOpen={props.isOpen} jwt={props.jwt}
+               onRequestClose={() => {
+                   props.onRequestClose()
+               }}
+               appElement={document.getElementById('app')}
+               className={"modal"} overlayClassName={"overlay"}
+        >
             <h2>Strategy Creator</h2>
-            <CryptoSelection/>
+            <CryptoSelection jwt={props.jwt}/>
         </Modal>
     )
 };

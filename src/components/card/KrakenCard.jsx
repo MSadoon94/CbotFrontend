@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {addCard, getCard} from "./CardApi";
-import {postReqInterceptor, refreshTokenInterceptor} from "../common_api/RequestInterceptors";
+import {postReqInterceptor, refreshTokenInterceptor} from "../common_api/requestInterceptors";
 import {refreshJwt} from "../common_api/RefreshTokenApi";
 import "./card.css"
 
@@ -48,7 +48,7 @@ export const KrakenCard = (props) => {
         }
     };
 
-    const getKrakenCard = async () =>{
+    const getKrakenCard = async () => {
         let response;
         await getCard(card, props.user, (res) => response = JSON.parse(res));
         setCard({...card, balance: response.balance});

@@ -26,8 +26,10 @@ export const DynamicTextBox = (props) => {
     return (
         <input id={props.id} type={"text"} value={entry}
                onChange={e => {
-                   setIsTyping(true);
-                   setEntry(e.target.value)
+                   if (entry !== e.target.value) {
+                       setIsTyping(true);
+                       setEntry(e.target.value)
+                   }
                }}/>
     )
 

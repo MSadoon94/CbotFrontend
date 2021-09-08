@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import {KrakenCard} from "../card/KrakenCard";
-import {customReqInterceptor} from "../common_api/RequestInterceptors";
+import {customReqInterceptor} from "../common_api/requestInterceptors";
 import {logout} from "../user/UserApi";
 import {StrategyModal} from "../strategy/StrategyModal";
+import ReactModal from "react-modal";
+
+ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
     const location = useLocation();
@@ -66,8 +69,14 @@ export const Home = () => {
                 type={"button"} id={"logoutButton"} onClick={logoutUser}>
                 Log Out
             </button>
-            <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy</button>
-            <StrategyModal id={"strategyModal"} isOpen={strategyModal}/>
+            <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy
+            </button>
+            <StrategyModal isOpen={strategyModal} username={user.username}
+                           jwt={{token: user.jwt, expiration: user.expiration}}
+                           onRequestClose={() => {
+                               setStrategyModal(false)
+                           }}
+            />
         </div>
     )
 };

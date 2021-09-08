@@ -1,5 +1,5 @@
 import {rest} from "msw";
-import{HttpCodes} from "../components/common/httpCodes";
+import {HttpCodes} from "../components/common/httpCodes";
 
 const URL = "http://localhost/api";
 const card = {account: "account", password: "password"};
@@ -34,9 +34,9 @@ const apiMocks = [
         (req, res, context) => {
             return res(context.status(HttpCodes.ok));
         }),
-    rest.post(`${URL}/asset-pair`,
+    rest.get(`${URL}/asset-pair/:assets/:brokerage`,
         (req, res, context) => {
-        return res(context.status(HttpCodes.ok))
+            return res(context.status(HttpCodes.ok), context.json({result: "asset pair information"}))
         })
 ];
 

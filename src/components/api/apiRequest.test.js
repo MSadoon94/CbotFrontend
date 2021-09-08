@@ -5,7 +5,6 @@ import {rest} from "msw";
 import {HttpCodes} from "../common/httpCodes";
 
 let card = {
-    username: "username",
     account: "account",
     password: "password",
     jwt: "jwtMock",
@@ -24,6 +23,7 @@ let config = {
     method: "post",
     headers: headers("mockJwt"),
     data: card,
+    username: card.username,
     jwt: card.jwt,
     expiration: card.expiration
 };
@@ -72,7 +72,7 @@ test("should refresh request when jwt is expired but session is valid", async ()
 
 describe("api test array", () => {
     let data = {
-        assetPair: {username: "username", base: "BTC", quote: "USD"}
+        assetPair: {base: "BTC", quote: "USD"}
     };
 
     let axiosConfig = (api, method, data) => {
@@ -81,6 +81,7 @@ describe("api test array", () => {
             method: method,
             headers: headers("mockJwt"),
             data: data,
+            username: card.username,
             jwt: "mockJwt",
             expiration: new Date(Date.now() + 10000).toUTCString()
         };
@@ -102,7 +103,7 @@ describe("api test array", () => {
 
     test.concurrent.each`
     api            |method     |data             |templates         
-    ${"asset-pair"}|${"post"}  |${data.assetPair}|${validation("BTC:USD")}
+    ${"asset-pair/BTCUSD/kraken"}|${"get"}  |${data.assetPair}|${validation("BTC:USD")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
             let handler = resHandler(templates);
@@ -115,8 +116,8 @@ describe("api test array", () => {
 
 
     test.concurrent.each`
-    api            |method     |data             |templates                     |failMethod
-    ${"asset-pair"}|${"post"}  |${data.assetPair}|${validation("BTC:USD")}|${rest.post}
+    api                         |method     |data             |templates                     |failMethod
+    ${"asset-pair/BTCUS/kraken"}|${"get"}   |${data.assetPair}|${validation("BTC:US")} |${rest.get}
     `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
             failedRequest(failMethod, api);
