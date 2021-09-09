@@ -1,7 +1,7 @@
 import {addCard, getCard} from "./CardApi";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
-import {customReqInterceptor, postReqInterceptor} from "../common_api/RequestInterceptors";
+import {customReqInterceptor, postReqInterceptor} from "../common_api/requestInterceptors";
 
 let outcome;
 

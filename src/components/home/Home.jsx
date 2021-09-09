@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import {KrakenCard} from "../card/KrakenCard";
-import {customReqInterceptor} from "../common_api/RequestInterceptors";
+import {customReqInterceptor} from "../common_api/requestInterceptors";
 import {logout} from "../user/UserApi";
+import {StrategyModal} from "../strategy/StrategyModal";
+import ReactModal from "react-modal";
+
+ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
     const location = useLocation();
     const history = useHistory();
     const [user, setUser] = useState(location.state);
     const [brokerageForm, setBrokerageForm] = useState(null);
-
+    const [strategyModal, setStrategyModal] = useState(false);
     useEffect(() => {
         setUser(location.state);
     }, [location]);
@@ -62,11 +66,17 @@ export const Home = () => {
             </form>
             {brokerageForm}
             <button
-                type={"button"}
-                id={"logoutButton"}
-                onClick={logoutUser}>
+                type={"button"} id={"logoutButton"} onClick={logoutUser}>
                 Log Out
             </button>
+            <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy
+            </button>
+            <StrategyModal isOpen={strategyModal} username={user.username}
+                           jwt={{token: user.jwt, expiration: user.expiration}}
+                           onRequestClose={() => {
+                               setStrategyModal(false)
+                           }}
+            />
         </div>
     )
 };

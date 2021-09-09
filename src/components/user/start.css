@@ -15,12 +15,3 @@ button {
     width: 55%;
     margin: auto;
 }
-
-.checkmark {
-    color: lightgreen;
-}
-
-.invalid{
-    color: crimson;
-}
-

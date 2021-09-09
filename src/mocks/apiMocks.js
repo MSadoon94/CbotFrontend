@@ -1,37 +1,42 @@
 import {rest} from "msw";
+import {HttpCodes} from "../components/common/httpCodes";
 
 const URL = "http://localhost/api";
 const card = {account: "account", password: "password"};
 const apiMocks = [
     rest.post(`${URL}/login`,
         (req, res, context) => {
-            return res(context.status(200), context.json({jwt: "jwtMock", expiration: "expirationMock"}));
+            return res(context.status(HttpCodes.ok), context.json({jwt: "jwtMock", expiration: "expirationMock"}));
         }),
     rest.post(`${URL}/signup`,
         (req, res, context) => {
-            return res(context.status(200));
+            return res(context.status(HttpCodes.ok));
         }),
     rest.post(`${URL}/home/card`,
         (req, res, context) => {
-            return res(context.status(200));
+            return res(context.status(HttpCodes.ok));
         }),
     rest.get(`${URL}/home/card/:account`,
         (req, res, context) => {
             const {account} = req.params;
             if (account === card.account) {
-                return res(context.status(200), context.json(card))
+                return res(context.status(HttpCodes.ok), context.json(card))
             } else {
-                return res(context.status(400))
+                return res(context.status(HttpCodes.badRequest))
             }
         }),
     rest.post(`${URL}/refreshjwt`,
         (req, res, context) => {
-            return res(context.status(200), context.json({jwt: "refreshedJwt", expiration: "newExpiration"}))
+            return res(context.status(HttpCodes.ok), context.json({jwt: "refreshedJwt", expiration: "newExpiration"}))
         }
     ),
     rest.delete(`${URL}/logout`,
         (req, res, context) => {
-            return res(context.status(200));
+            return res(context.status(HttpCodes.ok));
+        }),
+    rest.get(`${URL}/asset-pair/:assets/:brokerage`,
+        (req, res, context) => {
+            return res(context.status(HttpCodes.ok), context.json({result: "asset pair information"}))
         })
 ];
 

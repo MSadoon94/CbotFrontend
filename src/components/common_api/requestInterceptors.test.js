@@ -1,4 +1,4 @@
-import {postReqInterceptor} from "./RequestInterceptors";
+import {postReqInterceptor} from "./requestInterceptors";
 
 let card = {
     account: "account",
