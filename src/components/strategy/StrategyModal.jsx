@@ -15,6 +15,7 @@ export const StrategyModal = (props) => {
         >
             <h2>Strategy Creator</h2>
             <CryptoSelection jwt={props.jwt}/>
+            <button type={"button"} id={"closeButton"} onClick={() => {props.onRequestClose()}}>X</button>
         </Modal>
     )
 };
