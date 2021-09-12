@@ -13,3 +13,11 @@ export const validation = (query) => {
         fail: {message: `${query} is invalid.`}
     }
 };
+
+//Any request that attempts to save an object.
+export const save = (object) => {
+  return{
+      success: {message: `${object} was saved successfully.`},
+      fail: {message: `Error: ${object} could not be saved.`}
+  }
+};

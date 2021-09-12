@@ -10,11 +10,11 @@ const apiMocks = [
         }),
     rest.post(`${URL}/signup`,
         (req, res, context) => {
-            return res(context.status(HttpCodes.ok));
+            return res(context.status(HttpCodes.created));
         }),
     rest.post(`${URL}/home/card`,
         (req, res, context) => {
-            return res(context.status(HttpCodes.ok));
+            return res(context.status(HttpCodes.created));
         }),
     rest.get(`${URL}/home/card/:account`,
         (req, res, context) => {
@@ -37,7 +37,11 @@ const apiMocks = [
     rest.get(`${URL}/asset-pair/:assets/:brokerage`,
         (req, res, context) => {
             return res(context.status(HttpCodes.ok), context.json({result: "asset pair information"}))
-        })
+        }),
+    rest.post(`${URL}/save-strategy`,
+        (req, res, context) => {
+        return res(context.status(HttpCodes.created));
+    })
 ];
 
 export {apiMocks, rest};

@@ -18,16 +18,24 @@ beforeEach(() => {
 });
 
 describe("modal actions", () => {
-    let closeButton;
+    let closeButton, saveButton, saveOutcome;
 
     beforeEach(() => {
         closeButton = screen.getByRole("button", {name: "X"});
+        saveButton = screen.getByRole("button", {name: "Save Strategy"});
+        saveOutcome = screen.getByTestId("saveOutcome");
     });
 
-    test("should close modal when exit button is clicked", async() => {
+    test("should close modal when exit button is clicked", async () => {
         userEvent.click(closeButton);
 
         await waitFor(() => {expect(isOpen).toBe(false)});
+    });
+
+    test("should save strategy when save button is clicked", async () => {
+        userEvent.click(saveButton);
+
+        await waitFor(() => {expect(saveOutcome).toHaveTextContent("Strategy was saved successfully.")})
     });
 
 });
