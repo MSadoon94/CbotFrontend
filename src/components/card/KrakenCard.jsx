@@ -1,57 +1,51 @@
 import React, {useEffect, useState} from "react";
-import {addCard, getCard} from "./CardApi";
-import {postReqInterceptor, refreshTokenInterceptor} from "../common_api/requestInterceptors";
-import {refreshJwt} from "../common_api/RefreshTokenApi";
 import "./card.css"
+import {apiRequest} from "../api/apiRequest";
+import {create} from "../api/responseTemplates";
+import {apiConfig, apiHandler} from "../api/apiUtil";
+import {HttpCodes} from "../common/httpCodes";
 
 export const KrakenCard = (props) => {
 
-    const [card, setCard] = useState(
-        {
-            account: "",
-            username: props.user.username,
-            password: "",
-            jwt: props.user.jwt,
-            expiration: props.user.expiration,
-            balance: ""
-        });
-    const [isLoggedIn, setLogIn] = useState(false);
+    const [id, setId] = useState({
+        jwt: props.user.jwt,
+        expiration: props.user.expiration,
+        username: props.user.username,
+        isLoggedIn: false
+    });
+    const [card, setCard] = useState({
+        account: "",
+        password: "",
+        balance: ""
+    });
 
     useEffect(() => {
-        if (isLoggedIn) {
+        console.log(id.isLoggedIn);
+        if (id.isLoggedIn) {
             getKrakenCard();
         }
-    }, [isLoggedIn]);
+    }, [id.isLoggedIn]);
+
+    let addCardConfig = apiConfig({url: "api/home/card", method: "post"}, card, id);
+
+    let getCardConfig = apiConfig({url: `api/home/card/${card.account}`}, null, id);
+
+    let handler = apiHandler(
+        create("Kraken Card"),
+        {
+            onSuccess: (res) => setId({...id, jwt: res.jwt, expiration: res.expiration, isLoggedIn: true}),
+            onFail: () => setId({...id, isLoggedIn: false})
+        });
 
     const addKraken = async () => {
-        let response;
-
-        await addCard(card, postReqInterceptor, (res) => response = JSON.parse(res));
-        if (response.message === `${card.account} was created successfully.`) {
-            setLogIn(true);
-        } else if (response.message === "Jwt expired") {
-            await refresh();
-        } else {
-            setLogIn(false)
-        }
-    };
-
-    const refresh = async () => {
-        let outcome;
-        await refreshJwt(card, refreshTokenInterceptor, (res) => outcome = JSON.parse(res));
-        if (outcome.message === "Successfully refreshed jwt token") {
-            setCard({...card, jwt: outcome.body.jwt, expiration: outcome.body.expiration});
-            setLogIn(true);
-        } else {
-            alert("Session has ended, logging out.");
-            setLogIn(false);
-        }
+        await apiRequest(addCardConfig, handler);
+        setId({...id, isLoggedIn: handler.output.status === HttpCodes.created});
     };
 
     const getKrakenCard = async () => {
-        let response;
-        await getCard(card, props.user, (res) => response = JSON.parse(res));
-        setCard({...card, balance: response.balance});
+        await apiRequest(getCardConfig, handler);
+        setCard({...card, balance: handler.output});
+        console.log(card.balance);
     };
 
     const cardForm = () => {
@@ -78,7 +72,7 @@ export const KrakenCard = (props) => {
 
     return (
         <div className={"card"}>
-            {isLoggedIn
+            {id.isLoggedIn
                 ? displayCard()
                 : cardForm()}
         </div>

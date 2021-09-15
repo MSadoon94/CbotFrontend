@@ -8,15 +8,15 @@ export const apiRequest = async (config, handler) => {
     let reConfig = {...config};
     reConfig.cancelToken = new CancelToken((c) => cancel = c);
 
-    if (Date.now() >= Date.parse(config.expiration)) {
+    if (Date.now() >= Date.parse(config.id.expiration)) {
         await refresh(reConfig, handler, (res) => {
             reConfig = res
         });
     }
 
     await axios.request(reConfig)
-        .then(() => {
-            handler.onSuccess(handler.templates.success)
+        .then((res) => {
+            handler.onSuccess({status: res.status, message: handler.templates.success})
         })
         .catch((error) => {
                 if (axios.isCancel(error)) {
@@ -29,29 +29,25 @@ export const apiRequest = async (config, handler) => {
         );
 };
 
-export const headers = (jwt) => {
-    return {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + jwt
-    }
-};
 
 const refresh = async (config, handler, refreshed) => {
     let reConfig = {
         url: "api/refreshjwt",
         method: "post",
         headers: {...config.headers, "isRefreshToken": true},
-        data: config.username,
+        data: config.id.username,
     };
 
     await axios.request(reConfig)
         .then((res) => {
             console.log("Session refreshed.");
-            refreshed({...config, jwt: res.data.jwt, expiration: res.data.expiration})
+            refreshed({...config, jwt: res.data.jwt, expiration: res.data.expiration});
+            handler.onRefresh({...config.id, jwt: res.data.jwt, expiration: res.data.expiration});
         })
         .catch((error) => {
             if (error.response.status === HttpCodes.unauthorized) {
                 handler.onFail("Session expired, logging out.");
+                handler.onRefresh({...config.id, isLoggedIn: false});
             } else {
                 failSafe(error, handler);
             }

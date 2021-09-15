@@ -1,131 +1,127 @@
-import {apiRequest, headers} from "./apiRequest";
-import {create, save, validation} from "./responseTemplates";
+import {apiRequest} from "./apiRequest";
+import {create, load, save, validation} from "./responseTemplates";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {HttpCodes} from "../common/httpCodes";
-
-let card = {
-    account: "account",
-    password: "password",
-    jwt: "jwtMock",
-    expiration: new Date(Date.now() + 10000).toUTCString()
-};
+import {apiConfig, apiHandler} from "./apiUtil";
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpCodes.badRequest) => {
-    testServer.use(restMethod(`http://localhost/api/${endpoint}`,
+    testServer.use(restMethod(`http://localhost/${endpoint}`,
         (req, res, context) => {
             return res(context.status(statusCode));
         }))
 };
 
-let config = {
-    url: "/api/home/card",
-    method: "post",
-    headers: headers("mockJwt"),
-    data: card,
-    username: card.username,
-    jwt: card.jwt,
-    expiration: card.expiration
+let mockData = {
+    assetPair: {base: "BTC", quote: "USD"},
+    saveStrategy: {strategy: {}},
+    card: {account: "account", password: "password", balance: ""}
+};
+let mockAuth = {
+    jwt: "mockJwt",
+    expiration: new Date(Date.now() + 10000).toUTCString(),
+    username: "username",
+    isLoggedIn: true
 };
 
-let handler = {
-    output: null,
-    templates: create(card.account),
-    onSuccess: (res) => {
-        handler.output = res
-    },
-    onFail: (res) => {
-        handler.output = res
-    }
-};
-
-test("should return success message when request is accepted", async () => {
-    await apiRequest(config, handler);
-
-    expect(handler.output).toBe(handler.templates.success);
-});
-
-test("should return error message when internal server error is received", async () => {
-    failedRequest(rest.post, "home/card", HttpCodes.internalServerError);
-
-    await apiRequest(config, handler);
-
-    expect(handler.output).toBe("Sorry, the server did not respond, please try again later.");
-});
-
-test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
-    failedRequest(rest.post, "refreshjwt", HttpCodes.unauthorized);
-    config.expiration = new Date(Date.now() - 10000).toUTCString();
-
-    await apiRequest(config, handler);
-
-    expect(handler.output).toBe("Session expired, logging out.");
-});
-
-test("should refresh request when jwt is expired but session is valid", async () => {
-    config.expiration = new Date(Date.now() - 10000).toUTCString();
-
-    await apiRequest(config, handler);
-
-    expect(handler.output).toBe(handler.templates.success)
-});
-
-describe("api test array", () => {
-    let data = {
-        assetPair: {base: "BTC", quote: "USD"},
-        saveStrategy: {strategy: {}}
+afterEach(() => {
+    mockAuth = {
+        jwt: "mockJwt",
+        expiration: new Date(Date.now() + 10000).toUTCString(),
+        username: "username",
+        isLoggedIn: true
     };
+});
 
-    let axiosConfig = (api, method, data) => {
-        return {
-            url: `/api/${api}`,
-            method: method,
-            headers: headers("mockJwt"),
-            data: data,
-            username: card.username,
-            jwt: "mockJwt",
-            expiration: new Date(Date.now() + 10000).toUTCString()
-        };
-    };
+describe("common actions", () => {
 
-    let resHandler = (templates) => {
-        let handler = {
-            output: null,
-            templates: templates,
-            onSuccess: (res) => {
-                handler.output = res
-            },
-            onFail: (res) => {
-                handler.output = res
-            }
-        };
-        return handler;
-    };
+    let commonConfig =
+        apiConfig({url: "api/home/card", method: "post"}, mockData.card, mockAuth);
+
+    let refreshFailConfig = apiConfig(
+        {url: "api/home/card", method: "post"},
+        mockData.card,
+        {...mockAuth, expiration: new Date(Date.now() - 10000).toUTCString()});
+
+    let commonHandler = apiHandler(
+        create("account"), (res) => {
+            mockAuth = res
+        }
+    );
+
+
+    test("should return error message when internal server error is received", async () => {
+        failedRequest(rest.post, "api/home/card", HttpCodes.internalServerError);
+
+        await apiRequest(commonConfig, commonHandler);
+
+        expect(commonHandler.output).toBe("Sorry, the server did not respond, please try again later.");
+    });
+
+    test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
+        failedRequest(rest.post, "api/refreshjwt", HttpCodes.unauthorized);
+
+        await apiRequest(refreshFailConfig, commonHandler);
+
+        expect(commonHandler.output).toBe("Session expired, logging out.");
+    });
+
+    test("should refresh request when jwt is expired but session is valid", async () => {
+        await apiRequest(refreshFailConfig, commonHandler);
+
+        expect(commonHandler.output.message).toBe(commonHandler.templates.success)
+    });
+
+    test("should refresh stored jwt when refreshed", async () => {
+        await apiRequest(refreshFailConfig, commonHandler);
+
+        expect(mockAuth.jwt).toEqual("refreshedJwt");
+    });
+
+    test("should refresh stored expiration when refreshed", async () => {
+        await apiRequest(refreshFailConfig, commonHandler);
+
+        expect(mockAuth.expiration).toEqual("newExpiration");
+    });
+
+    test("should log out user when refresh fails", async () => {
+        failedRequest(rest.post, "api/refreshjwt", HttpCodes.unauthorized);
+        await apiRequest(refreshFailConfig, commonHandler);
+
+        expect(mockAuth.isLoggedIn).toBe(false);
+    });
+
+});
+
+describe("specific api actions", () => {
 
     test.concurrent.each`
-    api                          |method    |data                   |templates         
-    ${"asset-pair/BTCUSD/kraken"}|${"get"}  |${data.assetPair}      |${validation("BTC:USD")}
-    ${"save-strategy"}           |${"post"} |${data.saveStrategy}   |${save("Strategy")}
+    api                              |method    |data                       |templates         
+    ${"api/asset-pair/BTCUSD/kraken"}|${"get"}  |${mockData.assetPair}      |${validation("BTC:USD")}
+    ${"api/save-strategy"}           |${"post"} |${mockData.saveStrategy}   |${save("Strategy")}
+    ${"api/home/card"}               |${"post"} |${mockData.card}           |${create("account")}
+    ${"api/home/card/account"}       |${"get"}  |${null}                    |${load("Card")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
-            let handler = resHandler(templates);
-            let config = axiosConfig(api, method, data);
+            let config = apiConfig({url: api, method: method}, data, mockAuth);
+            let handler = apiHandler(templates, mockAuth);
 
             await apiRequest(config, handler);
 
-            expect(handler.output).toBe(handler.templates.success);
+            expect(handler.output.message).toBe(handler.templates.success);
         });
 
-
     test.concurrent.each`
-    api                             |method     |data                   |templates                     |failMethod
-    ${"asset-pair/BTCUS/kraken"}    |${"get"}   |${data.assetPair}      |${validation("BTC:US")} |${rest.get}
-    ${"save-strategy"}              |${"post"}  |${data.saveStrategy}   |${save("Strategy")}     |${rest.post}
+    api                                 |method     |data                       |templates                     |failMethod
+    ${"api/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
+    ${"api/save-strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
+    ${"api/home/card"}                  |${"post"}  |${mockData.card}           |${create("account")}    |${rest.post}
+    ${"api/home/card/account"}          |${"get"}   |${null}                    |${load("Card")}         |${rest.get}
     `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
             failedRequest(failMethod, api);
-            let handler = resHandler(templates);
-            let config = axiosConfig(api, method, data);
+            let config = apiConfig({url: api, method: method}, data, mockAuth);
+            let handler = apiHandler(templates, mockAuth);
 
             await apiRequest(config, handler);
 

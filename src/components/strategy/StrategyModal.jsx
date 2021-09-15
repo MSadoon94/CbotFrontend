@@ -2,34 +2,24 @@ import React, {useState} from "react";
 import Modal from "react-modal";
 import {CryptoSelection} from "./CryptoSelection";
 import "./modal.css"
-import {apiRequest, headers} from "../api/apiRequest";
+import {apiRequest} from "../api/apiRequest";
 import {save} from "../api/responseTemplates";
+import {apiConfig, apiHandler} from "../api/apiUtil";
 
 export const StrategyModal = (props) => {
 
     const [saveOutcome, setSaveOutcome] = useState();
     const [strategy, setStrategy] = useState({name: "Strategy Name"});
 
-    let config = {
-        url: "/api/save-strategy",
-        method: "post",
-        headers: headers(props.jwt.token),
-        username: props.username,
+    const [auth, setAuth] = useState({
         jwt: props.jwt.token,
         expiration: props.jwt.expiration,
-        data: strategy
-    };
+        username: props.username,
+        isLoggedIn: false
+    });
 
-    let handler = {
-        output: null,
-        templates: save("Strategy"),
-        onSuccess: (res) => {
-            handler.output = res
-        },
-        onFail: (res) => {
-            handler.output = res
-        }
-    };
+    let config = apiConfig({url: "/api/save-strategy", method: "post"}, strategy, auth);
+    let handler = apiHandler(save("Strategy"), (res) => setAuth(res));
 
     const handleSave = async () => {
         await apiRequest(config, handler);

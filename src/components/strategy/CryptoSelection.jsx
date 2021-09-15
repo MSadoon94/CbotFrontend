@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {DynamicTextBox} from "../common/DynamicTextBox";
-import {apiRequest, headers} from "../api/apiRequest";
+import {apiRequest} from "../api/apiRequest";
 import {validation} from "../api/responseTemplates";
+import {apiConfig, apiHandler} from "../api/apiUtil";
 
 export const CryptoSelection = (props) => {
     const [baseEntry, setBaseEntry] = useState({isTyping: false, entry: ""});
     const [quoteEntry, setQuoteEntry] = useState({isTyping: false, entry: ""});
     const [validity, setValidity] = useState();
+
+    const [id, setId] = useState({
+        jwt: props.jwt.token,
+        expiration: props.jwt.expiration,
+        username: props.username,
+        isLoggedIn: false
+    });
 
     useEffect(() => {
         if ((baseEntry.entry && quoteEntry.entry) !== "") {
@@ -14,31 +22,16 @@ export const CryptoSelection = (props) => {
         }
     }, [baseEntry, quoteEntry]);
 
+    let assetPair = () => baseEntry.entry + quoteEntry.entry;
+
+    let config = apiConfig({url: `/api/asset-pair/${assetPair()}/kraken`, method: "get"}, null, id);
+
+    let handler = apiHandler(validation(assetPair()), (res) => setId(res));
+
     const validateAssetPair = async () => {
         await apiRequest(config, handler);
         setValidity(handler.output.message);
     };
-
-    let config = {
-        url: `/api/asset-pair/${baseEntry.entry + quoteEntry.entry}/kraken`,
-        method: "get",
-        headers: headers(props.jwt.token),
-        username: props.username,
-        jwt: props.jwt.token,
-        expiration: props.jwt.expiration,
-    };
-
-    let handler = {
-        output: null,
-        templates: validation(`${baseEntry.entry}:${quoteEntry.entry}`),
-        onSuccess: (res) => {
-            handler.output = res
-        },
-        onFail: (res) => {
-            handler.output = res
-        }
-    };
-
 
     return (
         <div>

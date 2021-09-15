@@ -18,12 +18,8 @@ const apiMocks = [
         }),
     rest.get(`${URL}/home/card/:account`,
         (req, res, context) => {
-            const {account} = req.params;
-            if (account === card.account) {
-                return res(context.status(HttpCodes.ok), context.json(card))
-            } else {
-                return res(context.status(HttpCodes.badRequest))
-            }
+            return res(context.status(HttpCodes.ok), context.json(card))
+
         }),
     rest.post(`${URL}/refreshjwt`,
         (req, res, context) => {
@@ -40,8 +36,8 @@ const apiMocks = [
         }),
     rest.post(`${URL}/save-strategy`,
         (req, res, context) => {
-        return res(context.status(HttpCodes.created));
-    })
+            return res(context.status(HttpCodes.created));
+        })
 ];
 
 export {apiMocks, rest};

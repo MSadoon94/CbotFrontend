@@ -4,7 +4,7 @@ import {CryptoSelection} from "./CryptoSelection";
 import userEvent from "@testing-library/user-event";
 import {HttpCodes} from "../common/httpCodes";
 import {testServer} from "../../mocks/testServer";
-import {rest} from "../../mocks/apiMocks";
+import {rest} from "msw";
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpCodes.badRequest) => {
     testServer.use(restMethod(`http://localhost/api/${endpoint}`,
@@ -37,7 +37,7 @@ describe("api interactions", () => {
         userEvent.type(baseInput, "BTC");
         userEvent.type(quoteInput, "UD");
 
-        await waitFor(() => expect(assetsResponse).toHaveTextContent("BTC:UD is invalid."));
+        await waitFor(() => expect(assetsResponse).toHaveTextContent("BTCUD is invalid."));
     });
 
 });
