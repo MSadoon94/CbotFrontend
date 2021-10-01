@@ -2,7 +2,7 @@
 export const create = (object) => {
     return {
         success: `${object} was created successfully.`,
-        fail: {message: `Error: ${object} could not be created.`}
+        fail: `Error: ${object} could not be created.`
     }
 };
 
@@ -10,7 +10,7 @@ export const create = (object) => {
 export const validation = (query) => {
     return {
         success: "✔",
-        fail: {message: `${query} is invalid.`}
+        fail: `${query} is invalid.`
     }
 };
 
@@ -18,7 +18,7 @@ export const validation = (query) => {
 export const save = (object) => {
     return {
         success: `${object} was saved successfully.`,
-        fail: {message: `Error: ${object} could not be saved.`}
+        fail: `Error: ${object} could not be saved.`
     }
 };
 
@@ -26,6 +26,14 @@ export const save = (object) => {
 export const load = (object) => {
     return {
         success: `${object} was loaded successfully.`,
-        fail: {message: `Error: ${object} could not be loaded.`}
+        fail: `Error: ${object} could not be loaded.`
+    }
+};
+
+//Any request that attempts an action that changes state.
+export const change = (action) => {
+    return {
+        success: `${action} was successful.`,
+        fail: `Error: ${action} could not be complete.`
     }
 };

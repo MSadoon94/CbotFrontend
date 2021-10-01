@@ -1,22 +1,27 @@
 import React from "react";
-import {render, screen, waitFor} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {UserStart} from "./UserStart";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
-import {HttpCodes} from "../common/httpCodes";
+import {ApiManager} from "../api/ApiManager";
+import {mockId} from "../../mocks/mockId";
 
-let usernameTextBox, passwordTextBox, confirmPasswordTextBox, requestOutcome, usernameValidityOutput, passwordValidityOutput, signupButton,
-    loginButton;
+let usernameTextBox, passwordTextBox, confirmPasswordTextBox, usernameValidityOutput,
+    passwordValidityOutput, signupButton, loginButton;
 
 jest.mock("axios");
 
 beforeEach(() => {
-    render(<UserStart/>);
+    render(
+        <ApiManager userId={mockId}>
+            <UserStart/>
+        </ApiManager>
+    );
+
     usernameTextBox = screen.getByRole("textbox", {name: "User Name"});
     passwordTextBox = screen.getByRole("textbox", {name: "Password"});
     confirmPasswordTextBox = screen.getByRole("textbox", {name: "Confirm Password"});
 
-    requestOutcome = screen.getByTestId("requestOutcome");
     usernameValidityOutput = screen.getByTestId("usernameValidity");
     passwordValidityOutput = screen.getByTestId("passwordValidity");
 
@@ -24,20 +29,6 @@ beforeEach(() => {
     loginButton = screen.getByRole("button", {name: "Login"});
 });
 
-describe("api responses", () => {
-
-    test("should respond to duplicate usernames in sign up requests with error message", async () => {
-        axios.post.mockImplementation(() => Promise.reject({request: {status: HttpCodes.conflict}}));
-
-        userEvent.type(usernameTextBox, "TestUser");
-        userEvent.type(passwordTextBox, "TestPassword1-");
-        userEvent.type(confirmPasswordTextBox, "TestPassword1-");
-        await waitFor(() => userEvent.click(screen.getByRole("button", {name: "Create User"})));
-
-        expect(requestOutcome).toHaveTextContent("Username has been taken, please choose another.");
-    });
-
-});
 
 describe("entering username", () => {
 
@@ -100,7 +91,7 @@ describe("button function", () => {
 
     test("should disable sign up but not login button when both password entries don't match", () => {
         userEvent.clear(confirmPasswordTextBox);
-        userEvent.type(confirmPasswordTextBox,"TestPassword1");
+        userEvent.type(confirmPasswordTextBox, "TestPassword1");
 
         expect(signupButton).not.toBeEnabled();
         expect(loginButton).toBeEnabled();

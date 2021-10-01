@@ -3,6 +3,9 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {StrategyModal} from "./StrategyModal";
 import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
+import {ApiManager} from "../api/ApiManager";
+import {mockId} from "../../mocks/mockId";
+
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -10,34 +13,39 @@ let isOpen;
 
 beforeEach(() => {
     isOpen = true;
-    render(<StrategyModal isOpen={isOpen} username={"username"}
-                          jwt={{token: "mockJwt", expiration: new Date(Date.now() + 10000).toUTCString()}}
-                          onRequestClose={() => {
-                              isOpen = false
-                          }}/>);
+    render(
+        <ApiManager userId={mockId}>
+            <StrategyModal isOpen={isOpen} onRequestClose={() => {
+                isOpen = false
+            }}/>
+        </ApiManager>
+    );
 });
 
+
+
 describe("modal actions", () => {
-    let closeButton, saveButton, saveOutcome;
+    let closeButton, saveButton, response;
 
     beforeEach(() => {
         closeButton = screen.getByRole("button", {name: "X"});
         saveButton = screen.getByRole("button", {name: "Save Strategy"});
-        saveOutcome = screen.getByTestId("saveOutcome");
+        response = screen.getByTestId("saveModal");
     });
 
     test("should close modal when exit button is clicked", async () => {
         userEvent.click(closeButton);
 
-        await waitFor(() => {expect(isOpen).toBe(false)});
+        await waitFor(() => {
+            expect(isOpen).toBe(false)
+        });
     });
 
     test("should save strategy when save button is clicked", async () => {
         userEvent.click(saveButton);
 
-        await waitFor(() => {expect(saveOutcome).toHaveTextContent("Strategy was saved successfully.")})
+        await waitFor(() => expect(response).toHaveTextContent("Strategy was saved successfully."));
     });
-
 });
 
 describe("sections", () => {

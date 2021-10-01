@@ -1,31 +1,56 @@
-export const apiConfig = (request, data, id) => {
+const generalConfig = ({url, method}, data) => {
 
     const headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + id.jwt
     };
 
     return {
-        url: request.url,
-        method: request.method,
+        url,
+        method,
         headers,
-        id,
         data
     }
+
 };
 
-export const apiHandler = (templates, onRefresh) => {
+export const apiConfig = (request, data) => {
+    return {...generalConfig(request, data), isPublic: false,};
+};
+
+export const publicConfig = (request, data) => {
+    return {...generalConfig(request, data), isPublic: true};
+};
+
+const defaultActions = {idAction: null, onComplete: null};
+
+export const apiHandler = (templates, actions = defaultActions) => {
     let handler = {
         output: null,
+        isResponseReady: false,
         templates,
-        onSuccess: (res) => {
-            handler.output = res
-        },
-        onFail: (res) => {
-            handler.output = res
-        },
-        onRefresh,
+        actions
     };
 
-    return handler
+    handler.onResponse = (res) => {
+        if (actions.idAction) {
+            actions.idAction.payload = res;
+        }
+        handler.output = res;
+    };
+
+    handler.checkProgress = () => {
+        return new Promise((resolve, reject) => {
+            let requestTimeout = setTimeout(() => {
+                reject(`Request timeout: ${handler.output}`)
+            }, 50000);
+            setInterval(() => {
+                if (handler.isResponseReady) {
+                    clearTimeout(requestTimeout);
+                    resolve(handler.output);
+                }
+            }, 250);
+        })
+    };
+
+    return handler;
 };

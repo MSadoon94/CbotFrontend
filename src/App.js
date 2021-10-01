@@ -1,20 +1,29 @@
 import {Route, Switch} from 'react-router-dom';
 import './App.css';
-
 import {UserStart} from "./components/user/UserStart";
 import {Home} from "./components/home/Home";
+import {ApiManager} from "./components/api/ApiManager";
 
+export const initialId = {
+    username: "",
+    jwt: "",
+    expiration: "",
+    isLoggedIn: false
+};
 
 function App() {
+
+
+
     return (
-        <div>
             <main>
                 <Switch>
-                    <Route exact path={"/start"} component={UserStart}/>
-                    <Route exact path={"/home"} component={Home}/>
+                    <ApiManager userId={initialId}>
+                        <Route exact path={"/start"} component={UserStart}/>
+                        <Route exact path={"/home"} component={Home}/>
+                    </ApiManager>
                 </Switch>
             </main>
-        </div>
     );
 }
 

@@ -1,22 +1,22 @@
 import axios, {CancelToken} from "axios";
-import {HttpCodes} from "../common/httpCodes";
-
+import {HttpStatus} from "../common/httpStatus";
 
 let cancel;
 
-export const apiRequest = async (config, handler) => {
-    let reConfig = {...config};
-    reConfig.cancelToken = new CancelToken((c) => cancel = c);
+const response = (status, message, body) => {
+    return {status, message, body}
+};
 
-    if (Date.now() >= Date.parse(config.id.expiration)) {
-        await refresh(reConfig, handler, (res) => {
-            reConfig = res
-        });
+export const apiRequest = async (config, handler) => {
+    config.cancelToken = new CancelToken((c) => cancel = c);
+
+    if (!config.isPublic && isExpired(config)) {
+        await refresh(config, handler, (res) => config = res);
     }
 
-    await axios.request(reConfig)
+    await axios.request(config)
         .then((res) => {
-            handler.onSuccess({status: res.status, message: handler.templates.success})
+            handler.onResponse(response(res.status, handler.templates.success, res.data))
         })
         .catch((error) => {
                 if (axios.isCancel(error)) {
@@ -29,6 +29,9 @@ export const apiRequest = async (config, handler) => {
         );
 };
 
+const isExpired = (config) => {
+    return Date.now() >= Date.parse(config.id.expiration);
+};
 
 const refresh = async (config, handler, refreshed) => {
     let reConfig = {
@@ -40,13 +43,14 @@ const refresh = async (config, handler, refreshed) => {
 
     await axios.request(reConfig)
         .then((res) => {
+            let {jwt, expiration} = res.data;
             console.log("Session refreshed.");
             refreshed({...config, jwt: res.data.jwt, expiration: res.data.expiration});
             handler.onRefresh({...config.id, jwt: res.data.jwt, expiration: res.data.expiration});
         })
         .catch((error) => {
-            if (error.response.status === HttpCodes.unauthorized) {
-                handler.onFail("Session expired, logging out.");
+            if (error.response.status === HttpStatus.unauthorized) {
+                handler.onResponse(response(error.response.status, "Session expired, logging out.", null));
                 handler.onRefresh({...config.id, isLoggedIn: false});
             } else {
                 failSafe(error, handler);
@@ -57,10 +61,15 @@ const refresh = async (config, handler, refreshed) => {
 };
 
 const failSafe = (error, handler) => {
-    if (error.response.status >= HttpCodes.internalServerError) {
-        handler.onFail("Sorry, the server did not respond, please try again later.");
+    let {status, data} = error.response;
+    if (status >= HttpStatus.internalServerError) {
+        handler.onResponse(response(
+            status,
+            "Sorry, the server did not respond, please try again later.",
+            null)
+        );
     } else {
-        handler.onFail(handler.templates.fail);
+        handler.onResponse(response(status, handler.templates.fail, data));
     }
 };
 

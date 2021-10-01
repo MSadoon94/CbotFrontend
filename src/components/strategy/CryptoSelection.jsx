@@ -1,36 +1,26 @@
 import React, {useEffect, useState} from "react";
 import {DynamicTextBox} from "../common/DynamicTextBox";
-import {apiRequest} from "../api/apiRequest";
 import {validation} from "../api/responseTemplates";
-import {apiConfig, apiHandler} from "../api/apiUtil";
+import {apiConfig} from "../api/apiUtil";
+import {ApiResponse} from "../api/ApiResponse";
 
-export const CryptoSelection = (props) => {
-    const [baseEntry, setBaseEntry] = useState({isTyping: false, entry: ""});
-    const [quoteEntry, setQuoteEntry] = useState({isTyping: false, entry: ""});
-    const [validity, setValidity] = useState();
-
-    const [id, setId] = useState({
-        jwt: props.jwt.token,
-        expiration: props.jwt.expiration,
-        username: props.username,
-        isLoggedIn: false
-    });
+export const CryptoSelection = () => {
+    const [base, setBase] = useState({isTyping: false, entry: ""});
+    const [quote, setQuote] = useState({isTyping: false, entry: ""});
+    const [request, setRequest] = useState();
 
     useEffect(() => {
-        if ((baseEntry.entry && quoteEntry.entry) !== "") {
+        if ((base.entry && quote.entry) !== "") {
             validateAssetPair();
         }
-    }, [baseEntry, quoteEntry]);
+    }, [base, quote]);
 
-    let assetPair = () => baseEntry.entry + quoteEntry.entry;
+    let assetPair = () => base.entry + quote.entry;
 
-    let config = apiConfig({url: `/api/asset-pair/${assetPair()}/kraken`, method: "get"}, null, id);
+    let config = apiConfig({url: `/api/asset-pair/${assetPair()}/kraken`, method: "get"}, null);
 
-    let handler = apiHandler(validation(assetPair()), (res) => setId(res));
-
-    const validateAssetPair = async () => {
-        await apiRequest(config, handler);
-        setValidity(handler.output.message);
+    const validateAssetPair = () => {
+        setRequest({config, templates: validation(assetPair())});
     };
 
     return (
@@ -42,7 +32,7 @@ export const CryptoSelection = (props) => {
                     <DynamicTextBox id={"baseInput"}
                                     timeout={500}
                                     onTyping={(update) => {
-                                        setBaseEntry(update)
+                                        setBase(update)
                                     }}/>
                 </div>
                 <div>
@@ -50,13 +40,10 @@ export const CryptoSelection = (props) => {
                     <DynamicTextBox id={"quoteInput"}
                                     timeout={500}
                                     onTyping={(update) => {
-                                        setQuoteEntry(update)
+                                        setQuote(update);
                                     }}/>
                 </div>
-                <output data-testid={"validity"} id={"validity"}
-                        className={(validity === "✔" ? "checkmark" : "invalid")}>
-                    {validity}
-                </output>
+                    <ApiResponse cssId={"selectCrypto"} request={request}/>
             </form>
         </div>
     )

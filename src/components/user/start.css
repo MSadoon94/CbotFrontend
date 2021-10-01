@@ -15,3 +15,7 @@ button {
     width: 55%;
     margin: auto;
 }
+
+.apiResponse {
+    text-align: center;
+}

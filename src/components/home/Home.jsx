@@ -1,28 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import React, {useState} from "react";
 import {KrakenCard} from "../card/KrakenCard";
-import {customReqInterceptor} from "../common_api/requestInterceptors";
-import {logout} from "../user/UserApi";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
+import {apiConfig} from "../api/apiUtil";
+import {change} from "../api/responseTemplates";
+import {ApiResponse} from "../api/ApiResponse";
 
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
-    const location = useLocation();
-    const history = useHistory();
-    const [user, setUser] = useState(location.state);
     const [brokerageForm, setBrokerageForm] = useState(null);
     const [strategyModal, setStrategyModal] = useState(false);
-    useEffect(() => {
-        setUser(location.state);
-    }, [location]);
-
-    useEffect(() => {
-        if (location.state.jwt === undefined) {
-            history.push("/start")
-        }
-    }, []);
+    const [request, setRequest] = useState();
 
 
     const options = [
@@ -32,7 +21,7 @@ export const Home = () => {
         },
         {
             type: "Kraken",
-            form: <KrakenCard user={user}/>
+            form: <KrakenCard/>
         }
 
     ];
@@ -41,11 +30,18 @@ export const Home = () => {
         return options.find(option => option.type === selected).form
     };
 
-    const logoutUser = async () => {
-        let outcome;
-        await logout(user, customReqInterceptor, (res) => outcome = JSON.parse(res));
-        window.alert(outcome.message + " Redirecting to start page.");
-        history.push("/start");
+    const logoutConfig = apiConfig({url: "/api/log-out", method: "delete"}, null);
+
+    const logoutUser = () => {
+        let actions = {
+            idAction: {
+                type: "logout",
+                execute: (response) => {
+                    window.alert(`${response.message} Redirecting to start page.`)
+                }
+            }
+        };
+        setRequest({config: logoutConfig, templates: change("Logout"), actions});
     };
 
     return (
@@ -65,17 +61,16 @@ export const Home = () => {
                 </select>
             </form>
             {brokerageForm}
+            <ApiResponse cssId={"logout"} request={request}/>
             <button
                 type={"button"} id={"logoutButton"} onClick={logoutUser}>
                 Log Out
             </button>
             <button type={"button"} id={"newStrategyButton"} onClick={() => setStrategyModal(true)}>New Strategy
             </button>
-            <StrategyModal isOpen={strategyModal} username={user.username}
-                           jwt={{token: user.jwt, expiration: user.expiration}}
-                           onRequestClose={() => {
-                               setStrategyModal(false)
-                           }}
+            <StrategyModal isOpen={strategyModal} onRequestClose={() => {
+                setStrategyModal(false)
+            }}
             />
         </div>
     )

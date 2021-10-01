@@ -1,80 +1,75 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import "./card.css"
-import {apiRequest} from "../api/apiRequest";
-import {create} from "../api/responseTemplates";
-import {apiConfig, apiHandler} from "../api/apiUtil";
-import {HttpCodes} from "../common/httpCodes";
+import {create, load} from "../api/responseTemplates";
+import {apiConfig} from "../api/apiUtil";
+import {ApiResponse} from "../api/ApiResponse";
+import {outputTypes} from "../common/outputTypes";
 
-export const KrakenCard = (props) => {
+export const KrakenCard = () => {
 
-    const [id, setId] = useState({
-        jwt: props.user.jwt,
-        expiration: props.user.expiration,
-        username: props.user.username,
-        isLoggedIn: false
-    });
-    const [card, setCard] = useState({
-        account: "",
-        password: "",
-        balance: ""
-    });
+    const [balanceRequest, setBalanceRequest] = useState();
+    const [cardRequest, setCardRequest] = useState();
+    const [isCardDisplayed, setIsCardDisplayed] = useState(false);
+
+    let card = useRef({}).current;
+
+    const addCardConfig = () => {
+        return apiConfig({url: "api/home/card", method: "post"}, card)
+    };
+
+    let balanceConfig = () => {
+        return apiConfig({url: `api/home/card/${card.account}`, method: "get"}, null)
+    };
 
     useEffect(() => {
-        console.log(id.isLoggedIn);
-        if (id.isLoggedIn) {
-            getKrakenCard();
+        if (isCardDisplayed) {
+            getBalance();
         }
-    }, [id.isLoggedIn]);
 
-    let addCardConfig = apiConfig({url: "api/home/card", method: "post"}, card, id);
+    }, [isCardDisplayed]);
 
-    let getCardConfig = apiConfig({url: `api/home/card/${card.account}`}, null, id);
-
-    let handler = apiHandler(
-        create("Kraken Card"),
-        {
-            onSuccess: (res) => setId({...id, jwt: res.jwt, expiration: res.expiration, isLoggedIn: true}),
-            onFail: () => setId({...id, isLoggedIn: false})
-        });
-
-    const addKraken = async () => {
-        await apiRequest(addCardConfig, handler);
-        setId({...id, isLoggedIn: handler.output.status === HttpCodes.created});
+    const addCard = () => {
+        let actions = {
+            onComplete: {
+                success: () => setIsCardDisplayed(true),
+                fail: () => setIsCardDisplayed(false)
+            }
+        };
+        setCardRequest({config: addCardConfig(), templates: create("Kraken Card"), actions});
     };
 
-    const getKrakenCard = async () => {
-        await apiRequest(getCardConfig, handler);
-        setCard({...card, balance: handler.output});
-        console.log(card.balance);
+    const getBalance = () => {
+        setBalanceRequest({config: balanceConfig(), templates: load("Kraken Card")});
     };
 
-    const cardForm = () => {
+    const CardForm = () => {
         return (
             <form>
                 <label htmlFor={"apiKey"}>API Key</label>
                 <input type={"text"} id={"apiKey"}
-                       onChange={e => setCard({...card, account: e.target.value})}/>
+                       onChange={e => card = {...card, account: e.target.value}}/>
                 <label htmlFor={"privateKey"}>Private Key</label>
                 <input type={"text"} id={"privateKey"}
-                       onChange={e => setCard({...card, password: e.target.value})}/>
-                <button type={"button"} id={"addBrokerage"} onClick={addKraken}>Add Kraken</button>
+                       onChange={e => card = {...card, password: e.target.value}}/>
+                <button type={"button"} id={"addBrokerage"} onClick={addCard}>Add Kraken</button>
+                <ApiResponse cssId={"addCard"} request={cardRequest}/>
             </form>)
     };
 
-    const displayCard = () => {
+    const DisplayCard = () => {
         return (
             <form>
-                <label htmlFor={"balance"}>Current Balance</label>
-                <input type={"text"} id={"balance"} value={card.balance} readOnly/>
+                <label htmlFor={"krakenBalance"} id={"balanceLabel"} >Current Balance </label>
+                <ApiResponse cssId={"krakenBalance"} request={balanceRequest}
+                             outputPath={outputTypes.krakenBalance}
+                />
             </form>
         )
     };
 
     return (
         <div className={"card"}>
-            {id.isLoggedIn
-                ? displayCard()
-                : cardForm()}
+            {isCardDisplayed ? DisplayCard() : CardForm()}
         </div>
     )
 };

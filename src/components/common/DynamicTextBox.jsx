@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-export const DynamicTextBox = (props) => {
+export const DynamicTextBox = ({onTyping, timeout, id}) => {
 
     const [isTyping, setIsTyping] = useState(false);
     const [entry, setEntry] = useState("");
@@ -9,7 +9,7 @@ export const DynamicTextBox = (props) => {
         if (isTyping) {
             textBoxTimeout();
         } else {
-            props.onTyping({isTyping: false, entry});
+            onTyping({isTyping: false, entry});
         }
         return () => {
             clearTimeout(textBoxTimeout);
@@ -19,12 +19,12 @@ export const DynamicTextBox = (props) => {
     const textBoxTimeout = () => {
         setTimeout(() => {
             setIsTyping(false);
-            props.onTyping({isTyping: false, entry});
-        }, props.timeout)
+            onTyping({isTyping: false, entry});
+        }, timeout)
     };
 
     return (
-        <input id={props.id} type={"text"} value={entry}
+        <input id={id} type={"text"} value={entry}
                onChange={e => {
                    if (entry !== e.target.value) {
                        setIsTyping(true);
