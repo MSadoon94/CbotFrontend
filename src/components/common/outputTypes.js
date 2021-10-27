@@ -1,3 +1,3 @@
 export const outputTypes = {
-  krakenBalance: "body.krakenAccount.accountBalance.error"
+  krakenBalance: "body.krakenAccount.accountBalance.error",
 };

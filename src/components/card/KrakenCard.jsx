@@ -10,15 +10,14 @@ export const KrakenCard = () => {
     const [balanceRequest, setBalanceRequest] = useState();
     const [cardRequest, setCardRequest] = useState();
     const [isCardDisplayed, setIsCardDisplayed] = useState(false);
-
-    let card = useRef({}).current;
+    const card = useRef({cardName:"Default", brokerage: "kraken"});
 
     const addCardConfig = () => {
-        return apiConfig({url: "api/home/card", method: "post"}, card)
+        return apiConfig({url: "api/save-card", method: "post"}, card.current)
     };
 
     let balanceConfig = () => {
-        return apiConfig({url: `api/home/card/${card.account}`, method: "get"}, null)
+        return apiConfig({url: `api/home/card/${card.current.account}`, method: "get"}, null)
     };
 
     useEffect(() => {
@@ -45,12 +44,15 @@ export const KrakenCard = () => {
     const CardForm = () => {
         return (
             <form>
+                <label htmlFor={"cardName"}>Card Name</label>
+                <input type={"text"} id={"cardName"}
+                       onChange={e => card.current = {...card.current, cardName: e.target.value}}/>
                 <label htmlFor={"apiKey"}>API Key</label>
                 <input type={"text"} id={"apiKey"}
-                       onChange={e => card = {...card, account: e.target.value}}/>
+                       onChange={e => card.current = {...card.current, account: e.target.value}}/>
                 <label htmlFor={"privateKey"}>Private Key</label>
                 <input type={"text"} id={"privateKey"}
-                       onChange={e => card = {...card, password: e.target.value}}/>
+                       onChange={e => card.current = {...card.current, password: e.target.value}}/>
                 <button type={"button"} id={"addBrokerage"} onClick={addCard}>Add Kraken</button>
                 <ApiResponse cssId={"addCard"} request={cardRequest}/>
             </form>)

@@ -48,9 +48,9 @@ export const ApiResponse = ({cssId, request, isHidden = false, outputPath = "mes
 
     const doComplete = (action) => {
         if (HttpRange.success.test(response.current.status)) {
-            action.success();
+            action.success(response.current);
         } else {
-            action.fail();
+            action.fail(response.current);
         }
     };
 
@@ -62,7 +62,7 @@ export const ApiResponse = ({cssId, request, isHidden = false, outputPath = "mes
         <output data-testid={cssId} id={cssId} hidden={isHidden}
                 className={hasSucceeded() ? "valid" : "invalid"}>
             {hasSucceeded() ?
-                _.get(output.status, outputPath, output.message) : output.message}
+                _.get(output, outputPath, output.message) : output.message}
         </output>
     )
 };

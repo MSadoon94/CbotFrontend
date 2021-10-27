@@ -1,18 +1,20 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {KrakenCard} from "../card/KrakenCard";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
 import {apiConfig} from "../api/apiUtil";
 import {change} from "../api/responseTemplates";
 import {ApiResponse} from "../api/ApiResponse";
+import {CardLoader} from "../card/CardLoader";
 
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
+    const hasCardUpdate = useRef(false);
+
     const [brokerageForm, setBrokerageForm] = useState(null);
     const [strategyModal, setStrategyModal] = useState(false);
     const [request, setRequest] = useState();
-
 
     const options = [
         {
@@ -27,6 +29,7 @@ export const Home = () => {
     ];
 
     const getOption = (selected) => {
+        hasCardUpdate.current = true;
         return options.find(option => option.type === selected).form
     };
 
@@ -47,6 +50,7 @@ export const Home = () => {
     return (
         <div>
             <h1 className={"title"}>User Home</h1>
+            <CardLoader hasUpdate={hasCardUpdate.current}/>
             <form>
                 <label htmlFor={"brokerageSelect"}>Add Brokerage</label>
                 <select

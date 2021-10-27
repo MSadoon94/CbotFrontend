@@ -33,7 +33,7 @@ describe("kraken form", () => {
     });
 });
 
-describe("new strategy button", () => {
+describe("strategy modal features", () => {
 
     let strategyButton;
 

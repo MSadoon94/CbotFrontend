@@ -30,6 +30,14 @@ export const load = (object) => {
     }
 };
 
+//Any request that attempts to load a collection.
+export const loadGroup = (group) =>{
+  return {
+      success: `${group} were loaded successfully.`,
+      fail: `Error: ${group} could not be loaded.`
+  }
+};
+
 //Any request that attempts an action that changes state.
 export const change = (action) => {
     return {

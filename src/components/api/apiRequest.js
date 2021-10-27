@@ -45,8 +45,8 @@ const refresh = async (config, handler, refreshed) => {
         .then((res) => {
             let {jwt, expiration} = res.data;
             console.log("Session refreshed.");
-            refreshed({...config, jwt: res.data.jwt, expiration: res.data.expiration});
-            handler.onRefresh({...config.id, jwt: res.data.jwt, expiration: res.data.expiration});
+            refreshed({...config, jwt, expiration});
+            handler.onRefresh({...config.id, jwt, expiration});
         })
         .catch((error) => {
             if (error.response.status === HttpStatus.unauthorized) {
