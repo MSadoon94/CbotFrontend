@@ -9,7 +9,7 @@ import {mockId} from "../../mocks/mockId";
 
 
 let refreshed, commonHandler;
-let commonConfig = {...apiConfig({url: "api/home/card", method: "post"}, mockData.card), id: mockId};
+let commonConfig = {...apiConfig({url: "api/save-card", method: "post"}, mockData.card), id: mockId};
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
     testServer.use(restMethod(`http://localhost/${endpoint}`,
@@ -34,7 +34,7 @@ afterEach(() => {
 describe("common error behavior", () => {
 
     test("should return error message when internal server error is received", async () => {
-        failedRequest(rest.post, "api/home/card", HttpStatus.internalServerError);
+        failedRequest(rest.post, "api/save-card", HttpStatus.internalServerError);
 
         await apiRequest(commonConfig, commonHandler);
 
@@ -125,8 +125,6 @@ describe("specific api actions", () => {
     api                              |method     |data                       |templates         
     ${"api/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
     ${"api/save-strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
-    ${"api/home/card"}               |${"post"}  |${mockData.card}           |${create("Account")}
-    ${"api/home/card/account"}       |${"get"}   |${null}                    |${load("Card")}
     ${"api/log-out"}                  |${"delete"}|${null}                    |${change("Logout")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
@@ -149,8 +147,6 @@ describe("specific api actions", () => {
     api                                 |method     |data                       |templates                     |failMethod
     ${"api/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
     ${"api/save-strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
-    ${"api/home/card"}                  |${"post"}  |${mockData.card}           |${create("account")}    |${rest.post}
-    ${"api/home/card/account"}          |${"get"}   |${null}                    |${load("Card")}         |${rest.get}
     ${"api/login"}                      |${"post"}  |${mockData.user}           |${load("User")}         |${rest.post}
     ${"api/log-out"}                     |${"delete"}|${null}                    |${change("Logout")}     |${rest.delete}
     `("should send invalid $api request and receive rejected response",

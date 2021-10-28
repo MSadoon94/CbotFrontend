@@ -1,10 +1,17 @@
 import {rest} from "msw";
 import {HttpStatus} from "../components/common/httpStatus";
 import {mockData} from "./mockData";
+import {testServer} from "./testServer";
 
 const URL = "http://localhost/api";
 const card = {account: "account", password: "password"};
-const apiMocks = [
+export const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
+    testServer.use(restMethod(`http://localhost/${endpoint}`,
+        (req, res, context) => {
+            return res(context.status(statusCode));
+        }))
+};
+export const apiMocks = [
     rest.post(`${URL}/login`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json({jwt: "jwtMock", expiration: "expirationMock"}))
@@ -13,13 +20,9 @@ const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
-    rest.post(`${URL}/home/card`,
+    rest.post(`${URL}/save-card`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))
-    ),
-    rest.get(`${URL}/home/card/:account`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json(card))
     ),
     rest.post(`${URL}/refreshjwt`,
         (req, res, context) =>
@@ -50,5 +53,3 @@ const apiMocks = [
             res(context.status(HttpStatus.ok), context.json(mockData.singleCard))
         ),
 ];
-
-export {apiMocks, rest};
