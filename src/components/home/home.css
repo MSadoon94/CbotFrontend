@@ -1,0 +1,51 @@
+.homePage {
+    display: grid;
+    grid-template-columns: 1fr 5fr 2fr;
+    grid-template-rows: 1fr 3fr;
+    grid-template-areas:
+        "............ header ............"
+        "left-sidebar main right-sidebar";
+}
+
+.title {
+    grid-area: header;
+    justify-self: center;
+}
+
+.cardLoader {
+    grid-area: left-sidebar;
+    align-self: start;
+    margin-left: 10px;
+
+}
+
+.leftHomeSideBar{
+    grid-area: left-sidebar;
+    align-self: center;
+    margin-bottom: 50px;
+}
+
+.homeButton {
+    margin: 10px;
+}
+
+.loadedCards{
+    grid-area: right-sidebar;
+    justify-self: end;
+    margin-right: 10px;
+}
+
+.cardForm {
+    width: border-box;
+    grid-area: main;
+    justify-self: center;
+    align-self: center;
+    padding-bottom: 5px;
+    border-style: solid;
+}
+
+#cardPasswordVerify {
+    grid-area: main;
+    justify-self: center;
+    align-self: start;
+}

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
 import {apiConfig} from "../api/apiUtil";
@@ -6,12 +6,12 @@ import {change} from "../api/responseTemplates";
 import {ApiResponse} from "../api/ApiResponse";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
+import "./home.css"
 
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
     const hasCardUpdate = useRef(false);
-
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState(false);
     const [request, setRequest] = useState();
@@ -31,36 +31,40 @@ export const Home = () => {
     };
 
     return (
-        <div>
+        <div className={"homePage"}>
             <h1 className={"title"}>User Home</h1>
 
-            <CardLoader hasUpdate={hasCardUpdate.current}/>
-
-            <div hidden={newCardForm.isHidden}>
-                <CardSaver/>
-                <button type={"button"} id={"cancelCardButton"} onClick={() =>
-                    setNewCardForm({...newCardForm, isHidden: true})}>Cancel Card
+            <div hidden={newCardForm.isHidden} className={"cardForm"}>
+                <CardSaver />
+                <button type={"button"} id={"closeCardButton"} onClick={() =>
+                    setNewCardForm({...newCardForm, isHidden: true})}>Close Card
                 </button>
             </div>
 
-            <button type={"button"} id={"newCardButton"} onClick={() =>
-                setNewCardForm({...newCardForm, isHidden: false})}>New Card
-            </button>
-
             <ApiResponse cssId={"logout"} request={request}/>
-            <button
-                type={"button"} id={"logoutButton"} onClick={logoutUser}>
-                Log Out
-            </button>
-
-            <button type={"button"} id={"newStrategyButton"} onClick={() =>
-                setStrategyModal(true)}>New Strategy
-            </button>
 
             <StrategyModal isOpen={strategyModal} onRequestClose={() => {
                 setStrategyModal(false)
             }}
             />
+            <CardLoader hasUpdate={hasCardUpdate.current}/>
+
+            <div className={"leftHomeSideBar"}>
+
+                <button type={"button"} id={"newCardButton"} className={"homeButton"} onClick={() =>
+                    setNewCardForm({...newCardForm, isHidden: false})}>New Card
+                </button>
+
+                <button type={"button"} id={"newStrategyButton"} className={"homeButton"} onClick={() =>
+                    setStrategyModal(true)}>New Strategy
+                </button>
+
+                <button
+                    type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
+                    Log Out
+                </button>
+
+            </div>
         </div>
     )
 };

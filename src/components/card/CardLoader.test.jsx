@@ -21,28 +21,32 @@ beforeEach(async () => {
 
 });
 
-test("should populate cards with cards connected to user account", async () => {
-    await waitFor(() => expect(optionName()).toBe("mockCard1"));
+describe("multiple card loading", () => {
+
+    test("should populate cards with cards connected to user account", async () => {
+        await waitFor(() => expect(optionName()).toBe("mockCard1"));
+    });
+
 });
 
-test("should require password on selection of option", async () => {
-    await waitFor(() => userEvent.selectOptions(cardSelect, "mockCard1"));
+describe("single card loading", () => {
 
-    await screen.findByRole("textbox", {name: "Card Password"});
-});
+    test("should require password on selection of option", async () => {
+        await waitFor(() => userEvent.selectOptions(cardSelect, "mockCard1"));
 
-test("should return specific card name on password acceptance", async () => {
-    userEvent.type(await screen.findByRole("textbox", {name: "Card Password"}), "mockPassword");
-    userEvent.click(loadSingleCardButton);
+        await screen.findByRole("textbox", {name: "Card Password"});
+    });
 
-    await waitFor(() =>
-        expect(screen.getByTestId("cardName0")).toHaveTextContent(mockData.singleCard.cardName));
-});
+    test("should return card on password acceptance", async () => {
+        await loadCard();
 
-test("should return specific card balance on password acceptance", async () => {
-    userEvent.type(await screen.findByRole("textbox", {name: "Card Password"}), "mockPassword");
-    userEvent.click(loadSingleCardButton);
+        await waitFor(() =>
+            expect(screen.getByRole("table")).toHaveTextContent(mockData.singleCard.cardName));
+    });
 
-    await waitFor(() =>
-        expect(screen.getByTestId("cardBalance0")).toHaveTextContent(JSON.stringify(mockData.singleCard.balances)));
+    const loadCard = async () => {
+        userEvent.type(await screen.findByRole("textbox", {name: "Card Password"}), "mockPassword");
+        userEvent.click(loadSingleCardButton);
+    }
+
 });

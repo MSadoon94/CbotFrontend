@@ -1,1 +1,21 @@
-.card {border: solid #61dafb;}
+.cardSaver {
+    display: grid;
+    grid: repeat(5, 1fr) / 1fr 2fr;
+    justify-items: center;
+    align-items: center;
+}
+
+table {
+    width: border-box;
+    border-style: solid;
+}
+
+.hideButton {
+    width: fit-content;
+    margin: auto;
+}
+
+.closeButton {
+    width: fit-content;
+    margin: auto auto auto 75px;
+}

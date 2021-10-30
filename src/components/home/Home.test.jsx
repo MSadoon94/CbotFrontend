@@ -31,7 +31,7 @@ describe("card saving features", () => {
 
     test("should hide save card component when cancel card button is clicked", async () => {
        userEvent.click(newCardButton);
-       userEvent.click(screen.getByRole("button", {name: "Cancel Card"}));
+       userEvent.click(screen.getByRole("button", {name: "Close Card"}));
 
        await expect(screen.getByText("Card Name")).not.toBeVisible();
     });

@@ -2,6 +2,7 @@ import {useRef, useState} from "react"
 import {ApiResponse} from "../api/ApiResponse";
 import {apiConfig} from "../api/apiUtil";
 import {save} from "../api/responseTemplates";
+import "./card.css";
 
 
 export const CardSaver = () => {
@@ -15,7 +16,7 @@ export const CardSaver = () => {
     };
 
     return (
-        <div>
+        <div className={"cardSaver"}>
             <label htmlFor={"cardNameInput"}>Card Name</label>
             <input type={"text"} id={"cardNameInput"}
                    onChange={e => card.current = {...card.current, cardName: e.target.value}}/>
@@ -32,7 +33,7 @@ export const CardSaver = () => {
             <input type={"text"} id={"cardBrokerageInput"}
                    onChange={e => card.current = {...card.current, brokerage: e.target.value.toLowerCase()}}/>
 
-            <button type={"button"} id={"saveCardButton"} onClick={saveCard}>Save Card</button>
+            <button type={"button"} id={"saveCardButton"} onClick={() => saveCard()}>Save Card</button>
             <ApiResponse cssId={"saveCardResponse"} request={saveRequest}/>
 
         </div>

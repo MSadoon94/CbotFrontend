@@ -2,6 +2,8 @@ import {useEffect, useReducer, useRef} from "react";
 import {ApiResponse} from "../api/ApiResponse";
 import {apiConfig} from "../api/apiUtil";
 import {load, loadGroup, validation} from "../api/responseTemplates";
+import "./card.css"
+import {Card} from "./Card";
 
 const initialLoader = {
     selectedOption: {
@@ -39,7 +41,7 @@ export const CardLoader = ({hasUpdate}) => {
                 success: (res) => {
                     setLoaderState({type: "cards", action: mapResponse(res)})
                 },
-                fail: () => setLoaderState({type: "cards", action: {name: "No Cards Found"}})
+                fail: () => null
             }
         };
         setLoaderState({type: "allCards", action: {config, templates: loadGroup("Cards"), actions}});
@@ -56,9 +58,10 @@ export const CardLoader = ({hasUpdate}) => {
         let actions = {
             onComplete: {
                 success: (res) => {
+                    let bal = Object.entries(res.body.balances).map(([currency, amount]) => [{currency, amount}]);
                     setLoaderState({
                         type: "displayedCards", action: [...loaderState.displayedCards,
-                            {name: res.body.cardName, balances: JSON.stringify(res.body.balances)}]
+                            {name: res.body.cardName, balances: bal, isHidden: false}]
                     });
                     setLoaderState({type: "selectedOption", action: {hidePasswordBox: true}});
                 },
@@ -81,40 +84,46 @@ export const CardLoader = ({hasUpdate}) => {
             {url: "/api/card-password", method: "post"},
             {cardName: loaderState.selectedOption.cardName, password: cardPassword.current});
 
-        setLoaderState({type: "passwordValidate", action: {config, templates: validation("Card"), actions}});
+        setLoaderState({type: "passwordValidate", action: {config, templates: validation("Card password"), actions}});
     };
 
-
     return (
-        <div>
-            <ApiResponse cssId={"loadCards"} isHidden={true} request={loaderState.allCards}/>
-            <select id={"cardSelect"} onClick={() => loadCards()} onChange={e => {
-                if (e.target.value === "-- Load Card --") {
-                    setLoaderState({type: "selectedOption", action: {hidePasswordBox: true}})
-                } else {
-                    setLoaderState({type: "selectedOption", action: {hidePasswordBox: false, cardName: e.target.value}})
+        <>
+            <div className={"cardLoader"}>
+                <ApiResponse cssId={"loadCards"} isHidden={true} request={loaderState.allCards}/>
+                <select id={"cardSelect"}  onClick={() => loadCards()} onChange={e => {
+                    if (e.target.value === "-- Load Card --") {
+                        setLoaderState({type: "selectedOption", action: {hidePasswordBox: true}})
+                    } else {
+                        setLoaderState({
+                            type: "selectedOption",
+                            action: {hidePasswordBox: false, cardName: e.target.value}
+                        })
+                    }
                 }
-            }
-            }>
-                {loaderState.cards.map((card) =>
-                    <option key={card.name} value={card.name}>{card.name}</option>
-                )}
-            </select>
-            <div hidden={loaderState.selectedOption.hidePasswordBox}>
+                }>
+                    {loaderState.cards.map((card) =>
+                        <option key={card.name} value={card.name}>{card.name}</option>
+                    )}
+                </select>
+            </div>
+
+
+            <div hidden={loaderState.selectedOption.hidePasswordBox}
+                 id={"cardPasswordVerify"} className={"cardVerify"} >
                 <label htmlFor={"cardPassword"}>Card Password</label>
                 <input id={"cardPassword"} type={"text"} onChange={e => cardPassword.current = e.target.value}/>
                 <ApiResponse cssId={"cardPasswordCheck"} request={loaderState.passwordValidate}/>
                 <ApiResponse cssId={"loadSingleCard"} request={loaderState.singleCardRequest}/>
                 <button id={"cardPasswordButton"} type={"button"} onClick={loadSingleCard}>Load Card</button>
             </div>
-            {loaderState.displayedCards.map((card) =>
-                <div id={"displayedCards"}>
-                    <output data-testid={`cardName${loaderState.displayedCards.indexOf(card)}`}>{card.name}</output>
-                    <output
-                        data-testid={`cardBalance${loaderState.displayedCards.indexOf(card)}`}>{card.balances}</output>
-                </div>
-            )}
-        </div>
+
+            <div id={"displayedCards"} className={"loadedCards"}>
+                {loaderState.displayedCards.map((card) =>
+                    <Card cardData={card}/>
+                )}
+            </div>
+        </>
     )
 
 };
