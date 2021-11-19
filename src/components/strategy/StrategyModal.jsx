@@ -6,7 +6,7 @@ import {save} from "../api/responseTemplates";
 import {apiConfig} from "../api/apiUtil";
 import {ApiResponse} from "../api/ApiResponse";
 
-export const StrategyModal = ({isOpen, jwt, onRequestClose}) => {
+export const StrategyModal = ({isOpen,  onRequestClose}) => {
     const [strategy, setStrategy] = useState({name: "Strategy Name"});
     const [request, setRequest] = useState();
 
@@ -17,7 +17,7 @@ export const StrategyModal = ({isOpen, jwt, onRequestClose}) => {
     };
 
     return (
-        <Modal id={"strategyModal"} isOpen={isOpen} jwt={jwt}
+        <Modal id={"strategyModal"} isOpen={isOpen}
                onRequestClose={() => {
                    onRequestClose()
                }}

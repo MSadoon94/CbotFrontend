@@ -11,7 +11,7 @@ export const apiRequest = async (config, handler) => {
     config.cancelToken = new CancelToken((c) => cancel = c);
 
     if (!config.isPublic && isExpired(config)) {
-        await refresh(config, handler, (res) => config = res);
+        await silentRefresh(config, handler, (res) => config = res);
     }
 
     await axios.request(config)
@@ -29,13 +29,38 @@ export const apiRequest = async (config, handler) => {
         );
 };
 
+export const refresh = async (id, onRefresh, onResponse) => {
+
+    let config = {
+        url: "/api/refresh-jwt",
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
+            "isRefreshToken": true
+        },
+        id
+    }
+
+    await axios.request(config)
+        .then((res) => {
+            let {expiration} = res.data;
+            console.log("Session refreshed.");
+            onRefresh({...config.id, expiration});
+            onResponse.success();
+        })
+        .catch(() => {
+                onRefresh({...config.id, isLoggedIn: false});
+                onResponse.fail();
+        })
+}
+
 const isExpired = (config) => {
     return Date.now() >= Date.parse(config.id.expiration);
 };
 
-const refresh = async (config, handler, refreshed) => {
+const silentRefresh = async (config, handler, refreshed) => {
     let reConfig = {
-        url: "api/refreshjwt",
+        url: "/api/refresh-jwt",
         method: "post",
         headers: {...config.headers, "isRefreshToken": true},
         data: config.id.username,
@@ -43,10 +68,10 @@ const refresh = async (config, handler, refreshed) => {
 
     await axios.request(reConfig)
         .then((res) => {
-            let {jwt, expiration} = res.data;
+            let {expiration} = res.data;
             console.log("Session refreshed.");
-            refreshed({...config, jwt, expiration});
-            handler.onRefresh({...config.id, jwt, expiration});
+            refreshed({...config, expiration});
+            handler.onRefresh({...config.id, expiration});
         })
         .catch((error) => {
             if (error.response.status === HttpStatus.unauthorized) {

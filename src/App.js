@@ -6,7 +6,6 @@ import {ApiManager} from "./components/api/ApiManager";
 
 export const initialId = {
     username: "",
-    jwt: "",
     expiration: "",
     isLoggedIn: false
 };

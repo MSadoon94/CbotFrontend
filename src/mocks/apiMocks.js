@@ -4,7 +4,6 @@ import {mockData} from "./mockData";
 import {testServer} from "./testServer";
 
 const URL = "http://localhost/api";
-const card = {account: "account", password: "password"};
 export const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
     testServer.use(restMethod(`http://localhost/${endpoint}`,
         (req, res, context) => {
@@ -14,7 +13,7 @@ export const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badR
 export const apiMocks = [
     rest.post(`${URL}/login`,
         (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json({jwt: "jwtMock", expiration: "expirationMock"}))
+            res(context.status(HttpStatus.ok), context.json({expiration: "expirationMock"}))
     ),
     rest.post(`${URL}/signup`,
         (req, res, context) =>
@@ -24,9 +23,9 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
-    rest.post(`${URL}/refreshjwt`,
+    rest.post(`${URL}/refresh-jwt`,
         (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json({jwt: "refreshedJwt", expiration: "newExpiration"}))
+            res(context.status(HttpStatus.ok), context.json({expiration: "newExpiration"}))
     ),
     rest.delete(`${URL}/log-out`,
         (req, res, context) =>

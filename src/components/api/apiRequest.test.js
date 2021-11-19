@@ -51,7 +51,7 @@ describe("refresh behavior", () => {
     };
 
     test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
-        failedRequest(rest.post, "api/refreshjwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
 
         await apiRequest(refreshFailConfig, commonHandler);
 
@@ -64,12 +64,6 @@ describe("refresh behavior", () => {
         expect(outcome(commonHandler)).toBe(commonHandler.templates.success)
     });
 
-    test("should refresh stored jwt when refreshed", async () => {
-        await apiRequest(refreshFailConfig, commonHandler);
-
-        expect(refreshed.jwt).toEqual("refreshedJwt");
-    });
-
     test("should refresh stored expiration when refreshed", async () => {
         await apiRequest(refreshFailConfig, commonHandler);
 
@@ -77,7 +71,7 @@ describe("refresh behavior", () => {
     });
 
     test("should log out user when refresh fails", async () => {
-        failedRequest(rest.post, "api/refreshjwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
         await apiRequest(refreshFailConfig, commonHandler);
 
         expect(refreshed.isLoggedIn).toBe(false);

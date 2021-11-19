@@ -1,5 +1,5 @@
 import {createContext, useEffect, useReducer, useState} from "react";
-import {apiRequest} from "./apiRequest";
+import {apiRequest, refresh} from "./apiRequest";
 import {useHistory} from "react-router-dom";
 import {initialId} from "../../App";
 
@@ -8,15 +8,16 @@ export const ApiContext = createContext({});
 const idReducer = (id, action) => {
     let newId;
     switch (action.type) {
-        case "refresh":
+        case "refreshed":
         case "login" :
             newId = action.payload.body;
             break;
         case "logout":
         default:
-            newId = {initialId};
+            newId = initialId;
             break;
     }
+    localStorage.setItem("isLoggedIn", newId.isLoggedIn);
     return newId;
 };
 
@@ -42,16 +43,18 @@ export const ApiManager = ({children, userId}) => {
     }, [doRequest, requests]);
 
     useEffect(() => {
-        if (!id.isLoggedIn) {
-            history.push("/start")
+        let onResponse = {
+            success: () => history.push("/home"),
+            fail: () => history.push("/start")
         }
-    }, [history, id]);
+        if (localStorage.getItem("isLoggedIn") === "false") {
+            refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
+        }
+    }, [history, id, localStorage]);
+
 
     const prepConfig = ({config}) => {
-        if (!config.isPublic) {
-            config.headers = {...config.headers, Authorization: `Bearer ${id.jwt}`};
-        }
-        return {...config, id, onRefresh: (refresh) => setId({type: refresh, payload: refresh})};
+        return {...config, id, onRefresh: (refreshed) => setId({type: refreshed, payload: refreshed})};
     };
 
     const addRequest = (request) => {
