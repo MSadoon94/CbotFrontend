@@ -7,10 +7,12 @@ import {ApiResponse} from "../api/ApiResponse";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
 import "./home.css"
+import {useHistory} from "react-router-dom";
 
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
+    const history = useHistory();
     const hasCardUpdate = useRef(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState(false);
@@ -24,6 +26,7 @@ export const Home = () => {
                 type: "logout",
                 execute: (response) => {
                     window.alert(`${response.message} Redirecting to start page.`)
+                    history.push("/start");
                 }
             }
         };

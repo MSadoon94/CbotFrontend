@@ -50,7 +50,7 @@ export const ApiManager = ({children, userId}) => {
         if (localStorage.getItem("isLoggedIn") === "false") {
             refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
         }
-    }, [history, id, localStorage]);
+    }, [history, id]);
 
 
     const prepConfig = ({config}) => {
