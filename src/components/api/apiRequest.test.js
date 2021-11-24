@@ -24,7 +24,10 @@ const outcome = (handler) => {
 
 beforeEach(() => {
     commonHandler = apiHandler(create("account"));
-    commonHandler.onRefresh = (refresh) => refreshed = refresh;
+    commonHandler.onRefresh = {
+        success: (refresh) => refreshed = refresh,
+        fail: (refresh) => refreshed = refresh
+    }
 });
 
 afterEach(() => {

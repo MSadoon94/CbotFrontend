@@ -1,4 +1,4 @@
-import {createContext, useEffect, useReducer, useState} from "react";
+import {createContext, useEffect, useReducer, useRef, useState} from "react";
 import {apiRequest, refresh} from "./apiRequest";
 import {useHistory} from "react-router-dom";
 import {initialId} from "../../App";
@@ -11,13 +11,14 @@ const idReducer = (id, action) => {
         case "refreshed":
         case "login" :
             newId = action.payload.body;
+            localStorage.setItem("isLoggedIn", newId.isLoggedIn);
             break;
         case "logout":
         default:
             newId = initialId;
+            localStorage.setItem("isLoggedIn", false);
             break;
     }
-    localStorage.setItem("isLoggedIn", newId.isLoggedIn);
     return newId;
 };
 
@@ -27,10 +28,10 @@ export const ApiManager = ({children, userId}) => {
     const [id, setId] = useReducer(idReducer, userId);
 
     const doRequest = async (request, remaining) => {
-        request.config = prepConfig(request);
-        await apiRequest(request.config, request.handler)
-            .then(() => {
-                request.handler.isResponseReady = true;
+        let {config, handler} = prepRequest(request);
+        await apiRequest(config, handler)
+            .finally(() => {
+                handler.isResponseReady = true;
                 setRequests(remaining);
             });
     };
@@ -40,21 +41,46 @@ export const ApiManager = ({children, userId}) => {
             let [request, ...rest] = requests;
             doRequest(request, rest);
         }
-    }, [doRequest, requests]);
+    },[doRequest, requests]);
 
-    useEffect(() => {
-        let onResponse = {
-            success: () => history.push("/home"),
-            fail: () => history.push("/start")
+  useEffect(() => {
+        handlePageReload();
+    },[]);
+
+  const handlePageReload = () => {
+      let onResponse = {
+          success: () => {
+              history.push("/home")
+              localStorage.setItem("isLoggedIn", true)
+          },
+          fail: () => {
+              history.push("/start")
+              localStorage.setItem("isLoggedIn", false);
+          }
+      }
+      if (!(localStorage.getItem("isLoggedIn")) || (localStorage.getItem("isLoggedIn") === "false")) {
+          refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
+      }
+  }
+
+    const prepRequest = ({config, handler}) => {
+        config = {...config, id};
+        handler.onRefresh = {
+            success: (refreshed) => {
+                setId({type: refreshed, payload: refreshed})
+                localStorage.setItem("isLoggedIn", true)
+            },
+            fail: (refreshed) => {
+                setId({type: refreshed, payload: refreshed});
+                localStorage.setItem("isLoggedIn", false);
+                if(history.location.pathname === "/home"){
+                    alert(handler.output.message);
+                    history.push( "/start");
+                }
+            }
         }
-        if (localStorage.getItem("isLoggedIn") === "false") {
-            refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
-        }
-    }, [history, id]);
 
-
-    const prepConfig = ({config}) => {
-        return {...config, id, onRefresh: (refreshed) => setId({type: refreshed, payload: refreshed})};
+        return {config, handler};
     };
 
     const addRequest = (request) => {

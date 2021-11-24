@@ -26,6 +26,12 @@ export const UserStart = () => {
     const [textBox, setTextBox] = useState({usernameBox: null, passwordBox: null, confirmPasswordBox: null});
 
     useEffect(() => {
+        if (localStorage.getItem("isLoggedIn") === "true"){
+            history.push("/home")
+        }
+    }, [])
+
+    useEffect(() => {
         const textBoxTimeout =
             setTimeout(setTextBox({
                 usernameBox: user.username,

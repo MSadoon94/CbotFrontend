@@ -12,8 +12,6 @@ export const initialId = {
 
 function App() {
 
-
-
     return (
             <main>
                 <Switch>

@@ -42,13 +42,13 @@ export const apiMocks = [
     rest.get(`${URL}/load-cards`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.cards))
-        ),
+    ),
     rest.post(`${URL}/card-password`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok))
-        ),
+    ),
     rest.get(`${URL}/load-a-card/:cardName`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.singleCard))
-        ),
+    ),
 ];

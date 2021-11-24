@@ -11,6 +11,10 @@ ReactModal.setAppElement(document.createElement('div'));
 
 let isOpen;
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({push: jest.fn(),})
+}))
+
 beforeEach(() => {
     isOpen = true;
     render(

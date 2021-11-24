@@ -15,6 +15,10 @@ const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest)
         }))
 };
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({push: jest.fn(),})
+}))
+
 describe("api interactions", () => {
     let baseInput, quoteInput, assetsResponse;
 

@@ -8,6 +8,9 @@ import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
 import {failedRequest} from "../../mocks/apiMocks";
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({push: jest.fn(),})
+}))
 
 describe("save card requests", () => {
 

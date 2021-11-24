@@ -20,7 +20,7 @@ export const apiRequest = async (config, handler) => {
         })
         .catch((error) => {
                 if (axios.isCancel(error)) {
-                    console.log(error.message);
+                    console.log("Request canceled: ", error.message);
                 } else {
                     console.log(error.message);
                     failSafe(error, handler);
@@ -55,7 +55,12 @@ export const refresh = async (id, onRefresh, onResponse) => {
 }
 
 const isExpired = (config) => {
-    return Date.now() >= Date.parse(config.id.expiration);
+    let expiration = config.id.expiration;
+    if(!expiration){
+        return true
+    } else {
+        return Date.now() >= Date.parse(expiration);
+    }
 };
 
 const silentRefresh = async (config, handler, refreshed) => {
@@ -71,16 +76,17 @@ const silentRefresh = async (config, handler, refreshed) => {
             let {expiration} = res.data;
             console.log("Session refreshed.");
             refreshed({...config, expiration});
-            handler.onRefresh({...config.id, expiration});
+            handler.onRefresh.success({...config.id, expiration});
         })
         .catch((error) => {
+
             if (error.response.status === HttpStatus.unauthorized) {
                 handler.onResponse(response(error.response.status, "Session expired, logging out.", null));
-                handler.onRefresh({...config.id, isLoggedIn: false});
             } else {
                 failSafe(error, handler);
             }
             cancel(handler.output);
+            handler.onRefresh.fail({...config.id, isLoggedIn: false});
         })
 
 };

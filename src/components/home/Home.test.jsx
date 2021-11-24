@@ -16,6 +16,9 @@ beforeEach(() => {
     );
 });
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({push: jest.fn(),})
+}))
 
 describe("card saving features", () => {
     let newCardButton;

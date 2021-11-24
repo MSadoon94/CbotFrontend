@@ -21,6 +21,10 @@ beforeEach(async () => {
 
 });
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({push: jest.fn(),})
+}))
+
 describe("multiple card loading", () => {
 
     test("should populate cards with cards connected to user account", async () => {
