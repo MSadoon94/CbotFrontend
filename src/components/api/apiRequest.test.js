@@ -11,10 +11,10 @@ import {mockId} from "../../mocks/mockId";
 let refreshed, commonHandler;
 let commonConfig = {...apiConfig({url: "api/save-card", method: "post"}, mockData.card), id: mockId};
 
-const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
+const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest, message) => {
     testServer.use(restMethod(`http://localhost/${endpoint}`,
         (req, res, context) => {
-            return res(context.status(statusCode));
+            return res(context.status(statusCode), context.json({message}));
         }))
 };
 
@@ -43,6 +43,22 @@ describe("common error behavior", () => {
 
         expect(outcome(commonHandler)).toBe("Sorry, the server did not respond, please try again later.");
     });
+
+    test("should return response message for http conflict status rejections", async () => {
+        failedRequest(
+            rest.post,
+            "api/sign-up",
+            HttpStatus.conflict,
+            "A user already exists with the username 'User', please choose another username."
+        )
+
+        let config = {...publicConfig({url: "api/sign-up", method: "post"}, mockData.user)};
+        let handler = apiHandler(create("user"));
+
+        await apiRequest(config, handler);
+
+        expect(outcome(handler)).toBe("A user already exists with the username 'User', please choose another username.");
+    })
 
 });
 
@@ -87,7 +103,7 @@ describe("public endpoint behavior", () => {
     test.concurrent.each`
     api                              |method    |data                       |templates         
     ${"api/login"}                   |${"post"} |${mockData.user}           |${load("User")}
-    ${"api/signup"}                  |${"post"} |${mockData.user}           |${save("User")}
+    ${"api/sign-up"}                  |${"post"} |${mockData.user}           |${save("User")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
             let config = publicConfig({url: api, method}, data);
@@ -101,7 +117,7 @@ describe("public endpoint behavior", () => {
     test.concurrent.each`
    api             |method    |data             |templates              |failMethod
    ${"api/login"}  |${"post"} |${mockData.user} |${load("User")}  |${rest.post}
-   ${"api/signup"} |${"post"} |${mockData.user} |${create("User")}  |${rest.post}
+   ${"api/sign-up"} |${"post"} |${mockData.user} |${create("User")}  |${rest.post}
    `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
 

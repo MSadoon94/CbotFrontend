@@ -48,7 +48,7 @@ export const UserStart = () => {
         checkTextBoxes();
     }, [textBox]);
 
-    let signupConfig = publicConfig({url: "/api/signup", method: "post"}, user);
+    let signupConfig = publicConfig({url: "/api/sign-up", method: "post"}, user);
 
     let loginConfig = publicConfig({url: "/api/login", method: "post"}, user);
 

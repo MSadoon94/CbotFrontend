@@ -15,7 +15,7 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json({expiration: "expirationMock"}))
     ),
-    rest.post(`${URL}/signup`,
+    rest.post(`${URL}/sign-up`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),

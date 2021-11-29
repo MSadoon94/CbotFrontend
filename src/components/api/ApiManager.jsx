@@ -1,4 +1,4 @@
-import {createContext, useEffect, useReducer, useRef, useState} from "react";
+import {createContext, useEffect, useReducer, useState} from "react";
 import {apiRequest, refresh} from "./apiRequest";
 import {useHistory} from "react-router-dom";
 import {initialId} from "../../App";
@@ -74,7 +74,7 @@ export const ApiManager = ({children, userId}) => {
                 setId({type: refreshed, payload: refreshed});
                 localStorage.setItem("isLoggedIn", false);
                 if(history.location.pathname === "/home"){
-                    alert(handler.output.message);
+                    alert("Session expired, logging out.");
                     history.push( "/start");
                 }
             }
