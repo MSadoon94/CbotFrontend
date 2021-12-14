@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import {Home} from "./Home";
 import ReactModal from 'react-modal'
 import {ApiManager} from "../api/ApiManager";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 
 ReactModal.setAppElement(document.createElement('div'));
 

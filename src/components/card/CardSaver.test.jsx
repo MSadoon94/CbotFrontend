@@ -3,7 +3,7 @@ import {CardSaver} from "./CardSaver";
 import {ApiManager} from "../api/ApiManager";
 import userEvent from "@testing-library/user-event";
 import {save} from "../api/responseTemplates";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
 import {failedRequest} from "../../mocks/apiMocks";

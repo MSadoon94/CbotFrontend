@@ -99,7 +99,7 @@ const failSafe = (error, handler) => {
             "Sorry, the server did not respond, please try again later.",
             null)
         );
-    } else if(status = HttpStatus.conflict){
+    } else if(status === HttpStatus.conflict){
         handler.onResponse(response(
             status,
             data.message,

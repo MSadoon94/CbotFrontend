@@ -51,4 +51,12 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.singleCard))
     ),
+    rest.get(`${URL}/load-strategies`,
+        (req, res, context) =>
+            res(context.status(HttpStatus.ok), context.json(mockData.strategies))
+        ),
+    rest.get(`${URL}/load-strategy/:strategy`,
+        (req, res, context) =>
+            res(context.status(HttpStatus.ok), context.json(mockData.strategy))
+    )
 ];

@@ -4,8 +4,7 @@ import {StrategyModal} from "./StrategyModal";
 import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
 import {ApiManager} from "../api/ApiManager";
-import {mockId} from "../../mocks/mockId";
-
+import {mockData, mockId} from "../../mocks/mockData";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -25,7 +24,6 @@ beforeEach(() => {
         </ApiManager>
     );
 });
-
 
 
 describe("modal actions", () => {
@@ -58,4 +56,37 @@ describe("sections", () => {
         screen.getByRole("heading", {name: "Crypto Selection"});
     })
 
+    test("should have dynamic select section", () => {
+        screen.getByRole("combobox");
+    })
+
 });
+
+describe("dynamic select related behavior", () => {
+
+    let strategySelect;
+    let mockStrategy = mockData.strategy;
+
+    beforeEach(async () => {
+        strategySelect = screen.getByRole("combobox");
+        userEvent.click(strategySelect);
+        await waitFor(() => userEvent.selectOptions(strategySelect, mockStrategy.name));
+    });
+
+    test("should display message on success of load strategy request", async () => {
+        await waitFor(() => expect(screen.getByTestId("loadStrategyRequest"))
+            .toHaveTextContent("Strategy was loaded successfully."));
+    })
+
+    test("should load target strategy name when selected for load", async () => {
+        await waitFor(() => expect(screen.getByRole("textbox", {name: "Strategy Name"}))
+            .toHaveValue(mockStrategy.name));
+    })
+
+    test("should load assets when strategy selected for load", async () => {
+        await waitFor(() => expect(screen.getByRole("textbox", {name: "Base Symbol"}))
+            .toHaveValue(mockStrategy.base));
+        await waitFor(() => expect(screen.getByRole("textbox", {name: "Quote Symbol"}))
+            .toHaveValue(mockStrategy.quote));
+    })
+})

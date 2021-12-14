@@ -5,7 +5,7 @@ import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
 import {apiConfig, apiHandler, publicConfig} from "./apiUtil";
 import {mockData} from "../../mocks/mockData";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 
 
 let refreshed, commonHandler;

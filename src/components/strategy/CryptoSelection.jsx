@@ -4,7 +4,7 @@ import {validation} from "../api/responseTemplates";
 import {apiConfig} from "../api/apiUtil";
 import {ApiResponse} from "../api/ApiResponse";
 
-export const CryptoSelection = () => {
+export const CryptoSelection = ({loadedAssets}) => {
     const [base, setBase] = useState({isTyping: false, entry: ""});
     const [quote, setQuote] = useState({isTyping: false, entry: ""});
     const [request, setRequest] = useState();
@@ -33,7 +33,7 @@ export const CryptoSelection = () => {
                                     timeout={500}
                                     onTyping={(update) => {
                                         setBase(update)
-                                    }}/>
+                                    }} overwrite={loadedAssets.base}/>
                 </div>
                 <div>
                     <label htmlFor={"quoteInput"}>Quote Symbol</label>
@@ -41,9 +41,9 @@ export const CryptoSelection = () => {
                                     timeout={500}
                                     onTyping={(update) => {
                                         setQuote(update);
-                                    }}/>
+                                    }} overwrite={loadedAssets.quote}/>
                 </div>
-                    <ApiResponse cssId={"selectCrypto"} request={request}/>
+                <ApiResponse cssId={"selectCrypto"} request={request}/>
             </form>
         </div>
     )

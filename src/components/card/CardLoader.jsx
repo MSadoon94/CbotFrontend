@@ -87,21 +87,22 @@ export const CardLoader = ({hasUpdate}) => {
         setLoaderState({type: "passwordValidate", action: {config, templates: validation("Card password"), actions}});
     };
 
+    const handleSelection = (selection) => {
+        if (selection.target.value === "-- Load Card --") {
+            setLoaderState({type: "selectedOption", action: {hidePasswordBox: true}})
+        } else {
+            setLoaderState({
+                type: "selectedOption",
+                action: {hidePasswordBox: false, cardName: selection.target.value}
+            })
+        }
+    }
+
     return (
         <>
             <div className={"cardLoader"}>
                 <ApiResponse cssId={"loadCards"} isHidden={true} request={loaderState.allCards}/>
-                <select id={"cardSelect"}  onClick={() => loadCards()} onChange={e => {
-                    if (e.target.value === "-- Load Card --") {
-                        setLoaderState({type: "selectedOption", action: {hidePasswordBox: true}})
-                    } else {
-                        setLoaderState({
-                            type: "selectedOption",
-                            action: {hidePasswordBox: false, cardName: e.target.value}
-                        })
-                    }
-                }
-                }>
+                <select id={"cardSelect"}  onClick={() => loadCards()} onChange={e => handleSelection(e)}>
                     {loaderState.cards.map((card) =>
                         <option key={card.name} value={card.name}>{card.name}</option>
                     )}

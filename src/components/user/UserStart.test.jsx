@@ -4,7 +4,7 @@ import {UserStart} from "./UserStart";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import {ApiManager} from "../api/ApiManager";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 
 let usernameTextBox, passwordTextBox, confirmPasswordTextBox, usernameValidityOutput,
     passwordValidityOutput, signupButton, loginButton;

@@ -1,6 +1,6 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {CardLoader} from "./CardLoader";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 import {ApiManager} from "../api/ApiManager";
 import userEvent from "@testing-library/user-event";
 import {mockData} from "../../mocks/mockData";

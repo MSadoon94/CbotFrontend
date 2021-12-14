@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import {HttpStatus} from "../common/httpStatus";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
-import {mockId} from "../../mocks/mockId";
+import {mockId} from "../../mocks/mockData";
 import {ApiManager} from "../api/ApiManager";
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
@@ -25,7 +25,7 @@ describe("api interactions", () => {
     beforeEach(() => {
         render(
             <ApiManager userId={mockId}>
-            <CryptoSelection />
+            <CryptoSelection loadedAssets={{base: "", quote: ""}}/>
             </ApiManager>
                 );
 
