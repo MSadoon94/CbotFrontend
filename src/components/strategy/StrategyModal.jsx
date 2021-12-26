@@ -33,6 +33,10 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         setLoadedStrategy({loadedAssets: {base: body.base, quote: body.quote}})
     }
 
+    const handleAssetUpdate = (assets) => {
+        setStrategyState({...strategyState, base: assets.base, quote: assets.quote});
+    }
+
     return (
         <Modal id={"strategyModal"} isOpen={isOpen}
                onRequestClose={() => {
@@ -41,7 +45,8 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                appElement={document.getElementById('app')}
                className={"modal"} overlayClassName={"overlay"}>
             <h2>Strategy Creator</h2>
-            <CryptoSelection loadedAssets={loadedStrategy.loadedAssets}/>
+            <CryptoSelection updateAssets={handleAssetUpdate}
+                             loadedAssets={loadedStrategy.loadedAssets}/>
             <label htmlFor={"strategyName"}>Strategy Name</label>
             <input id={"strategyName"} value={strategyState.name}
                    onChange={e => setStrategyState({...strategyState, name: e.target.value})}/>

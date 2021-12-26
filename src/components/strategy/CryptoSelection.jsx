@@ -4,7 +4,7 @@ import {validation} from "../api/responseTemplates";
 import {apiConfig} from "../api/apiUtil";
 import {ApiResponse} from "../api/ApiResponse";
 
-export const CryptoSelection = ({loadedAssets}) => {
+export const CryptoSelection = ({updateAssets, loadedAssets}) => {
     const [base, setBase] = useState({isTyping: false, entry: ""});
     const [quote, setQuote] = useState({isTyping: false, entry: ""});
     const [request, setRequest] = useState();
@@ -13,6 +13,7 @@ export const CryptoSelection = ({loadedAssets}) => {
         if ((base.entry && quote.entry) !== "") {
             validateAssetPair();
         }
+        updateAssets({base: base.entry, quote: quote.entry});
     }, [base, quote]);
 
     let assetPair = () => base.entry + quote.entry;
