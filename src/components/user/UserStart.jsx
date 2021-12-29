@@ -1,12 +1,11 @@
 import {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
-import {validatePassword, validateUsername} from "./validator";
+import {validatePassword, validateUsername} from "../common/validator";
 import "./start.css"
 import {publicConfig} from "../api/apiUtil";
 import {create, load} from "../api/responseTemplates";
 import {HttpRange} from "../common/httpStatus";
 import {ApiResponse} from "../api/ApiResponse";
-
 
 export const UserStart = () => {
 
@@ -60,7 +59,6 @@ export const UserStart = () => {
             password: validatePassword(textBox.passwordBox, textBox.confirmPasswordBox)
         });
     };
-
 
     const handleSignup = async () => {
         setRequest({config: signupConfig, templates: create("User")});

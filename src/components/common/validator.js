@@ -1,6 +1,5 @@
 export function validateUsername(name) {
-    let validation = "Username";
-    const validator = new Validator(name, validation);
+    const validator = new Validator(name, "Username");
     try {
         validator.isNotNull()
             .isNotAllWhiteSpaces()
@@ -13,8 +12,7 @@ export function validateUsername(name) {
 }
 
 export function validatePassword(password, secondPassword) {
-    let validation = "Password";
-    const validator = new Validator(password, validation);
+    const validator = new Validator(password, "Password");
     try {
         validator.isNotNull()
             .isNotAllWhiteSpaces()
@@ -23,7 +21,7 @@ export function validatePassword(password, secondPassword) {
             .hasAtLeastOneSpecialCharacter()
             .hasAtLeastOneUpperCaseLetter()
             .hasNoWhiteSpace()
-            .containsAtLeast1Number()
+            .hasAtLeast1Number()
             .matchesSecondPassword(secondPassword);
 
     } catch (err) {
@@ -38,12 +36,16 @@ function Validator(input, validation) {
     this.validation = validation;
     Validator.prototype.result = null;
 
+    const success = () => {
+        this.result = input;
+        return this;
+    }
+
     Validator.prototype.isOnlyAlphanumerics = function () {
         if (/\W+/gm.test(input)) {
             throw Error("Username can only contain letters, numbers, or underscores.");
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -51,8 +53,7 @@ function Validator(input, validation) {
         if (!input) {
             throw Error(`${validation} cannot be null or blank.`);
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -60,8 +61,7 @@ function Validator(input, validation) {
         if (!input.replace(/\s/gm, "").length) {
             throw Error(`${validation} cannot be null or blank.`);
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -69,8 +69,7 @@ function Validator(input, validation) {
         if (input.length > maxLength) {
             throw Error(`${validation} cannot be longer than ${maxLength} characters.`);
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -78,8 +77,7 @@ function Validator(input, validation) {
         if (input.length < minLength) {
             throw Error(`${validation} cannot be shorter than ${minLength} characters.`);
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -87,8 +85,7 @@ function Validator(input, validation) {
         if (!/\W+/gm.test(input)) {
             throw Error(`${validation} must contain at least 1 special character, e.g. '-', '%', etc...`);
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -96,8 +93,7 @@ function Validator(input, validation) {
         if (!/[A-Z]/gm.test(input)) {
             throw Error(`${validation} must contain at least 1 uppercase letter.`)
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
@@ -105,17 +101,15 @@ function Validator(input, validation) {
         if (/\s/gm.test(input)) {
             throw Error(`${validation} cannot contain any white space.`)
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     };
 
-    Validator.prototype.containsAtLeast1Number = function () {
+    Validator.prototype.hasAtLeast1Number = function () {
         if (!/[\d]/gm.test(input)) {
             throw Error(`${validation} must contain at least 1 number.`)
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     }
 
@@ -123,8 +117,7 @@ function Validator(input, validation) {
         if(input !== secondPassword){
             throw Error(`${validation}s do not match.`)
         } else {
-            this.result = input;
-            return this;
+            return success();
         }
     }
 }

@@ -8,10 +8,14 @@ import {ApiResponse} from "../api/ApiResponse";
 import {DynamicSelect} from "../common/DynamicSelect";
 import {strategySelect} from "../common/selectSchemas";
 import {loadStrategiesModule, saveStrategyModule} from "./strategyApiModule";
+import {RefineStrategy} from "./RefineStrategy";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
-    const [loadedStrategy, setLoadedStrategy] = useState({loadedAssets: {base: "", quote: ""}});
-    const [strategyState, setStrategyState] = useState({name: ""});
+    const [strategyState, setStrategyState] = useState({
+        name: "",
+        assets: {base: "", quote: ""},
+        stopLoss: ""
+    });
     const [saveRequest, setSaveRequest] = useState();
     const [loadStrategyRequest, setLoadStrategyRequest] = useState();
 
@@ -29,12 +33,19 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
     const setModalChanges = (response) => {
         let {body} = response;
-        setStrategyState({...strategyState, name: body.name})
-        setLoadedStrategy({loadedAssets: {base: body.base, quote: body.quote}})
+        setStrategyState({
+            name: body.name,
+            assets: {base: body.base, quote: body.quote},
+            stopLoss: body.stopLoss
+        })
     }
 
     const handleAssetUpdate = (assets) => {
         setStrategyState({...strategyState, base: assets.base, quote: assets.quote});
+    }
+
+    const refineUpdate = {
+        stopLoss: (value) => setStrategyState({...strategyState, stopLoss: value}),
     }
 
     return (
@@ -46,7 +57,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                className={"modal"} overlayClassName={"overlay"}>
             <h2>Strategy Creator</h2>
             <CryptoSelection updateAssets={handleAssetUpdate}
-                             loadedAssets={loadedStrategy.loadedAssets}/>
+                             loadedAssets={strategyState.assets}/>
             <label htmlFor={"strategyName"}>Strategy Name</label>
             <input id={"strategyName"} value={strategyState.name}
                    onChange={e => setStrategyState({...strategyState, name: e.target.value})}/>
@@ -58,6 +69,8 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
             <DynamicSelect selectSchema={strategySelect(handleSelectChange)} apiModule={loadStrategiesModule}/>
             <ApiResponse cssId={"loadStrategyRequest"} request={loadStrategyRequest}/>
+
+            <RefineStrategy update={refineUpdate} overwrite={strategyState.stopLoss}/>
         </Modal>
     )
 };

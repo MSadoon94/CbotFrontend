@@ -21,11 +21,12 @@ jest.mock('react-router-dom', () => ({
 
 describe("api interactions", () => {
     let baseInput, quoteInput, assetsResponse;
+    let updateAssets = (assets) => ({base: assets.base, quote: assets.quote});
 
     beforeEach(() => {
         render(
             <ApiManager userId={mockId}>
-            <CryptoSelection loadedAssets={{base: "", quote: ""}}/>
+            <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
             </ApiManager>
                 );
 

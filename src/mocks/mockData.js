@@ -35,7 +35,7 @@ export const mockSelectCardsSchema = (onChange) =>  {
         doAction: (selection) =>
             onChange({
                 type: "selectedOption",
-                action: {hidePasswordBox: false, cardName: selection.target.value}
+                action: {hidePasswordBox: false, cardName: selection}
             }
         )
     }

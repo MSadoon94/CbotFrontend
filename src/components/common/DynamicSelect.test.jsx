@@ -29,22 +29,17 @@ test("should load options on click", async () => {
     await waitFor(() => userEvent.selectOptions(select, "mockCard1"));
 
     expect(optionName()).toBe("mockCard1");
-    console.log(outcome);
 })
 
-test("should do default action when default optionNap is clicked", async () => {
+test("should do default action when default option is clicked", async () => {
     await waitFor(() => userEvent.selectOptions(select, `-- Load ${schema.type} --`));
 
     expect(outcome).toStrictEqual(schema.defaultAction());
 })
 
-test("should do action from schema when optionNap is selected", async () => {
-    let mockSelection = {
-        target: {
-            value: "mockCard1"
-        }
-    }
+test("should do action from schema when option is selected", async () => {
+
     await waitFor(() => userEvent.selectOptions(select, "mockCard1"));
 
-    expect(outcome).toStrictEqual(schema.doAction(mockSelection))
+    expect(outcome).toStrictEqual(schema.doAction("mockCard1"));
 })
