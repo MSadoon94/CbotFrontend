@@ -34,9 +34,9 @@ export const DynamicTextBox = ({onTyping, timeout = 500,
     return (
         <>
         {(overwriteState.isChanging === false)
-            ? <input id={id} type={options.type} value={overwriteState.value}
+            ? <input id={id} type={options.type} min={0} value={overwriteState.value}
                      onClick={setOverwriteState({...overwriteState, isChanging: true})}/>
-            : <input id={id} type={options.type} value={overwriteState.value}
+            : <input id={id} type={options.type} min={0} value={overwriteState.value}
                onChange={e => {
                    if (entry !== e.target.value) {
                        setIsTyping(true);

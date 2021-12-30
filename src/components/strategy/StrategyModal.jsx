@@ -11,10 +11,18 @@ import {loadStrategiesModule, saveStrategyModule} from "./strategyApiModule";
 import {RefineStrategy} from "./RefineStrategy";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
+    let refinements = {
+        stopLoss: "",
+        maxPosition: "",
+        targetProfit: "",
+        movingStopLoss: "",
+        maxLoss: "",
+        longEntry: ""
+    }
     const [strategyState, setStrategyState] = useState({
         name: "",
         assets: {base: "", quote: ""},
-        stopLoss: ""
+        refinements
     });
     const [saveRequest, setSaveRequest] = useState();
     const [loadStrategyRequest, setLoadStrategyRequest] = useState();
@@ -36,16 +44,25 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         setStrategyState({
             name: body.name,
             assets: {base: body.base, quote: body.quote},
-            stopLoss: body.stopLoss
+            refinements: getRefinements(body)
         })
+    }
+
+    const getRefinements = (body) => {
+        let bodyRefinements = {};
+        Object.keys(refinements).forEach((type) => bodyRefinements[type] = body[type])
+        return bodyRefinements;
     }
 
     const handleAssetUpdate = (assets) => {
         setStrategyState({...strategyState, base: assets.base, quote: assets.quote});
     }
 
-    const refineUpdate = {
-        stopLoss: (value) => setStrategyState({...strategyState, stopLoss: value}),
+    const refineUpdate = () => {
+        let update = {};
+        Object.keys(refinements).forEach(
+            (type) => update[type] = (value) => setStrategyState({...strategyState, [type]: value}))
+        return update;
     }
 
     return (
@@ -70,7 +87,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
             <DynamicSelect selectSchema={strategySelect(handleSelectChange)} apiModule={loadStrategiesModule}/>
             <ApiResponse cssId={"loadStrategyRequest"} request={loadStrategyRequest}/>
 
-            <RefineStrategy update={refineUpdate} overwrite={strategyState.stopLoss}/>
+            <RefineStrategy update={refineUpdate()} overwrite={strategyState.stopLoss}/>
         </Modal>
     )
 };

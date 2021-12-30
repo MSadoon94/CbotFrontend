@@ -16,7 +16,13 @@ export const mockData = {
     strategy: {
         name: "MockStrategy1",
         base: "USD",
-        quote: "BTC"
+        quote: "BTC",
+        stopLoss: "100",
+        maxPosition: "100",
+        targetProfit: "100",
+        movingStopLoss: "100",
+        maxLoss: "100",
+        longEntry: "100"
     }
 
 };
