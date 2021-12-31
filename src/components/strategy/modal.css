@@ -25,6 +25,51 @@
     z-index: 9998;
 }
 
+#strategyModal {
+    padding: 5px 10px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 3fr 3fr;
+    grid-template-areas:
+        ".... header ...."
+        "mid-left mid-center mid-right"
+        "bottom-left bottom-center bottom-right";
+}
+
+h2 {
+    grid-area: header;
+    margin: 5px;
+    justify-self: center;
+}
+
+
+#cryptoSelection {
+    grid-area: mid-left;
+}
+
+#cryptoSelection input {
+    width: 70px;
+}
+
+#strategyManagement {
+    grid-area: mid-right;
+}
+
+#loadStrategiesSelect {
+    width: 170px
+}
+
+#refineDetails {
+    grid-area: bottom-left;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+input[type="number"] {
+    width: 55px;
+}
+
 #closeButton {
     position: fixed;
     top: 0;
@@ -35,8 +80,4 @@
 
     text-align: center;
     font-weight: bold;
-}
-
-input[type="number"] {
-    width: 55px;
 }
