@@ -16,6 +16,22 @@ beforeEach(() => {
     );
 });
 
+
+let mockStrategies;
+
+jest.mock("../common/DynamicSelect", () => {
+    return {
+        DynamicSelect: ({onOptionsSet}) =>
+            <div>
+            <button id={"mockOptionsSetButton"}
+                    onClick={() => {
+                        console.log(onOptionsSet);
+                        onOptionsSet(mockStrategies())
+                    }}>MockOptionsSet</button>
+            </div>
+    }
+})
+
 jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
@@ -26,17 +42,17 @@ describe("card saving features", () => {
     beforeEach(() => {
         newCardButton = screen.getByRole("button", {name: "New Card"});
     });
-    test("should show save card component when new card button is clicked", async() => {
+    test("should show save card component when new card button is clicked", async () => {
         userEvent.click(newCardButton);
 
         await screen.findByText("Card Name");
     });
 
     test("should hide save card component when cancel card button is clicked", async () => {
-       userEvent.click(newCardButton);
-       userEvent.click(screen.getByRole("button", {name: "Close Card"}));
+        userEvent.click(newCardButton);
+        userEvent.click(screen.getByRole("button", {name: "Close Card"}));
 
-       await expect(screen.getByText("Card Name")).not.toBeVisible();
+        await expect(screen.getByText("Card Name")).not.toBeVisible();
     });
 
 });

@@ -19,7 +19,7 @@
 
 }
 
-.leftHomeSideBar{
+.leftHomeSideBar {
     grid-area: left-sidebar;
     align-self: center;
     margin-bottom: 50px;
@@ -29,7 +29,7 @@
     margin: 10px;
 }
 
-.loadedCards{
+.loadedCards {
     grid-area: right-sidebar;
     justify-self: end;
     margin-right: 10px;
@@ -49,3 +49,20 @@
     justify-self: center;
     align-self: start;
 }
+
+#cbotPowerButton {
+    background-image: url("../../assets/power-button-symbol.png");
+
+    background-size: contain;
+    height: 50px;
+    width: 50px;
+}
+
+.powerButtonOn {
+    background: rgba(0, 255, 0, 0.5)
+}
+
+.powerButtonOff {
+    background: rgba(255, 0, 0, 0.5)
+}
+

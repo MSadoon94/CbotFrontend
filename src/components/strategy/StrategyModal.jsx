@@ -66,7 +66,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
     }
 
     return (
-        <div id={"strategyModal"}>
+        <div id={"strategyModal"} data-testid={"strategyModal"}>
             <Modal isOpen={isOpen}
                    onRequestClose={() => {
                        onRequestClose()
@@ -87,7 +87,8 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                             onClick={() => setSaveRequest(saveStrategyModule(strategyState))}>Save Strategy
                     </button>
                     <ApiResponse cssId={"saveModal"} request={saveRequest}/>
-                    <DynamicSelect selectSchema={strategySelect(handleSelectChange)} apiModule={loadStrategiesModule}/>
+                    <DynamicSelect selectSchema={strategySelect(handleSelectChange)}
+                                   apiModule={loadStrategiesModule}/>
                     <ApiResponse cssId={"loadStrategyRequest"} request={loadStrategyRequest}/>
                 </div>
 

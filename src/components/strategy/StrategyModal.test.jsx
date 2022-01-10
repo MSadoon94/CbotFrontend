@@ -18,9 +18,8 @@ beforeEach(() => {
     isOpen = true;
     render(
         <ApiManager userId={mockId}>
-            <StrategyModal isOpen={isOpen} onRequestClose={() => {
-                isOpen = false
-            }}/>
+            <StrategyModal isOpen={isOpen}
+                           onRequestClose={() => isOpen = false}/>
         </ApiManager>
     );
 });

@@ -1,12 +1,12 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {ApiManager} from "../api/ApiManager";
-import {mockId, mockSelectCardsSchema} from "../../mocks/mockData";
+import {mockData, mockId, mockSelectCardsSchema} from "../../mocks/mockData";
 import React from "react";
 import {DynamicSelect} from "./DynamicSelect";
 import {mockCardsApiModule} from "../../mocks/mockApiModules";
 import userEvent from "@testing-library/user-event";
 
-let select, optionName, outcome, schema;
+let select, optionName, outcome, schema, allOptions;
 
 jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
@@ -17,13 +17,18 @@ beforeEach(async () => {
 
     render(
         <ApiManager userId={mockId}>
-            <DynamicSelect selectSchema={schema} apiModule={mockCardsApiModule}/>
+            <DynamicSelect selectSchema={schema} apiModule={mockCardsApiModule}
+                           onOptionsSet={(options) => allOptions = options}/>
         </ApiManager>
     );
     select = screen.getByRole("combobox");
     optionName = () => select.children.item(0).getAttribute("value");
     userEvent.click(select);
 });
+
+test("should return all options to parent component", async () => {
+    await waitFor(() => expect(allOptions).toStrictEqual(mockData.cards));
+})
 
 test("should load options on click", async () => {
     await waitFor(() => userEvent.selectOptions(select, "mockCard1"));

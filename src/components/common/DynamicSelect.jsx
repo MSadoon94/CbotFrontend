@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {ApiResponse} from "../api/ApiResponse";
 
-export const DynamicSelect = ({selectSchema, apiModule}) => {
+export const DynamicSelect = ({selectSchema, apiModule, onOptionsSet = () => null}) => {
     const defaultOption = `-- Load ${selectSchema.type} --`;
     const [options, setOptions] = useState([{name: defaultOption}]);
     const [loadOptionsRequest, setLoadOptionsRequest] = useState();
@@ -11,6 +11,7 @@ export const DynamicSelect = ({selectSchema, apiModule}) => {
             onComplete: {
                 success: (res) => {
                     setOptions(mapResponse(res));
+                    onOptionsSet(res.body);
                 },
                 fail: () => null
             }
