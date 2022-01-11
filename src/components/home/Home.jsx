@@ -62,26 +62,13 @@ export const Home = () => {
 
             <ApiResponse cssId={"logout"} request={request}/>
 
-            <div>
-            <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
-                <summary>Strategies</summary>
-                <CheckboxWidget type={"strategies"}
-                                apiModule={loadStrategiesModule}
-                                isStale={() => {
-                                    console.log(isStale);
-                                    return isStale
-                                }}
-                />
-            </details>
-            </div>
-
 
             <StrategyModal isOpen={strategyModal.isOpen}
                            onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
             />
             <CardLoader hasUpdate={hasCardUpdate.current}/>
 
-            <div className={"leftHomeSideBar"}>
+            <div className={"newItemButtons"}>
 
                 <button type={"button"} id={"newCardButton"} className={"homeButton"} onClick={() =>
                     setNewCardForm({...newCardForm, isHidden: false})}>New Card
@@ -91,17 +78,28 @@ export const Home = () => {
                     setStrategyModal({...strategyModal, isOpen: true})}>New Strategy
                 </button>
 
-                <button
-                    type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
-                    Log Out
-                </button>
+
+            </div>
+
+            <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
+                <summary>Strategies</summary>
+                <CheckboxWidget type={"strategies"}
+                                apiModule={loadStrategiesModule}
+                                isStale={() => isStale}
+                />
+            </details>
 
                 <button type={"button"}
                         id={"cbotPowerButton"}
                         className={powerButton.isActive ? "powerButtonOn" : "powerButtonOff"}
                         onClick={togglePower}>{}</button>
 
-            </div>
+                <button
+                    type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
+                    Log Out
+                </button>
+
+
         </div>
     )
 };
