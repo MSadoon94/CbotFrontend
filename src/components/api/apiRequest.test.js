@@ -1,5 +1,5 @@
 import {apiRequest} from "./apiRequest";
-import {change, create, load, save, validation} from "./responseTemplates";
+import {changeState, create, load, save, validation} from "./responseTemplates";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
@@ -138,7 +138,7 @@ describe("specific api actions", () => {
     api                              |method     |data                       |templates         
     ${"api/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
     ${"api/save-strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
-    ${"api/log-out"}                  |${"delete"}|${null}                    |${change("Logout")}
+    ${"api/log-out"}                  |${"delete"}|${null}                    |${changeState("Logout")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
 
@@ -161,7 +161,7 @@ describe("specific api actions", () => {
     ${"api/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
     ${"api/save-strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
     ${"api/login"}                      |${"post"}  |${mockData.user}           |${load("User")}         |${rest.post}
-    ${"api/log-out"}                     |${"delete"}|${null}                    |${change("Logout")}     |${rest.delete}
+    ${"api/log-out"}                     |${"delete"}|${null}                    |${changeState("Logout")}     |${rest.delete}
     `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
 

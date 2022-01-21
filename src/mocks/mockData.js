@@ -23,7 +23,7 @@ export const mockData = {
         movingStopLoss: "100",
         maxLoss: "100",
         longEntry: "100"
-    }
+    },
 
 };
 
@@ -33,16 +33,23 @@ export const mockId = {
     isLoggedIn: true
 };
 
-export const mockSelectCardsSchema = (onChange) =>  {
+export const mockSelectCardsSchema = (onChange) => {
     return {
         type: "Card",
         id: "loadCardsSelect",
         defaultAction: () => onChange({type: "selectedOption", action: {hidePasswordBox: true}}),
         doAction: (selection) =>
             onChange({
-                type: "selectedOption",
-                action: {hidePasswordBox: false, cardName: selection}
-            }
-        )
+                    type: "selectedOption",
+                    action: {hidePasswordBox: false, cardName: selection}
+                }
+            )
+    }
+}
+
+export const mockStatus = () => {
+    return {
+        isActive: true,
+        activeStrategies: Object.keys(mockData.strategies)
     }
 }

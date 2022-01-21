@@ -1,6 +1,6 @@
 import {rest} from "msw";
 import {HttpStatus} from "../components/common/httpStatus";
-import {mockData} from "./mockData";
+import {mockData, mockStatus} from "./mockData";
 import {testServer} from "./testServer";
 
 const URL = "http://localhost/api";
@@ -58,5 +58,13 @@ export const apiMocks = [
     rest.get(`${URL}/load-strategy/:strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.strategy))
+    ),
+    rest.put(`${URL}/user/cbot-status`,
+        (req, res, context) =>
+            res(context.status(HttpStatus.ok))
+    ),
+    rest.get(`${URL}/user/cbot-status`,
+        (req, res, context) =>
+            res(context.status(HttpStatus.ok), context.json(mockStatus()))
     )
 ];

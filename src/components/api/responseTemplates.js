@@ -39,7 +39,7 @@ export const loadGroup = (group) =>{
 };
 
 //Any request that attempts an action that changes state.
-export const change = (action) => {
+export const changeState = (action) => {
     return {
         success: `${action} was successful.`,
         fail: `Error: ${action} could not be complete.`

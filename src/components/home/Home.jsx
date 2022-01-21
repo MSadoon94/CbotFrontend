@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
 import {apiConfig} from "../api/apiUtil";
-import {change} from "../api/responseTemplates";
+import {changeState} from "../api/responseTemplates";
 import {ApiResponse} from "../api/ApiResponse";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
@@ -10,6 +10,7 @@ import "./home.css"
 import {useHistory} from "react-router-dom";
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
 import {loadStrategiesModule} from "../strategy/strategyApiModule";
+import {StatusWidget} from "../widgets/StatusWidget";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -19,8 +20,8 @@ export const Home = () => {
     const hasCardUpdate = useRef(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
-    const [request, setRequest] = useState();
-    const [powerButton, setPowerButton] = useState({isActive: false})
+    const [logoutRequest, setLogoutRequest] = useState();
+    const activeStrategiesRef = useRef([]);
 
     const logoutConfig = apiConfig({url: "/api/log-out", method: "delete"}, null);
 
@@ -30,7 +31,9 @@ export const Home = () => {
         }, 30000)
         return () => {
             clearTimeout(staleTimer)
-            setStale(false);
+            if (isStale) {
+                setStale(false);
+            }
         }
     })
 
@@ -44,24 +47,21 @@ export const Home = () => {
                 }
             }
         };
-        setRequest({config: logoutConfig, templates: change("Logout"), actions});
+        setLogoutRequest({config: logoutConfig, templates: changeState("Logout"), actions});
     };
-
-    const togglePower = () => setPowerButton({...setPowerButton, isActive: !powerButton.isActive})
 
     return (
         <div className={"homePage"}>
             <h1 className={"title"}>User Home</h1>
 
             <div hidden={newCardForm.isHidden} className={"cardForm"}>
-                <CardSaver />
+                <CardSaver/>
                 <button type={"button"} id={"closeCardButton"} onClick={() =>
                     setNewCardForm({...newCardForm, isHidden: true})}>Close Card
                 </button>
             </div>
 
-            <ApiResponse cssId={"logout"} request={request}/>
-
+            <ApiResponse cssId={"logout"} request={logoutRequest}/>
 
             <StrategyModal isOpen={strategyModal.isOpen}
                            onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
@@ -78,27 +78,31 @@ export const Home = () => {
                     setStrategyModal({...strategyModal, isOpen: true})}>New Strategy
                 </button>
 
-
             </div>
 
-            <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
-                <summary>Strategies</summary>
-                <CheckboxWidget type={"strategies"}
-                                apiModule={loadStrategiesModule}
-                                isStale={() => isStale}
-                />
-            </details>
+            <div>
+                <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
+                    <summary>Strategies</summary>
+                    <CheckboxWidget type={"strategies"}
+                                    apiModule={loadStrategiesModule}
+                                    isStale={() => isStale}
+                                    onRequest={() => (
+                                        {
+                                            isReady: false,
+                                            getRequest: (checked) =>
+                                                activeStrategiesRef.current = checked
+                                        }
+                                    )}
+                    />
+                </details>
+            </div>
 
-                <button type={"button"}
-                        id={"cbotPowerButton"}
-                        className={powerButton.isActive ? "powerButtonOn" : "powerButtonOff"}
-                        onClick={togglePower}>{}</button>
+            <StatusWidget/>
 
-                <button
-                    type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
-                    Log Out
-                </button>
-
+            <button
+                type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
+                Log Out
+            </button>
 
         </div>
     )

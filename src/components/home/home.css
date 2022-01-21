@@ -46,12 +46,10 @@
     border-style: solid;
 }
 
-.powerButtonOn {
-    background: rgba(0, 255, 0, 0.5)
-}
-
-.powerButtonOff {
-    background: rgba(255, 0, 0, 0.5)
+.statusWidget {
+    grid-area: top-main;
+    justify-self: center;
+    align-self: start;
 }
 
 #strategyActDetails {
@@ -64,18 +62,7 @@
     align-self: start;
 }
 
-#cbotPowerButton {
-    grid-area: top-main;
-    justify-self: center;
-    align-self: start;
 
-    margin: 5px;
-
-    background-image: url("../../assets/power-button-symbol.png");
-    background-size: contain;
-    height: 50px;
-    width: 50px;
-}
 
 #logoutButton {
     grid-area: header-right2;

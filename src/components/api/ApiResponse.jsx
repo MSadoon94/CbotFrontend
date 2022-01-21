@@ -4,6 +4,27 @@ import {apiHandler} from "./apiUtil";
 import {HttpRange} from "../common/httpStatus";
 import _ from "lodash";
 
+export const ApiResponseWrapper = ({
+                                       apiModule: {
+                                           id, config, actions, templates,
+                                           apiControl= () => false,
+                                           isHidden = false,
+                                           outputPath = "message"
+                                       }
+                                   }) => {
+
+    const [request, setRequest] = useState(null);
+    useEffect(() => {
+        if(apiControl()){
+            setRequest({config, actions, templates});
+        } else {
+            setRequest(null);
+        }
+    }, [apiControl])
+
+    return <ApiResponse cssId={id} request={request} isHidden={isHidden} outputPath={outputPath}/>
+}
+
 export const ApiResponse = ({cssId, request, isHidden = false, outputPath = "message"}) => {
     const initialResponse = {status: "", message: "", body: ""};
     const {addRequest, addIdAction} = useContext(ApiContext);
