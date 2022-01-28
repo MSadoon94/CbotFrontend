@@ -1,14 +1,12 @@
 import React, {useState} from "react";
 import Modal from "react-modal";
 import {CryptoSelection} from "./CryptoSelection";
-import {load} from "../api/responseTemplates";
-import {apiConfig} from "../api/apiUtil";
-import {ApiResponse} from "../api/ApiResponse";
 import {DynamicSelect} from "../common/DynamicSelect";
 import {strategySelect} from "../common/selectSchemas";
-import {loadStrategiesModule, saveStrategyModule} from "./strategyApiModule";
+import {loadStrategiesModule, loadStrategyModule, saveStrategyModule, strategyIds} from "./strategyApiModule";
 import {RefineStrategy} from "./RefineStrategy";
 import "./modal.css"
+import {useApi} from "../api/useApi";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
     let refinements = {
@@ -24,19 +22,17 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         assets: {base: "", quote: ""},
         refinements
     });
-    const [saveRequest, setSaveRequest] = useState();
-    const [loadStrategyRequest, setLoadStrategyRequest] = useState();
+    const [sendStrategyRequest, , strategyResponse] = useApi()
+    const [sendSaveRequest, , saveResponse] = useApi();
 
     const handleSelectChange = (selection) => {
-        let config = apiConfig({url: `/api/load-strategy/${selection}`, method: "get"}, null);
-
         let actions = {
             onComplete: {
                 success: (response) => setModalChanges(response),
                 fail: () => null
             }
         }
-        setLoadStrategyRequest({config, templates: load("Strategy"), actions});
+        sendStrategyRequest(loadStrategyModule(selection, actions));
     }
 
     const setModalChanges = (response) => {
@@ -83,18 +79,24 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                     <label htmlFor={"strategyName"}>Strategy Name</label>
                     <input id={"strategyName"} value={strategyState.name}
                            onChange={e => setStrategyState({...strategyState, name: e.target.value})}/>
-                    <button type={"button"} id={"saveButton"}
-                            onClick={() => setSaveRequest(saveStrategyModule(strategyState))}>Save Strategy
+
+                    <button type={"button"} id={"saveStrategyButton"}
+                            onClick={() => sendSaveRequest(saveStrategyModule(strategyState))}
+                    >Save Strategy
                     </button>
-                    <ApiResponse cssId={"saveModal"} request={saveRequest}/>
+                    <output id={strategyIds.saveStrategy} data-testid={strategyIds.saveStrategy}
+                            data-issuccess={saveResponse.isSuccess}>{saveResponse.message}</output>
+
                     <DynamicSelect selectSchema={strategySelect(handleSelectChange)}
                                    apiModule={loadStrategiesModule}/>
-                    <ApiResponse cssId={"loadStrategyRequest"} request={loadStrategyRequest}/>
+
+                    <output id={strategyIds.loadStrategy} data-testid={strategyIds.loadStrategy}
+                            data-issuccess={strategyResponse.isSuccess}>{strategyResponse.message}</output>
                 </div>
 
                 <button type={"button"} id={"closeButton"} onClick={() => onRequestClose()}>X</button>
 
-                <RefineStrategy update={refineUpdate()} overwrite={strategyState.stopLoss}/>
+                <RefineStrategy update={refineUpdate()} overwrite={strategyState.refinements}/>
             </Modal>
         </div>
     )

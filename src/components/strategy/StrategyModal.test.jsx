@@ -5,6 +5,7 @@ import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
 import {ApiManager} from "../api/ApiManager";
 import {mockData, mockId} from "../../mocks/mockData";
+import {strategyIds} from "./strategyApiModule";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -31,7 +32,7 @@ describe("modal actions", () => {
     beforeEach(() => {
         closeButton = screen.getByRole("button", {name: "X"});
         saveButton = screen.getByRole("button", {name: "Save Strategy"});
-        response = screen.getByTestId("saveModal");
+        response = screen.getByTestId(strategyIds.saveStrategy);
     });
 
     test("should close modal when exit button is clicked", async () => {
@@ -65,6 +66,14 @@ describe("dynamic select related behavior", () => {
 
     let strategySelect;
     let mockStrategy = mockData.strategy;
+    const refinements = {
+        stopLoss: "Stop-Loss",
+        maxPosition: "Max Position",
+        targetProfit: "Target Profit",
+        movingStopLoss: "Moving Stop-Loss",
+        maxLoss: "Max Loss",
+        longEntry: "Long Entry"
+    }
 
     beforeEach(async () => {
         strategySelect = screen.getByRole("combobox");
@@ -73,7 +82,7 @@ describe("dynamic select related behavior", () => {
     });
 
     test("should display message on success of load strategy request", async () => {
-        await waitFor(() => expect(screen.getByTestId("loadStrategyRequest"))
+        await waitFor(() => expect(screen.getByTestId(strategyIds.loadStrategy))
             .toHaveTextContent("Strategy was loaded successfully."));
     })
 
@@ -87,5 +96,13 @@ describe("dynamic select related behavior", () => {
             .toHaveValue(mockStrategy.base));
         await waitFor(() => expect(screen.getByRole("textbox", {name: "Quote Symbol"}))
             .toHaveValue(mockStrategy.quote));
+    })
+    test("should load refinements when strategy selected for load", async () => {
+        await waitFor(() => {
+            for (let type in refinements) {
+                expect(screen.getByRole("spinbutton", {name: refinements[type]}))
+                    .toHaveValue(parseInt(mockStrategy[type]))
+            }
+        })
     })
 })

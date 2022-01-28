@@ -45,7 +45,7 @@ describe("single card loading", () => {
         await loadCard();
 
         await waitFor(() =>
-            expect(screen.getByRole("table")).toHaveTextContent(mockData.singleCard.cardName));
+            expect(screen.getByRole("table")).toHaveTextContent(mockData.card.cardName));
     });
 
     const loadCard = async () => {

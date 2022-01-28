@@ -10,7 +10,7 @@ export const CardSaver = () => {
     const [saveRequest, setSaveRequest] = useState({});
 
     const saveCard = () => {
-        let config = apiConfig({url: "api/save-card", method: "post"}, card.current);
+        let config = apiConfig({url: "api/user/card", method: "post"}, card.current);
 
         setSaveRequest({config, templates: save("Card")});
     };

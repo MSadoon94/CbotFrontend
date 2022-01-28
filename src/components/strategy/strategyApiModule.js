@@ -1,5 +1,11 @@
-import {apiConfig} from "../api/apiUtil";
-import {loadGroup, save} from "../api/responseTemplates";
+import {apiConfig, apiHandler} from "../api/apiUtil";
+import {load, loadGroup, save} from "../api/responseTemplates";
+
+export const strategyIds = {
+    saveStrategy: "saveStrategyResponse",
+    loadStrategies: "loadStrategiesResponse",
+    loadStrategy: "loadStrategyResponse"
+}
 
 export const loadStrategiesModule = {
     id: "loadStrategiesRequest",
@@ -7,11 +13,25 @@ export const loadStrategiesModule = {
     templates: loadGroup("Strategies"),
 }
 
-export const saveStrategyModule = (strategyState) => {
+export const loadStrategiesModule2 = (actions) => {
     return {
-        id: "saveModal",
-        config: apiConfig({url: "/api/save-strategy", method: "post"}, strategyState),
-        templates: save("Strategy")
+        config: apiConfig({url: "/api/load-strategies", method: "get"}, null),
+        handler: apiHandler(loadGroup("Strategies"), actions)
+    }
+}
+
+export const loadStrategyModule = (strategyName, actions) => {
+    return{
+        config: apiConfig({url: `/api/user/strategy/${strategyName}`, method: "get"}),
+        handler: apiHandler(load("Strategy"), actions)
+    }
+}
+
+export const saveStrategyModule = (strategy, actions) => {
+    return {
+        config: apiConfig({url: "/api/user/strategy", method: "post"}, strategy),
+        handler: apiHandler(save("Strategy"), actions),
+        actions
     }
 }
 

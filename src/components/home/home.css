@@ -41,7 +41,7 @@
     width: border-box;
     grid-area: bottom-main;
     justify-self: center;
-    align-self: center;
+    align-self: start;
     padding-bottom: 5px;
     border-style: solid;
 }
@@ -61,8 +61,6 @@
     justify-self: center;
     align-self: start;
 }
-
-
 
 #logoutButton {
     grid-area: header-right2;

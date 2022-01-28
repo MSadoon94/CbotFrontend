@@ -19,7 +19,7 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
-    rest.post(`${URL}/save-card`,
+    rest.post(`${URL}/user/card`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
@@ -35,7 +35,7 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json({result: "asset pair information"}))
     ),
-    rest.post(`${URL}/save-strategy`,
+    rest.post(`${URL}/user/strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
@@ -47,15 +47,15 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.ok))
     ),
-    rest.get(`${URL}/load-a-card/:cardName`,
+    rest.get(`${URL}/user/card/:cardName`,
         (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json(mockData.singleCard))
+            res(context.status(HttpStatus.ok), context.json(mockData.card))
     ),
     rest.get(`${URL}/load-strategies`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.strategies))
         ),
-    rest.get(`${URL}/load-strategy/:strategy`,
+    rest.get(`${URL}/user/strategy/:strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.strategy))
     ),

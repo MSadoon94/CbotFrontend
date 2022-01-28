@@ -41,27 +41,27 @@ export const ApiManager = ({children, userId}) => {
             let [request, ...rest] = requests;
             doRequest(request, rest);
         }
-    },[doRequest, requests]);
+    }, [doRequest, requests]);
 
-  useEffect(() => {
+    useEffect(() => {
         handlePageReload();
-    },[]);
+    }, []);
 
-  const handlePageReload = () => {
-      let onResponse = {
-          success: () => {
-              history.push("/home")
-              localStorage.setItem("isLoggedIn", true)
-          },
-          fail: () => {
-              history.push("/start")
-              localStorage.setItem("isLoggedIn", false);
-          }
-      }
-      if (!(localStorage.getItem("isLoggedIn")) || (localStorage.getItem("isLoggedIn") === "false")) {
-          refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
-      }
-  }
+    const handlePageReload = () => {
+        let onResponse = {
+            success: () => {
+                history.push("/home")
+                localStorage.setItem("isLoggedIn", true)
+            },
+            fail: () => {
+                history.push("/start")
+                localStorage.setItem("isLoggedIn", false);
+            }
+        }
+        if (!(localStorage.getItem("isLoggedIn")) || (localStorage.getItem("isLoggedIn") === "false")) {
+            refresh(id, (refreshed) => setId({type: refreshed, payload: refreshed}), onResponse);
+        }
+    }
 
     const prepRequest = ({config, handler}) => {
         config = {...config, id};
@@ -73,9 +73,9 @@ export const ApiManager = ({children, userId}) => {
             fail: (refreshed) => {
                 setId({type: refreshed, payload: refreshed});
                 localStorage.setItem("isLoggedIn", false);
-                if(history.location.pathname === "/home"){
+                if (history.location.pathname === "/home") {
                     alert("Session expired, logging out.");
-                    history.push( "/start");
+                    history.push("/start");
                 }
             }
         }
@@ -88,8 +88,10 @@ export const ApiManager = ({children, userId}) => {
     };
 
     const addIdAction = (idAction) => {
-        setId(idAction);
-        idAction.execute(idAction.payload);
+        if (idAction) {
+            setId(idAction);
+            idAction.execute(idAction.payload);
+        }
     };
 
     return (
