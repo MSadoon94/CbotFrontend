@@ -1,29 +1,32 @@
-import React, {useState} from "react";
-import {ApiResponse} from "../api/ApiResponse";
+import React, {useRef} from "react";
+import {useApi} from "../api/useApi";
+import {apiHandler} from "../api/apiUtil";
+import {loadGroup} from "../api/responseTemplates";
 
-export const DynamicSelect = ({selectSchema, apiModule, onOptionsSet = () => null}) => {
+export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
     const defaultOption = `-- Load ${selectSchema.type} --`;
-    const [options, setOptions] = useState([{name: defaultOption}]);
-    const [loadOptionsRequest, setLoadOptionsRequest] = useState();
+    const options = useRef([{name: defaultOption}]);
+    const [sendRequest,response, ] = useApi({isActive: false});
 
     const handleClick = () => {
         let actions = {
             onComplete: {
                 success: (res) => {
-                    setOptions(mapResponse(res));
+                    options.current = mapResponse(res);
                     onOptionsSet(res.body);
                 },
                 fail: () => null
             }
         };
-        setLoadOptionsRequest({config: apiModule.config, templates: apiModule.templates, actions});
+        sendRequest({config: selectSchema.config, handler: apiHandler(loadGroup(selectSchema.type), actions)});
     }
 
-    const mapResponse = (response) => {
-        return Object.keys(response.body)
+    const mapResponse = (res) => {
+        console.log(res);
+        return Object.keys(res.body)
             .map((key) => ({"name": key}))
-            .filter(key => !options.some(option => option.name === key.name))
-            .concat(options)
+            .filter(key => !options.current.some(option => option.name === key.name))
+            .concat(options.current)
     }
 
     const handleChange = (selection) => {
@@ -36,10 +39,9 @@ export const DynamicSelect = ({selectSchema, apiModule, onOptionsSet = () => nul
 
     return (
         <>
-            <ApiResponse cssId={apiModule.id} isHidden={true} request={loadOptionsRequest}/>
-            <select id={selectSchema.id} onClick={() => handleClick()}
+            <select id={selectSchema.id} onClick={handleClick}
                     onChange={e => handleChange(e)}>
-                {options.map((option) =>
+                {mapResponse(response).map((option) =>
                     <option key={option.name} value={option.name}>{option.name}</option>
                 )}
             </select>

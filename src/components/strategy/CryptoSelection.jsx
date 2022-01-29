@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {DynamicTextBox} from "../common/DynamicTextBox";
-import {validation} from "../api/responseTemplates";
-import {apiConfig} from "../api/apiUtil";
-import {ApiResponse} from "../api/ApiResponse";
+import {getAssetPair, strategyIds} from "./strategyApiModule";
+import {useApi} from "../api/useApi";
 
 export const CryptoSelection = ({updateAssets, loadedAssets}) => {
     const [base, setBase] = useState({isTyping: false, entry: ""});
     const [quote, setQuote] = useState({isTyping: false, entry: ""});
-    const [request, setRequest] = useState();
+    const [sendAssetPairRequest, response,] = useApi();
 
     useEffect(() => {
         if ((base.entry && quote.entry) !== "") {
@@ -18,10 +17,8 @@ export const CryptoSelection = ({updateAssets, loadedAssets}) => {
 
     let assetPair = () => base.entry + quote.entry;
 
-    let config = apiConfig({url: `/api/asset-pair/${assetPair()}/kraken`, method: "get"}, null);
-
     const validateAssetPair = () => {
-        setRequest({config, templates: validation(assetPair())});
+        sendAssetPairRequest(getAssetPair(assetPair()));
     };
 
     return (
@@ -43,7 +40,8 @@ export const CryptoSelection = ({updateAssets, loadedAssets}) => {
                                     setQuote(update);
                                 }} overwrite={loadedAssets.quote}/>
             </div>
-            <ApiResponse cssId={"selectCrypto"} request={request}/>
+            <output id={strategyIds.getAssetPairData} data-testid={strategyIds.getAssetPairData}
+                    data-isSuccess={strategyIds.getAssetPairData}>{response.message}</output>
         </div>
     )
 

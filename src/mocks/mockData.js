@@ -1,3 +1,5 @@
+import {apiConfig} from "../components/api/apiUtil";
+
 export const mockData = {
     assetPair: {base: "BTC", quote: "USD"},
     saveStrategy: {strategy: {}},
@@ -36,6 +38,7 @@ export const mockSelectCardsSchema = (onChange) => {
     return {
         type: "Card",
         id: "loadCardsSelect",
+        config: apiConfig({url: "/api/load-cards", method: "get"}, null),
         defaultAction: () => onChange({type: "selectedOption", action: {hidePasswordBox: true}}),
         doAction: (selection) =>
             onChange({

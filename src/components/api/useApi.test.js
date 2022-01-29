@@ -14,9 +14,9 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
-const render = (onComplete, timeToClearMs = 5000) => {
+const render = () => {
     const wrapper = ({children}) => <ApiManager userId={initialId}>{children}</ApiManager>
-    return renderHook(() => useApi(timeToClearMs), {wrapper})
+    return renderHook(() => useApi(), {wrapper})
 }
 
 const initialResponse = {status: "", message: "", body: "", isSuccess: false};
@@ -28,8 +28,8 @@ let onComplete = {
 }
 
 const getCurrent = (result) => {
-    let [sendRequest, clearResponse, response] = result.current;
-    return {sendRequest, clearResponse, response}
+    let [sendRequest, response, clearResponse] = result.current;
+    return {sendRequest, response, clearResponse}
 }
 
 test("should return status in response", async () => {
@@ -45,7 +45,7 @@ test("should return message on success response", async () => {
     const {result} = render();
 
     await waitFor(() => {
-       getCurrent(result).sendRequest(loadCard(mockData.card.account, onComplete, null));
+        getCurrent(result).sendRequest(loadCard(mockData.card.account, onComplete, null));
         expect(getCurrent(result).response.message).toBe(load("Card").success)
     })
 })
@@ -97,7 +97,7 @@ test("should clear response after 1 second", async () => {
     const {result, waitFor} = render(onComplete, 1000);
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCard(mockData.card.account, onComplete, null));
+            getCurrent(result).sendRequest(loadCard(mockData.card.account, onComplete, null));
             expect(getCurrent(result).response).not.toStrictEqual(initialResponse);
         }, {timeout: 2000}
     );

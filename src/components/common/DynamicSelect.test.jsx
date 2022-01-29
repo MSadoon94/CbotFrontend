@@ -3,7 +3,6 @@ import {ApiManager} from "../api/ApiManager";
 import {mockData, mockId, mockSelectCardsSchema} from "../../mocks/mockData";
 import React from "react";
 import {DynamicSelect} from "./DynamicSelect";
-import {mockCardsApiModule} from "../../mocks/mockApiModules";
 import userEvent from "@testing-library/user-event";
 
 let select, optionName, outcome, schema, allOptions;
@@ -17,7 +16,7 @@ beforeEach(async () => {
 
     render(
         <ApiManager userId={mockId}>
-            <DynamicSelect selectSchema={schema} apiModule={mockCardsApiModule}
+            <DynamicSelect selectSchema={schema}
                            onOptionsSet={(options) => allOptions = options}/>
         </ApiManager>
     );

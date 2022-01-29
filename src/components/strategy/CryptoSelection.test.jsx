@@ -7,6 +7,7 @@ import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {mockId} from "../../mocks/mockData";
 import {ApiManager} from "../api/ApiManager";
+import {strategyIds} from "./strategyApiModule";
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
     testServer.use(restMethod(`http://localhost/api/${endpoint}`,
@@ -26,13 +27,13 @@ describe("api interactions", () => {
     beforeEach(() => {
         render(
             <ApiManager userId={mockId}>
-            <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
+                <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
             </ApiManager>
-                );
+        );
 
         baseInput = screen.getByRole("textbox", {name: "Base Symbol"});
         quoteInput = screen.getByRole("textbox", {name: "Quote Symbol"});
-        assetsResponse = screen.getByTestId("selectCrypto");
+        assetsResponse = screen.getByTestId(strategyIds.getAssetPairData);
     });
     test("should display checkmark for valid asset pairs", async () => {
         userEvent.type(baseInput, "BTC");
@@ -47,5 +48,4 @@ describe("api interactions", () => {
 
         await waitFor(() => expect(assetsResponse).toHaveTextContent("BTCUD is invalid."));
     });
-
 });

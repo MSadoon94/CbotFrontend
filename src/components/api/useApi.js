@@ -2,17 +2,17 @@ import {useContext, useState} from "react";
 import {ApiContext} from "./ApiManager";
 import {HttpRange} from "../common/httpStatus";
 
-export const useApi = (timeToClearMs = 5000) => {
+export const useApi = (clearOptions = {isActive: true, timeToClearMs: 10000}) => {
     const initialResponse = {status: "", message: "", body: "", isSuccess: false};
     const {addRequest, addIdAction} = useContext(ApiContext);
     const [response, setResponse] = useState(initialResponse);
 
-    const clearResponseTimeout = setTimeout(() => {
-        clearResponse();
-    }, timeToClearMs)
-
+    let clearResponseTimeout;
 
     const sendRequest = async ({config, handler}) => {
+        if ((clearOptions.isActive) && (clearResponseTimeout)) {
+            clearTimeout(clearResponseTimeout);
+        }
         let request = {config, handler};
         addRequest(request);
         await request.handler.checkProgress()
@@ -20,16 +20,20 @@ export const useApi = (timeToClearMs = 5000) => {
                 (res) => finishRequest(request, {...res, isFulfilled: true}),
                 (err) => finishRequest(request, {...err, isFulfilled: false})
             )
-    }
 
+    }
     const finishRequest = async (request, apiResponse) => {
         apiResponse.isSuccess = HttpRange.success.test(apiResponse.status);
         setResponse(apiResponse);
-        if(request.handler.actions){
+        if (request.handler.actions) {
             addIdAction(request.handler.actions.idAction)
             doComplete(request.handler, apiResponse)
         }
-        clearTimeout(clearResponseTimeout);
+        if (clearOptions.isActive) {
+            clearResponseTimeout = setTimeout(() => {
+                clearResponse();
+            }, clearOptions.timeToClearMs)
+        }
     }
 
     const doComplete = ({actions}, apiResponse) => {
@@ -43,5 +47,5 @@ export const useApi = (timeToClearMs = 5000) => {
         setResponse(initialResponse);
     }
 
-    return [sendRequest, clearResponse, response]
+    return [sendRequest, response, clearResponse]
 }
