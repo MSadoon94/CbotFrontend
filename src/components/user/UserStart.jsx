@@ -2,16 +2,16 @@ import {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {validatePassword, validateUsername} from "../common/validator";
 import "./start.css"
-import {publicConfig} from "../api/apiUtil";
-import {create, load} from "../api/responseTemplates";
 import {HttpRange} from "../common/httpStatus";
-import {ApiResponse} from "../api/ApiResponse";
+import {loginApiModule, signupApiModule, userStartIds} from "./userStartApiModule";
+import {useApi} from "../api/useApi";
 
 export const UserStart = () => {
 
     const history = useHistory();
     const [valid, setValid] = useState({username: null, password: null});
-    const [request, setRequest] = useState();
+    const [sendLoginRequest, loginResponse,] = useApi();
+    const [sendSignupRequest, signupResponse,] = useApi();
 
     const [user, setUser] = useState(
         {
@@ -25,7 +25,7 @@ export const UserStart = () => {
     const [textBox, setTextBox] = useState({usernameBox: null, passwordBox: null, confirmPasswordBox: null});
 
     useEffect(() => {
-        if (localStorage.getItem("isLoggedIn") === "true"){
+        if (localStorage.getItem("isLoggedIn") === "true") {
             history.push("/home")
         }
     }, [])
@@ -47,11 +47,6 @@ export const UserStart = () => {
         checkTextBoxes();
     }, [textBox]);
 
-    let signupConfig = publicConfig({url: "/api/sign-up", method: "post"}, user);
-
-    let loginConfig = publicConfig({url: "/api/login", method: "post"}, user);
-
-
     const checkTextBoxes = () => {
         setValid({
             ...valid,
@@ -60,12 +55,12 @@ export const UserStart = () => {
         });
     };
 
-    const handleSignup = async () => {
-        setRequest({config: signupConfig, templates: create("User")});
+    const handleSignup = () => {
+        sendSignupRequest(signupApiModule(user));
     };
 
     const handleLogin = () => {
-        let actions = {
+        sendLoginRequest(loginApiModule(user, {
             idAction: {
                 type: "login",
                 execute: (response) => {
@@ -74,8 +69,7 @@ export const UserStart = () => {
                     }
                 }
             }
-        };
-        setRequest({config: loginConfig, templates: load("User"), actions});
+        }))
     };
 
     const isNotValidUsername = () => {
@@ -125,8 +119,13 @@ export const UserStart = () => {
                         </button>
                     </div>
 
-                    <div className={"apiResponse"}>
-                        <ApiResponse cssId={"startResponse"} request={request}/>
+                    <div className={"startOutputs"}>
+
+                        <output id={userStartIds.loginResponse} data-testid={userStartIds.loginResponse}
+                                data-issuccess={loginResponse.isSuccess}>{loginResponse.message}</output>
+
+                        <output id={userStartIds.signupResponse} data-testid={userStartIds.signupResponse}
+                                data-issuccess={loginResponse.isSuccess}>{signupResponse.message}</output>
                     </div>
                 </div>
             </form>

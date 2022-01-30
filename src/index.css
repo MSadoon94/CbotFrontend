@@ -14,10 +14,10 @@ code {
     monospace;
 }
 
-.valid {
+output[data-issuccess="true"] {
   color: lightgreen;
 }
 
-.invalid{
+output[data-issuccess="false"]{
   color: red;
 }

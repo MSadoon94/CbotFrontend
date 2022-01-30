@@ -12,10 +12,11 @@ button {
 }
 
 .inputBlock {
+    text-align: center;
     width: 55%;
     margin: auto;
 }
 
-.apiResponse {
+.startOutputs {
     text-align: center;
 }
