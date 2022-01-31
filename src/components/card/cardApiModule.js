@@ -1,10 +1,18 @@
 import {apiConfig, apiHandler} from "../api/apiUtil";
-import {load, validation} from "../api/responseTemplates";
+import {load, save, validation} from "../api/responseTemplates";
 
 export const cardIds = {
     passwordResponse: "passwordResponse",
     cardResponse: "cardResponse",
-    allCardsResponse: "allCardsResponse"
+    allCardsResponse: "allCardsResponse",
+    saveCardResponse: "saveCardResponse"
+}
+
+export const saveCardApiModule = (card) => {
+    return {
+        config: apiConfig({url: "api/user/card", method: "post"}, card),
+        handler: apiHandler(save("Card"))
+    }
 }
 
 export const loadCardApiModule = (cardName, actions) => {

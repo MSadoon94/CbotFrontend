@@ -3,17 +3,13 @@ import {ApiResponse} from "../api/ApiResponse";
 import {apiConfig} from "../api/apiUtil";
 import {save} from "../api/responseTemplates";
 import "./card.css";
+import {useApi} from "../api/useApi";
+import {cardIds, saveCardApiModule} from "./cardApiModule";
 
 
 export const CardSaver = () => {
     const card = useRef({cardName: "", account: "", password: "", brokerage: ""});
-    const [saveRequest, setSaveRequest] = useState({});
-
-    const saveCard = () => {
-        let config = apiConfig({url: "api/user/card", method: "post"}, card.current);
-
-        setSaveRequest({config, templates: save("Card")});
-    };
+    const [sendSaveRequest, saveResponse, ] = useApi();
 
     return (
         <div className={"cardSaver"}>
@@ -33,8 +29,10 @@ export const CardSaver = () => {
             <input type={"text"} id={"cardBrokerageInput"}
                    onChange={e => card.current = {...card.current, brokerage: e.target.value.toLowerCase()}}/>
 
-            <button type={"button"} id={"saveCardButton"} onClick={() => saveCard()}>Save Card</button>
-            <ApiResponse cssId={"saveCardResponse"} request={saveRequest}/>
+            <button type={"button"} id={"saveCardButton"}
+                    onClick={() => sendSaveRequest(saveCardApiModule(card.current))}>Save Card</button>
+            <output id={cardIds.saveCardResponse} data-testid={cardIds.saveCardResponse}
+                    data-issuccess={saveResponse.isSuccess}>{saveResponse.message}</output>
 
         </div>
     )
