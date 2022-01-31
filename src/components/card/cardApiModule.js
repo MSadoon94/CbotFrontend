@@ -1,29 +1,22 @@
 import {apiConfig, apiHandler} from "../api/apiUtil";
-import {load, save} from "../api/responseTemplates";
+import {load, validation} from "../api/responseTemplates";
 
-export const saveCard = (card, apiControl) => {
+export const cardIds = {
+    passwordResponse: "passwordResponse",
+    cardResponse: "cardResponse",
+    allCardsResponse: "allCardsResponse"
+}
+
+export const loadCardApiModule = (cardName, actions) => {
     return {
-        id: "saveCardResponse",
-        config: apiConfig({url: "api/user/card", method: "post"}, card),
-        templates: save("Card"),
-        isHidden: false,
-        apiControl
+        config: apiConfig({url: `/api/user/card/${cardName}`, method: "get"}),
+        handler: apiHandler(load("Card"), actions),
     }
 }
 
-export const loadCard = (cardName, onComplete, apiControl) => {
-    let actions = {
-        onComplete
-    }
-
+export const cardPasswordApiModule = (cardData, actions) => {
     return {
-        id: "loadCardResponse",
-        config: apiConfig({url: `/api/user/card/${cardName}`, method: "get"}),
-        handler: apiHandler(load("Card"), actions),
-        templates: load("Card"),
-        isHidden: false,
-        actions,
-        apiControl
-
+        config: apiConfig({url: "/api/user/card-password", method: "post"}, cardData),
+        handler: apiHandler(validation("Card Password"), actions)
     }
 }

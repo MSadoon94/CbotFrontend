@@ -2,7 +2,7 @@ import React, {useRef} from "react";
 import Modal from "react-modal";
 import {CryptoSelection} from "./CryptoSelection";
 import {DynamicSelect} from "../common/DynamicSelect";
-import {strategySelect} from "../common/selectSchemas";
+import {strategySelectSchema} from "../common/selectSchemas";
 import {loadStrategyModule, saveStrategyModule, strategyIds} from "./strategyApiModule";
 import {RefineStrategy} from "./RefineStrategy";
 import "./modal.css"
@@ -87,7 +87,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                     <output id={strategyIds.saveStrategy} data-testid={strategyIds.saveStrategy}
                             data-issuccess={saveResponse.isSuccess}>{saveResponse.message}</output>
 
-                    <DynamicSelect selectSchema={strategySelect(handleSelectChange)}/>
+                    <DynamicSelect selectSchema={strategySelectSchema(handleSelectChange)}/>
 
                     <output id={strategyIds.loadStrategy} data-testid={strategyIds.loadStrategy}
                             data-issuccess={strategyResponse.isSuccess}>{strategyResponse.message}</output>

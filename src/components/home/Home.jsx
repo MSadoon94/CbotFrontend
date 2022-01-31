@@ -17,7 +17,6 @@ ReactModal.setAppElement(document.createElement('div'));
 export const Home = () => {
     const history = useHistory();
     const [isStale, setStale] = useState(false);
-    const hasCardUpdate = useRef(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
     const [logoutRequest, setLogoutRequest] = useState();
@@ -66,7 +65,7 @@ export const Home = () => {
             <StrategyModal isOpen={strategyModal.isOpen}
                            onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
             />
-            <CardLoader hasUpdate={hasCardUpdate.current}/>
+            <CardLoader/>
 
             <div className={"newItemButtons"}>
 

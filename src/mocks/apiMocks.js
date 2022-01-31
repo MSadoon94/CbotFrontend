@@ -39,11 +39,11 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
-    rest.get(`${URL}/load-cards`,
+    rest.get(`${URL}/user/cards`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.cards))
     ),
-    rest.post(`${URL}/card-password`,
+    rest.post(`${URL}/user/card-password`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok))
     ),
@@ -54,7 +54,7 @@ export const apiMocks = [
     rest.get(`${URL}/user/strategies    `,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.strategies))
-        ),
+    ),
     rest.get(`${URL}/user/strategy/:strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json(mockData.strategy))

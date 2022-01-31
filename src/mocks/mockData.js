@@ -3,7 +3,7 @@ import {apiConfig} from "../components/api/apiUtil";
 export const mockData = {
     assetPair: {base: "BTC", quote: "USD"},
     saveStrategy: {strategy: {}},
-    card: {account: "account", password: "password", balance: ""},
+    card: {cardName: "mockCard1", balances: {currency: "ZUSD", amount: 100}},
     user: {username: "user", password: "pass", authority: "USER"},
     formattedCard: {cardName: "mockCard1", balances: [[{currency: "ZUSD", amount: 100}]], isHidden: false},
     cards: {
@@ -39,7 +39,7 @@ export const mockSelectCardsSchema = (onChange) => {
         type: "Card",
         id: "loadCardsSelect",
         config: apiConfig({url: "/api/load-cards", method: "get"}, null),
-        defaultAction: () => onChange({type: "selectedOption", action: {hidePasswordBox: true}}),
+        doDefault: () => onChange({type: "selectedOption", action: {hidePasswordBox: true}}),
         doAction: (selection) =>
             onChange({
                     type: "selectedOption",

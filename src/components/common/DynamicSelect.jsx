@@ -22,7 +22,6 @@ export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
     }
 
     const mapResponse = (res) => {
-        console.log(res);
         return Object.keys(res.body)
             .map((key) => ({"name": key}))
             .filter(key => !options.current.some(option => option.name === key.name))
@@ -31,7 +30,7 @@ export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
 
     const handleChange = (selection) => {
         if(selection.target.value === defaultOption){
-            selectSchema.defaultAction();
+            selectSchema.doDefault();
         } else {
             selectSchema.doAction(selection.target.value);
         }

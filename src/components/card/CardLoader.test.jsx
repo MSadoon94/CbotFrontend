@@ -16,9 +16,9 @@ beforeEach(async () => {
 
     cardSelect = screen.getByRole("combobox");
     optionName = () => cardSelect.children.item(0).getAttribute("value");
+    userEvent.click(cardSelect);
     await waitFor(() => userEvent.selectOptions(cardSelect, "mockCard1"));
     loadSingleCardButton = screen.getByRole("button", {name: "Load Card"});
-
 });
 
 jest.mock('react-router-dom', () => ({
@@ -28,7 +28,10 @@ jest.mock('react-router-dom', () => ({
 describe("multiple card loading", () => {
 
     test("should populate cards with cards connected to user account", async () => {
-        await waitFor(() => expect(optionName()).toBe("mockCard1"));
+
+        await waitFor(() => {
+            expect(optionName()).toBe("mockCard1")
+        });
     });
 
 });
