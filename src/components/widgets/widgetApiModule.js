@@ -1,36 +1,21 @@
-import {apiConfig} from "../api/apiUtil";
+import {apiConfig, apiHandler} from "../api/apiUtil";
 import {changeState, load} from "../api/responseTemplates";
 
-export const changeCbotStatus = (setCbotStatus, cbotStatus, apiControl) => {
-    let actions = {
-        onComplete: {
-            success: setCbotStatus,
-            fail: () => null
-        }
-    }
+export const widgetIds = {
+    getCbotStatusRequest: "getCbotStatusRequest",
+    saveCbotStatusRequest: "saveCbotStatusRequest"
+}
 
+export const changeCbotStatus = (actions, cbotStatus) => {
     return {
-        id: "changeCbotStatusRequest",
         config: apiConfig({url: "/api/user/cbot-status", method: "put"}, cbotStatus),
-        actions,
-        templates: changeState("Activation"),
-        isHidden: true,
-        apiControl
+        handler: apiHandler(changeState("CbotStatus"), actions),
     }
 }
 
-export const getCbotStatus = (setCbotStatus, apiControl) => {
-    let actions = {
-        onComplete: {
-            success: setCbotStatus,
-            fail: () => null
-        }
-    }
+export const getCbotStatus = (actions) => {
     return {
-        id: "getCbotStatusRequest",
         config: apiConfig({url: "/api/user/cbot-status", method: "get"}),
-        actions,
-        templates: () => ({...load("CbotStatus"), success: null}),
-        apiControl
+        handler: apiHandler({...load("CbotStatus"), success: null}, actions)
     }
 }

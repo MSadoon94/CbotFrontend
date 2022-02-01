@@ -9,7 +9,7 @@ import {mockId} from "../../mocks/mockData";
 
 
 let refreshed, commonHandler;
-let commonConfig = {...apiConfig({url: "api/save-card", method: "post"}, mockData.card), id: mockId};
+let commonConfig = {...apiConfig({url: "api/user/card", method: "post"}, mockData.card), id: mockId};
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest, message) => {
     testServer.use(restMethod(`http://localhost/${endpoint}`,
@@ -37,7 +37,7 @@ afterEach(() => {
 describe("common error behavior", () => {
 
     test("should return error message when internal server error is received", async () => {
-        failedRequest(rest.post, "api/save-card", HttpStatus.internalServerError);
+        failedRequest(rest.post, "api/user/card", HttpStatus.internalServerError);
 
         await apiRequest(commonConfig, commonHandler);
 
@@ -137,7 +137,7 @@ describe("specific api actions", () => {
     test.concurrent.each`
     api                              |method     |data                       |templates         
     ${"api/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
-    ${"api/save-strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
+    ${"api/user/strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
     ${"api/log-out"}                  |${"delete"}|${null}                    |${changeState("Logout")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
@@ -159,7 +159,7 @@ describe("specific api actions", () => {
     test.concurrent.each`
     api                                 |method     |data                       |templates                     |failMethod
     ${"api/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
-    ${"api/save-strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
+    ${"api/user/strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
     ${"api/login"}                      |${"post"}  |${mockData.user}           |${load("User")}         |${rest.post}
     ${"api/log-out"}                     |${"delete"}|${null}                    |${changeState("Logout")}     |${rest.delete}
     `("should send invalid $api request and receive rejected response",

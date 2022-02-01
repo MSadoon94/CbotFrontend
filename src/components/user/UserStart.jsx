@@ -94,7 +94,8 @@ export const UserStart = () => {
                         <input type="text" id={"name"} value={user.username}
                                onChange={e => setUser({...user, username: e.target.value})}/>
                         <output data-testid={"usernameValidity"}
-                                className={(valid.username === "✔" ? "valid" : "invalid")}>{valid.username}</output>
+                                data-issuccess={(valid.username === "✔")}>
+                            {valid.username}</output>
                     </div>
 
                     <div className={"inputBlock"}>
@@ -102,7 +103,7 @@ export const UserStart = () => {
                         <input type={"text"} id={"pass"} value={user.password}
                                onChange={e => setUser({...user, password: e.target.value})}/>
                         <output data-testid={"passwordValidity"}
-                                className={(valid.password === "✔" ? "valid" : "invalid")}>{valid.password}</output>
+                                data-issuccess={(valid.password === "✔")}>{valid.password}</output>
                     </div>
 
                     <div className={"inputBlock"}>
@@ -125,7 +126,7 @@ export const UserStart = () => {
                                 data-issuccess={loginResponse.isSuccess}>{loginResponse.message}</output>
 
                         <output id={userStartIds.signupResponse} data-testid={userStartIds.signupResponse}
-                                data-issuccess={loginResponse.isSuccess}>{signupResponse.message}</output>
+                                data-issuccess={signupResponse.isSuccess}>{signupResponse.message}</output>
                     </div>
                 </div>
             </form>

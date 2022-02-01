@@ -1,25 +1,13 @@
 import {Fragment, useEffect, useRef, useState} from "react";
-import {ApiResponse} from "../api/ApiResponse";
+import {useApi} from "../api/useApi";
 
 export const CheckboxWidget = ({
                                    type, apiModule, isStale = () => false,
                                    onRequest = () => ({isReady: false, getRequest: () => null})
                                }) => {
-    const [options, setOptions] = useState({});
     const [checked, setChecked] = useState({});
+    const [sendOptionsRequest, optionsResponse, ] = useApi();
     const isStaleRef = useRef(isStale)
-    const apiRequest = () => {
-        let {config, templates} = apiModule;
-
-        let actions = {
-            onComplete: {
-                success: (res) => setOptions(res.body),
-                fail: () => null
-            }
-        }
-        return {config, templates, actions}
-    }
-    const [optionsRequest, setOptionsRequest] = useState();
 
     useEffect(() => {
         if (onRequest().isReady) {
@@ -30,21 +18,22 @@ export const CheckboxWidget = ({
     }, [onRequest().isReady])
 
     useEffect(() => {
-        setOptionsRequest(apiRequest());
+        sendOptionsRequest(apiModule);
     }, [])
 
     useEffect(() => {
         isStaleRef.current = isStale;
         if (isStaleRef.current()) {
-            setOptionsRequest(apiRequest());
+            sendOptionsRequest(apiModule);
             isStaleRef.current = () => false;
         }
     }, [isStale()])
 
     return (
         <div id={`${type}checkboxWidget`}>
-            <ApiResponse cssId={apiModule.id} isHidden={true} request={optionsRequest}/>
-            {Object.keys(options).map((option) => {
+            <output id={`get${type}Options`} data-testid={`get${type}Options`}
+                    data-issuccess={optionsResponse.isSuccess}/>
+            {Object.keys(optionsResponse.body).map((option) => {
                 let optionTag = `${option}Checkbox`;
                 return (
                     <Fragment key={optionTag}>

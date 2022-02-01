@@ -1,7 +1,7 @@
-import {ApiResponseWrapper} from "../api/ApiResponse";
-import React, {useReducer} from "react";
+import React, {useEffect, useReducer} from "react";
 import "./widgets.css";
-import {changeCbotStatus, getCbotStatus} from "./widgetApiModule";
+import {changeCbotStatus, getCbotStatus, widgetIds} from "./widgetApiModule";
+import {useApi} from "../api/useApi";
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -38,26 +38,47 @@ export const StatusWidget = () => {
     const powerButtonStates = {true: "active", false: "inactive"}
     const apiStates = {put: "changeStatus", get: "getStatus"}
     const [state, dispatch] = useReducer(reducer, {type: apiStates.get, isTransition: true});
+    const [sendGetStatusRequest, getStatusResponse, ] = useApi();
+    const [sendSaveStatusRequest,, ] = useApi();
+
+    useEffect(() => {
+        if(state.type === apiStates.get){
+            getStatus();
+        } else if(state.type === apiStates.put){
+            changeStatus();
+        }
+    }, [state.type])
 
     const togglePower = () => {
         dispatch({type: apiStates.put});
     }
 
-    const getStatus = ({body}) =>
-        dispatch({type: powerButtonStates[body.isActive], strategies: body.activeStrategies})
-
+    const getStatus = () => {
+        sendGetStatusRequest(getCbotStatus({
+            onComplete: {
+                success: ({body}) =>
+                    dispatch({type: powerButtonStates[body.isActive], strategies: body.activeStrategies}),
+                fail: () => null
+            }
+        }));
+    }
     const changeStatus = () => {
-        dispatch({type: powerButtonStates[state.isActive], strategies: state.strategies})
+        let actions = {
+            onComplete: {
+                success: () => dispatch({type: powerButtonStates[state.isActive], strategies: state.strategies}),
+                fail: () => null
+            }}
+        sendSaveStatusRequest(changeCbotStatus(actions, {
+            isActive: state.isActive,
+            activeStrategies: state.strategies
+        }))
+
     }
 
     return (
         <div className={"statusWidget"}>
-            <ApiResponseWrapper apiModule={getCbotStatus(getStatus, () => state.type === apiStates.get)}/>
-
-            <ApiResponseWrapper apiModule={changeCbotStatus(changeStatus, {
-                isActive: state.isActive,
-                activeStrategies: state.strategies
-            }, () => state.type === apiStates.put)}/>
+            <output id={widgetIds.getCbotStatusRequest} data-testid={widgetIds.getCbotStatusRequest}
+                    data-issuccess={getStatusResponse.isSuccess}>{getStatusResponse.message}</output>
 
             <button type={"button"}
                     id={"cbotPowerButton"}

@@ -14,9 +14,9 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
-const render = () => {
+const render = (timeToClearMs = 5000) => {
     const wrapper = ({children}) => <ApiManager userId={initialId}>{children}</ApiManager>
-    return renderHook(() => useApi(), {wrapper})
+    return renderHook(() => useApi({isActive: true, timeToClearMs: timeToClearMs}), {wrapper})
 }
 
 const initialResponse = {status: "", message: "", body: "", isSuccess: false};
@@ -36,7 +36,7 @@ test("should return status in response", async () => {
     const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(getCurrent(result).response.status).toBe(HttpStatus.ok);
     })
 })
@@ -45,7 +45,7 @@ test("should return message on success response", async () => {
     const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(getCurrent(result).response.message).toBe(load("Card").success)
     })
 })
@@ -55,16 +55,16 @@ test("should return message on success response", async () => {
     const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(getCurrent(result).response.message).toBe(load("Card").fail)
     })
 })
 
 test("should do success actions on complete", async () => {
-    const {result} = render(onComplete);
+    const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(successResponse).toStrictEqual(getCurrent(result).response)
     })
 })
@@ -72,19 +72,19 @@ test("should do success actions on complete", async () => {
 test("should do fail actions on complete", async () => {
     failedRequest(rest.get, "api/user/card/:cardName", HttpStatus.badRequest);
 
-    const {result} = render(onComplete);
+    const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(failResponse).toStrictEqual(getCurrent(result).response)
     })
 })
 
 test("should clear response when called", async () => {
-    const {result} = render(onComplete);
+    const {result} = render();
 
     await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(getCurrent(result).response).not.toStrictEqual(initialResponse);
 
         getCurrent(result).clearResponse();
@@ -94,10 +94,10 @@ test("should clear response when called", async () => {
 })
 
 test("should clear response after 1 second", async () => {
-    const {result, waitFor} = render(onComplete, 1000);
+    const {result, waitFor} = render(1000);
 
     await waitFor(() => {
-            getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, onComplete));
+            getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
             expect(getCurrent(result).response).not.toStrictEqual(initialResponse);
         }, {timeout: 2000}
     );

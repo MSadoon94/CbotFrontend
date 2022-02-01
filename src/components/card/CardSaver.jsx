@@ -1,7 +1,4 @@
-import {useRef, useState} from "react"
-import {ApiResponse} from "../api/ApiResponse";
-import {apiConfig} from "../api/apiUtil";
-import {save} from "../api/responseTemplates";
+import {useRef} from "react"
 import "./card.css";
 import {useApi} from "../api/useApi";
 import {cardIds, saveCardApiModule} from "./cardApiModule";

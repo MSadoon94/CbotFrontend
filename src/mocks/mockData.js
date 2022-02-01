@@ -1,5 +1,3 @@
-import {apiConfig} from "../components/api/apiUtil";
-
 export const mockData = {
     assetPair: {base: "BTC", quote: "USD"},
     saveStrategy: {strategy: {}},
@@ -33,21 +31,6 @@ export const mockId = {
     expiration: new Date(Date.now() + 10000).toUTCString(),
     isLoggedIn: true
 };
-
-export const mockSelectCardsSchema = (onChange) => {
-    return {
-        type: "Card",
-        id: "loadCardsSelect",
-        config: apiConfig({url: "/api/load-cards", method: "get"}, null),
-        doDefault: () => onChange({type: "selectedOption", action: {hidePasswordBox: true}}),
-        doAction: (selection) =>
-            onChange({
-                    type: "selectedOption",
-                    action: {hidePasswordBox: false, cardName: selection}
-                }
-            )
-    }
-}
 
 export const mockStatus = () => {
     return {

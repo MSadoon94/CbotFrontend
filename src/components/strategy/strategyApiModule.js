@@ -16,7 +16,7 @@ export const loadStrategiesModule = {
 
 export const loadStrategiesModule2 = (actions) => {
     return {
-        config: apiConfig({url: "/api/load-strategies", method: "get"}, null),
+        config: apiConfig({url: "/api/user/strategies", method: "get"}, null),
         handler: apiHandler(loadGroup("Strategies"), actions)
     }
 }

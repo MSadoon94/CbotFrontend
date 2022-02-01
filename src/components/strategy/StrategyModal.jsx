@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useState} from "react";
 import Modal from "react-modal";
 import {CryptoSelection} from "./CryptoSelection";
 import {DynamicSelect} from "../common/DynamicSelect";
@@ -18,13 +18,13 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         longEntry: ""
     }
 
-    const strategy = useRef({
+    const [strategy, setStrategy] = useState({
         name: "",
         assets: {base: "", quote: ""},
         refinements
     });
-    const [sendStrategyRequest, strategyResponse] = useApi()
-    const [sendSaveRequest, , saveResponse] = useApi();
+    const [sendStrategyRequest, strategyResponse,] = useApi()
+    const [sendSaveRequest,saveResponse, ] = useApi();
 
     const handleSelectChange = (selection) => {
         sendStrategyRequest(loadStrategyModule(selection, {
@@ -37,11 +37,11 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
     const setModalChanges = (response) => {
         let {body} = response;
-        strategy.current = {
+        setStrategy({
             name: body.name,
             assets: {base: body.base, quote: body.quote},
             refinements: getRefinements(body)
-        }
+        })
     }
 
     const getRefinements = (body) => {
@@ -51,13 +51,13 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
     }
 
     const handleAssetUpdate = (assets) => {
-        strategy.current = {...strategy.current, base: assets.base, quote: assets.quote}
+        setStrategy({...strategy, base: assets.base, quote: assets.quote})
     }
 
     const refineUpdate = () => {
         let update = {};
         Object.keys(refinements).forEach(
-            (type) => update[type] = (value) => strategy.current = {...strategy.current, [type]: value})
+            (type) => update[type] = ((value) => setStrategy({...strategy, [type]: value })))
         return update;
     }
 
@@ -73,15 +73,15 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                 <h2>Strategy Creator</h2>
 
                 <CryptoSelection updateAssets={handleAssetUpdate}
-                                 loadedAssets={strategy.current.assets}/>
+                                 loadedAssets={strategy.assets}/>
 
                 <div id={"strategyManagement"}>
                     <label htmlFor={"strategyName"}>Strategy Name</label>
-                    <input id={"strategyName"} value={strategy.current.name}
-                           onChange={e => strategy.current = {...strategy.current, name: e.target.value}}/>
+                    <input id={"strategyName"} value={strategy.name}
+                           onChange={e => setStrategy({...strategy, name: e.target.value})}/>
 
                     <button type={"button"} id={"saveStrategyButton"}
-                            onClick={() => sendSaveRequest(saveStrategyModule(strategy.current))}
+                            onClick={() => sendSaveRequest(saveStrategyModule(strategy))}
                     >Save Strategy
                     </button>
                     <output id={strategyIds.saveStrategy} data-testid={strategyIds.saveStrategy}
@@ -95,7 +95,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
                 <button type={"button"} id={"closeButton"} onClick={() => onRequestClose()}>X</button>
 
-                <RefineStrategy update={refineUpdate()} overwrite={strategy.current.refinements}/>
+                <RefineStrategy update={refineUpdate()} overwrite={strategy.refinements}/>
             </Modal>
         </div>
     )

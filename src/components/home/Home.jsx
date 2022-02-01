@@ -1,16 +1,15 @@
 import React, {useEffect, useRef, useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
-import {apiConfig} from "../api/apiUtil";
-import {changeState} from "../api/responseTemplates";
-import {ApiResponse} from "../api/ApiResponse";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
 import "./home.css"
 import {useHistory} from "react-router-dom";
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
-import {loadStrategiesModule} from "../strategy/strategyApiModule";
+import {loadStrategiesModule2} from "../strategy/strategyApiModule";
 import {StatusWidget} from "../widgets/StatusWidget";
+import {useApi} from "../api/useApi";
+import {logoutApiModule} from "./homeApiModule";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -19,10 +18,8 @@ export const Home = () => {
     const [isStale, setStale] = useState(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
-    const [logoutRequest, setLogoutRequest] = useState();
     const activeStrategiesRef = useRef([]);
-
-    const logoutConfig = apiConfig({url: "/api/log-out", method: "delete"}, null);
+    const [sendLogoutRequest, ,] = useApi();
 
     useEffect(() => {
         const staleTimer = setTimeout(() => {
@@ -37,7 +34,7 @@ export const Home = () => {
     })
 
     const logoutUser = () => {
-        let actions = {
+        sendLogoutRequest(logoutApiModule({
             idAction: {
                 type: "logout",
                 execute: (response) => {
@@ -45,8 +42,7 @@ export const Home = () => {
                     history.push("/start");
                 }
             }
-        };
-        setLogoutRequest({config: logoutConfig, templates: changeState("Logout"), actions});
+        }))
     };
 
     return (
@@ -59,8 +55,6 @@ export const Home = () => {
                     setNewCardForm({...newCardForm, isHidden: true})}>Close Card
                 </button>
             </div>
-
-            <ApiResponse cssId={"logout"} request={logoutRequest}/>
 
             <StrategyModal isOpen={strategyModal.isOpen}
                            onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
@@ -79,22 +73,21 @@ export const Home = () => {
 
             </div>
 
-            <div>
-                <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
-                    <summary>Strategies</summary>
-                    <CheckboxWidget type={"strategies"}
-                                    apiModule={loadStrategiesModule}
-                                    isStale={() => isStale}
-                                    onRequest={() => (
-                                        {
-                                            isReady: false,
-                                            getRequest: (checked) =>
-                                                activeStrategiesRef.current = checked
-                                        }
-                                    )}
-                    />
-                </details>
-            </div>
+
+            <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
+                <summary>Strategies</summary>
+                <CheckboxWidget type={"strategies"}
+                                apiModule={loadStrategiesModule2()}
+                                isStale={() => isStale}
+                                onRequest={() => (
+                                    {
+                                        isReady: false,
+                                        getRequest: (checked) =>
+                                            activeStrategiesRef.current = checked
+                                    }
+                                )}
+                />
+            </details>
 
             <StatusWidget/>
 

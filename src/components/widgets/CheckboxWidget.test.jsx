@@ -1,7 +1,7 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {CheckboxWidget} from "./CheckboxWidget";
 import {mockData, mockId} from "../../mocks/mockData";
-import {loadStrategiesModule} from "../strategy/strategyApiModule";
+import {loadStrategiesModule2} from "../strategy/strategyApiModule";
 import {ApiManager} from "../api/ApiManager";
 import userEvent from "@testing-library/user-event";
 
@@ -61,7 +61,7 @@ const cleanRender = () => {
     render(
         <ApiManager userId={mockId}>
             <CheckboxWidget type={"strategies"}
-                            apiModule={loadStrategiesModule}
+                            apiModule={loadStrategiesModule2()}
                             isStale={() => isStale}
                             onRequest={() => onRequest}
             />

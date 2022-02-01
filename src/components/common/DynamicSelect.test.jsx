@@ -1,9 +1,10 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {ApiManager} from "../api/ApiManager";
-import {mockData, mockId, mockSelectCardsSchema} from "../../mocks/mockData";
+import {mockData, mockId} from "../../mocks/mockData";
 import React from "react";
 import {DynamicSelect} from "./DynamicSelect";
 import userEvent from "@testing-library/user-event";
+import {cardSelectSchema} from "./selectSchemas";
 
 let select, optionName, outcome, schema, allOptions;
 
@@ -12,7 +13,11 @@ jest.mock('react-router-dom', () => ({
 }))
 
 beforeEach(async () => {
-    schema = mockSelectCardsSchema((selection) => outcome = selection);
+    let onDefault = () => outcome = "default";
+    let onChange = (selection) => outcome = selection;
+    schema = cardSelectSchema({onDefault, onChange});
+
+    outcome = null;
 
     render(
         <ApiManager userId={mockId}>
@@ -38,7 +43,7 @@ test("should load options on click", async () => {
 test("should do default action when default option is clicked", async () => {
     await waitFor(() => userEvent.selectOptions(select, `-- Load ${schema.type} --`));
 
-    expect(outcome).toStrictEqual(schema.defaultAction());
+    expect(outcome).toStrictEqual("default");
 })
 
 test("should do action from schema when option is selected", async () => {
