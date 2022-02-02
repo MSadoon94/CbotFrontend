@@ -59,7 +59,7 @@ export const CardLoader = () => {
                  id={"cardPasswordVerify"} className={"cardVerify"}>
                 <label htmlFor={"cardPassword"}>Card Password</label>
                 <input id={"cardPassword"} type={"text"} onChange={e => cardPassword.current = e.target.value}/>
-                <output id={cardIds.passwordResponse} data-testid={cardIds.passwordResponse}
+                <output id={cardIds.cardPassResponse} data-testid={cardIds.cardPassResponse}
                         data-issuccess={passwordResponse.isSuccess}>{passwordResponse.message}</output>
                 <output id={cardIds.cardResponse} data-testid={cardIds.cardResponse}
                         data-issuccess={cardResponse.isSuccess}>{cardResponse.message}</output>

@@ -6,7 +6,7 @@ import {CardSaver} from "../card/CardSaver";
 import "./home.css"
 import {useHistory} from "react-router-dom";
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
-import {loadStrategiesModule2} from "../strategy/strategyApiModule";
+import {loadStrategiesModule} from "../strategy/strategyApiModule";
 import {StatusWidget} from "../widgets/StatusWidget";
 import {useApi} from "../api/useApi";
 import {logoutApiModule} from "./homeApiModule";
@@ -73,21 +73,22 @@ export const Home = () => {
 
             </div>
 
-
-            <details id={"strategyActDetails"} onToggle={() => setStale(true)}>
-                <summary>Strategies</summary>
-                <CheckboxWidget type={"strategies"}
-                                apiModule={loadStrategiesModule2()}
-                                isStale={() => isStale}
-                                onRequest={() => (
-                                    {
-                                        isReady: false,
-                                        getRequest: (checked) =>
-                                            activeStrategiesRef.current = checked
-                                    }
-                                )}
-                />
-            </details>
+            <div id={"strategyDetailsBox"}>
+                <details id={"strategyDetails"} onToggle={() => setStale(true)}>
+                    <summary>Strategies</summary>
+                    <CheckboxWidget type={"strategies"}
+                                    apiModule={loadStrategiesModule()}
+                                    isStale={() => isStale}
+                                    onRequest={() => (
+                                        {
+                                            isReady: false,
+                                            getRequest: (checked) =>
+                                                activeStrategiesRef.current = checked
+                                        }
+                                    )}
+                    />
+                </details>
+            </div>
 
             <StatusWidget/>
 

@@ -41,7 +41,7 @@ export const CryptoSelection = ({updateAssets, loadedAssets}) => {
                                 }} overwrite={loadedAssets.quote}/>
             </div>
             <output id={strategyIds.getAssetPairData} data-testid={strategyIds.getAssetPairData}
-                    data-isSuccess={strategyIds.getAssetPairData}>{response.message}</output>
+                    data-issuccess={response.isSuccess}>{response.message}</output>
         </div>
     )
 

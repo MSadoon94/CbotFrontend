@@ -8,13 +8,7 @@ export const strategyIds = {
     getAssetPairData: "getAssetPairDataResponse"
 }
 
-export const loadStrategiesModule = {
-    id: "loadStrategiesRequest",
-    config: apiConfig({url: "/api/load-strategies", method: "get"}, null),
-    templates: loadGroup("Strategies"),
-}
-
-export const loadStrategiesModule2 = (actions) => {
+export const loadStrategiesModule = (actions) => {
     return {
         config: apiConfig({url: "/api/user/strategies", method: "get"}, null),
         handler: apiHandler(loadGroup("Strategies"), actions)

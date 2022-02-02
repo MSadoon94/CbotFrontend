@@ -2,7 +2,7 @@ import {apiConfig, apiHandler} from "../api/apiUtil";
 import {load, save, validation} from "../api/responseTemplates";
 
 export const cardIds = {
-    passwordResponse: "passwordResponse",
+    cardPassResponse: "cardPassResponse",
     cardResponse: "cardResponse",
     allCardsResponse: "allCardsResponse",
     saveCardResponse: "saveCardResponse"

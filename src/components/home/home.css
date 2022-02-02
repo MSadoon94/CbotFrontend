@@ -41,7 +41,7 @@
     width: border-box;
     grid-area: bottom-main;
     justify-self: center;
-    align-self: start;
+    align-self: center;
     padding-bottom: 5px;
     border-style: solid;
 }
@@ -52,7 +52,7 @@
     align-self: start;
 }
 
-#strategyActDetails {
+#strategyDetailsBox {
     grid-area: top-left2;
 }
 
