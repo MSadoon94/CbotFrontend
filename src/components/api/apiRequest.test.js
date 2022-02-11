@@ -1,14 +1,13 @@
-import {apiRequest} from "./apiRequest";
+import {apiRequest, refresh} from "./apiRequest";
 import {changeState, create, load, save, validation} from "./responseTemplates";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
-import {apiConfig, apiHandler, publicConfig} from "./apiUtil";
-import {mockData} from "../../mocks/mockData";
-import {mockId} from "../../mocks/mockData";
+import {apiConfig, publicConfig} from "./apiUtil";
+import {mockData, mockId} from "../../mocks/mockData";
+import {waitFor} from "@testing-library/react";
 
-
-let refreshed, commonHandler;
+let templates = create("Account");
 let commonConfig = {...apiConfig({url: "api/user/card", method: "post"}, mockData.card), id: mockId};
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest, message) => {
@@ -18,30 +17,21 @@ const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest,
         }))
 };
 
-const outcome = (handler) => {
-    return handler.output.message;
-};
-
-beforeEach(() => {
-    commonHandler = apiHandler(create("account"));
-    commonHandler.onRefresh = {
-        success: (refresh) => refreshed = refresh,
-        fail: (refresh) => refreshed = refresh
-    }
-});
-
-afterEach(() => {
-    refreshed = undefined;
-});
-
 describe("common error behavior", () => {
 
     test("should return error message when internal server error is received", async () => {
+        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.internalServerError);
         failedRequest(rest.post, "api/user/card", HttpStatus.internalServerError);
 
-        await apiRequest(commonConfig, commonHandler);
+        let apiResponse;
+        await waitFor(() =>
+            apiRequest(commonConfig, templates).then((res) => apiResponse = res)
+        );
 
-        expect(outcome(commonHandler)).toBe("Sorry, the server did not respond, please try again later.");
+        await waitFor(() => {
+            expect(apiResponse.message).toBe("Sorry, the server did not respond, please try again later.");
+        });
+
     });
 
     test("should return response message for http conflict status rejections", async () => {
@@ -51,13 +41,16 @@ describe("common error behavior", () => {
             HttpStatus.conflict,
             "A user already exists with the username 'User', please choose another username."
         )
-
         let config = {...publicConfig({url: "api/sign-up", method: "post"}, mockData.user)};
-        let handler = apiHandler(create("user"));
 
-        await apiRequest(config, handler);
+        let apiResponse;
+        await waitFor(() =>
+            apiRequest(config, create("User")).then((res) => apiResponse = res)
+        );
 
-        expect(outcome(handler)).toBe("A user already exists with the username 'User', please choose another username.");
+        await waitFor(() => {
+            expect(apiResponse.message).toBe("A user already exists with the username 'User', please choose another username.");
+        });
     })
 
 });
@@ -71,32 +64,52 @@ describe("refresh behavior", () => {
 
     test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
         failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "api/user/card", HttpStatus.unauthorized);
 
-        await apiRequest(refreshFailConfig, commonHandler);
+        let apiResponse;
+        await waitFor(() =>
+            apiRequest(refreshFailConfig, templates).then((res) => apiResponse = res)
+        );
 
-        expect(outcome(commonHandler)).toBe("Session expired, logging out.");
+        await expect(apiResponse.message).toBe("Session expired, logging out.");
     });
 
     test("should refresh request when jwt is expired but session is valid", async () => {
-        await apiRequest(refreshFailConfig, commonHandler);
-
-        expect(outcome(commonHandler)).toBe(commonHandler.templates.success)
-    });
-
-    test("should refresh stored expiration when refreshed", async () => {
-        await apiRequest(refreshFailConfig, commonHandler);
-
-        expect(refreshed.expiration).toEqual("newExpiration");
-    });
-
-    test("should log out user when refresh fails", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
-        await apiRequest(refreshFailConfig, commonHandler);
-
-        expect(refreshed.isLoggedIn).toBe(false);
+        await apiRequest(refreshFailConfig, templates)
+            .then((res) => expect(res.message).toBe(templates.success));
     });
 
 });
+
+describe("local storage behavior", () => {
+
+    test("should set session as expired when refresh fails", async () => {
+        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+
+        await refresh(() => null).catch(() => null);
+
+        expect(JSON.parse(localStorage.getItem("session")).isExpired).toBe(true);
+    });
+
+    test("should set session as not expired when refresh succeeds", async () => {
+        await refresh(() => null);
+
+        expect(JSON.parse(localStorage.getItem("session")).isExpired).toBe(false);
+    });
+    test("should set logged in as true when refresh succeeds", async () => {
+        await refresh(() => null);
+
+        expect(JSON.parse(localStorage.getItem("session")).isLoggedIn).toBe(true);
+    });
+    test("should set logged in as false when refresh succeeds", async () => {
+        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+
+        await refresh(() => null).catch(() => null);
+
+        expect(JSON.parse(localStorage.getItem("session")).isLoggedIn).toBe(false);
+    });
+
+})
 
 describe("public endpoint behavior", () => {
 
@@ -107,11 +120,9 @@ describe("public endpoint behavior", () => {
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
             let config = publicConfig({url: api, method}, data);
-            let handler = apiHandler(templates);
 
-            await apiRequest(config, handler);
-
-            expect(outcome(handler)).toBe(templates.success);
+            await apiRequest(config, templates)
+                .then((res) => expect(res.message).toBe(templates.success));
         });
 
     test.concurrent.each`
@@ -123,11 +134,9 @@ describe("public endpoint behavior", () => {
 
             failedRequest(failMethod, api);
             let config = publicConfig({url: api, method}, data);
-            let handler = apiHandler(templates);
 
-            await apiRequest(config, handler);
-
-            expect(outcome(handler)).toBe(templates.fail);
+            await apiRequest(config, templates)
+                .then((res) => expect(res.message).toBe(templates.fail));
         });
 
 });
@@ -142,18 +151,10 @@ describe("specific api actions", () => {
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
 
-            let config = {
-                ...apiConfig({url: api, method}, data),
-                id: mockId, onRefresh: (refresh) => {
-                    refreshed = refresh
-                }
-            };
+            let config = {...apiConfig({url: api, method}, data)};
 
-            let handler = apiHandler(templates);
-
-            await apiRequest(config, handler);
-
-            expect(outcome(handler)).toBe(templates.success);
+            await apiRequest(config, templates)
+                .then((res) => expect(res.message).toBe(templates.success));
         });
 
     test.concurrent.each`
@@ -166,18 +167,10 @@ describe("specific api actions", () => {
         async ({api, method, data, templates, failMethod}) => {
 
             failedRequest(failMethod, api);
-            let config = {
-                ...apiConfig({url: api, method}, data),
-                id: mockId, onRefresh: (refresh) => {
-                    refreshed = refresh
-                }
-            };
+            let config = {...apiConfig({url: api, method}, data)};
 
-            let handler = apiHandler(templates);
-
-            await apiRequest(config, handler);
-
-            expect(outcome(handler)).toBe(templates.fail);
-        })
+            await apiRequest(config, templates)
+                .then((res) => expect(res.message).toBe(templates.fail));
+        });
 
 });

@@ -14,31 +14,21 @@ export const CardLoader = () => {
     const [sendPasswordRequest, passwordResponse,] = useApi();
     const [sendCardRequest, cardResponse,] = useApi();
 
-    const getCard = () => {
-        let actions = {
-            onComplete: {
-                success: (res) => {
-                    let bal = Object.entries(res.body.balances).map(([currency, amount]) => [{currency, amount}]);
-                    setDisplayedCards([...displayedCards,
-                        {name: res.body.cardName, balances: bal, isHidden: false}])
-                    setCardSelected({...cardSelected, hidePasswordBox: true})
-                },
-                fail: () => null
-            }
-        };
-
-        sendCardRequest(loadCardApiModule(cardSelected.cardName, actions))
+    const getCard = async () => {
+        await sendCardRequest(loadCardApiModule(cardSelected.cardName))
+            .then((res) => {
+                let bal = Object.entries(res.body.balances).map(([currency, amount]) => [{currency, amount}]);
+                setDisplayedCards([...displayedCards,
+                    {name: res.body.cardName, balances: bal, isHidden: false}])
+                setCardSelected({...cardSelected, hidePasswordBox: true})
+            })
     };
 
-    const loadSingleCard = () => {
+    const loadSingleCard = async () => {
         let cardData = {cardName: cardSelected.cardName, password: cardPassword.current};
 
-        sendPasswordRequest(cardPasswordApiModule(cardData, {
-            onComplete: {
-                success: () => getCard(),
-                fail: () => null
-            }
-        }));
+        await sendPasswordRequest(cardPasswordApiModule(cardData))
+            .then(() => getCard())
     };
 
     const handleSelection = () => {

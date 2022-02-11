@@ -1,16 +1,12 @@
 import {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
 import {validatePassword, validateUsername} from "../common/validator";
 import "./start.css"
-import {HttpRange} from "../common/httpStatus";
 import {loginApiModule, signupApiModule, userStartIds} from "./userStartApiModule";
 import {useApi} from "../api/useApi";
 
 export const UserStart = () => {
-
-    const history = useHistory();
     const [valid, setValid] = useState({username: null, password: null});
-    const [sendLoginRequest, loginResponse,] = useApi();
+    const [sendLoginRequest, loginResponse, , setSession] = useApi();
     const [sendSignupRequest, signupResponse,] = useApi();
 
     const [user, setUser] = useState(
@@ -23,12 +19,6 @@ export const UserStart = () => {
         });
 
     const [textBox, setTextBox] = useState({usernameBox: null, passwordBox: null, confirmPasswordBox: null});
-
-    useEffect(() => {
-        if (localStorage.getItem("isLoggedIn") === "true") {
-            history.push("/home")
-        }
-    }, [])
 
     useEffect(() => {
         const textBoxTimeout =
@@ -59,17 +49,12 @@ export const UserStart = () => {
         sendSignupRequest(signupApiModule(user));
     };
 
-    const handleLogin = () => {
-        sendLoginRequest(loginApiModule(user, {
-            idAction: {
-                type: "login",
-                execute: (response) => {
-                    if (HttpRange.success.test(response.status)) {
-                        history.push("/home")
-                    }
-                }
-            }
-        }))
+    const handleLogin = async () => {
+        await sendLoginRequest(loginApiModule(user))
+            .then(() => {
+                localStorage.setItem("session", JSON.stringify({isExpired: false, isLoggedIn: true}));
+                setSession({isExpired: false, isLoggedIn: true});
+            });
     };
 
     const isNotValidUsername = () => {

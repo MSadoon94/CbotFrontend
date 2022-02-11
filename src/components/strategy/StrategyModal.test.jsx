@@ -3,8 +3,7 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {StrategyModal} from "./StrategyModal";
 import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
-import {ApiManager} from "../api/ApiManager";
-import {mockData, mockId} from "../../mocks/mockData";
+import {mockData} from "../../mocks/mockData";
 import {strategyIds} from "./strategyApiModule";
 
 ReactModal.setAppElement(document.createElement('div'));
@@ -18,10 +17,8 @@ jest.mock('react-router-dom', () => ({
 beforeEach(() => {
     isOpen = true;
     render(
-        <ApiManager userId={mockId}>
-            <StrategyModal isOpen={isOpen}
-                           onRequestClose={() => isOpen = false}/>
-        </ApiManager>
+        <StrategyModal isOpen={isOpen}
+                       onRequestClose={() => isOpen = false}/>
     );
 });
 

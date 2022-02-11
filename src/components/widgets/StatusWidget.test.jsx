@@ -1,6 +1,4 @@
 import {render, screen, waitFor} from "@testing-library/react";
-import {ApiManager} from "../api/ApiManager";
-import {initialId} from "../../App";
 import {StatusWidget} from "./StatusWidget";
 import userEvent from "@testing-library/user-event";
 
@@ -8,9 +6,7 @@ let powerButton, buttonProgress;
 
 beforeEach(() => {
     render(
-        <ApiManager userId={initialId}>
-            <StatusWidget/>
-        </ApiManager>
+        <StatusWidget/>
     )
     powerButton = screen.getByRole("button");
     buttonProgress = powerButton.getElementsByClassName("button-progress").item(0);
@@ -35,4 +31,7 @@ test("should disable button on power button press", async () => {
     userEvent.click(powerButton);
 
     await waitFor(() => expect(powerButton).toBeDisabled());
+})
+test("should display entry found message", () => {
+
 })

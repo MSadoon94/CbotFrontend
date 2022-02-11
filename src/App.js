@@ -1,27 +1,38 @@
-import {Route, Switch} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import './App.css';
 import {UserStart} from "./components/user/UserStart";
 import {Home} from "./components/home/Home";
-import {ApiManager} from "./components/api/ApiManager";
+import React, {createContext} from "react";
+import {urls} from "./components/util/historyUtil";
+import {useSessionManager} from "./components/util/useSessionManager";
 
 export const initialId = {
     username: "",
     expiration: "",
     isLoggedIn: false
 };
+export const SessionContext = createContext({});
 
 function App() {
+    const [setSession] = useSessionManager();
 
     return (
-            <main>
-                <Switch>
-                    <ApiManager userId={initialId}>
-                        <Route exact path={"/start"} component={UserStart}/>
-                        <Route exact path={"/home"} component={Home}/>
-                    </ApiManager>
-                </Switch>
-            </main>
-    );
+        <SessionContext.Provider value={setSession}>
+            <Routes>
+                <Route path={urls.start} element={<UserStart/>}/>
+                <Route path={urls.home} element={<Home/>}/>
+                <Route
+                    path="*"
+                    element={
+                        <main style={{padding: "1rem"}}>
+                            <p>There's nothing here!</p>
+                        </main>
+                    }
+                />
+            </Routes>
+        </SessionContext.Provider>
+    )
+        ;
 }
 
 export default App;

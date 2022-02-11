@@ -38,13 +38,13 @@ export const StatusWidget = () => {
     const powerButtonStates = {true: "active", false: "inactive"}
     const apiStates = {put: "changeStatus", get: "getStatus"}
     const [state, dispatch] = useReducer(reducer, {type: apiStates.get, isTransition: true});
-    const [sendGetStatusRequest, getStatusResponse, ] = useApi();
-    const [sendSaveStatusRequest,, ] = useApi();
+    const [sendGetStatusRequest, getStatusResponse,] = useApi();
+    const [sendSaveStatusRequest, ,] = useApi();
 
     useEffect(() => {
-        if(state.type === apiStates.get){
+        if (state.type === apiStates.get) {
             getStatus();
-        } else if(state.type === apiStates.put){
+        } else if (state.type === apiStates.put) {
             changeStatus();
         }
     }, [state.type])
@@ -53,25 +53,16 @@ export const StatusWidget = () => {
         dispatch({type: apiStates.put});
     }
 
-    const getStatus = () => {
-        sendGetStatusRequest(getCbotStatus({
-            onComplete: {
-                success: ({body}) =>
-                    dispatch({type: powerButtonStates[body.isActive], strategies: body.activeStrategies}),
-                fail: () => null
-            }
-        }));
+    const getStatus = async () => {
+        await sendGetStatusRequest(getCbotStatus())
+            .then(({body}) =>
+                dispatch({type: powerButtonStates[body.isActive], strategies: body.activeStrategies}))
     }
-    const changeStatus = () => {
-        let actions = {
-            onComplete: {
-                success: () => dispatch({type: powerButtonStates[state.isActive], strategies: state.strategies}),
-                fail: () => null
-            }}
-        sendSaveStatusRequest(changeCbotStatus(actions, {
+    const changeStatus = async () => {
+        await sendSaveStatusRequest(changeCbotStatus({
             isActive: state.isActive,
             activeStrategies: state.strategies
-        }))
+        })).then(() => dispatch({type: powerButtonStates[state.isActive], strategies: state.strategies}))
 
     }
 
@@ -79,6 +70,7 @@ export const StatusWidget = () => {
         <div className={"statusWidget"}>
             <output id={widgetIds.getCbotStatusRequest} data-testid={widgetIds.getCbotStatusRequest}
                     data-issuccess={getStatusResponse.isSuccess}>{getStatusResponse.message}</output>
+
 
             <button type={"button"}
                     id={"cbotPowerButton"}

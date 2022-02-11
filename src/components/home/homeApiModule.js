@@ -1,13 +1,13 @@
-import {apiConfig, apiHandler} from "../api/apiUtil";
+import {apiConfig} from "../api/apiUtil";
 import {changeState} from "../api/responseTemplates";
 
 export const homeIds = {
     logoutRequest: "logoutRequest",
 }
 
-export const logoutApiModule = (actions) => {
+export const logoutApiModule = () => {
     return {
         config: apiConfig({url: "/api/log-out", method: "delete"}, null),
-        handler: apiHandler(changeState("Logout"), actions)
+        templates: changeState("Logout")
     }
 }

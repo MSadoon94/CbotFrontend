@@ -3,8 +3,6 @@ import {render, screen} from "@testing-library/react";
 import {UserStart} from "./UserStart";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
-import {ApiManager} from "../api/ApiManager";
-import {mockId} from "../../mocks/mockData";
 
 let usernameTextBox, passwordTextBox, confirmPasswordTextBox, usernameValidityOutput,
     passwordValidityOutput, signupButton, loginButton;
@@ -13,9 +11,7 @@ jest.mock("axios");
 
 beforeEach(() => {
     render(
-        <ApiManager userId={mockId}>
-            <UserStart/>
-        </ApiManager>
+        <UserStart/>
     );
 
     usernameTextBox = screen.getByRole("textbox", {name: "User Name"});

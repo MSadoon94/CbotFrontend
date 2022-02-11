@@ -5,8 +5,6 @@ import userEvent from "@testing-library/user-event";
 import {HttpStatus} from "../common/httpStatus";
 import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
-import {mockId} from "../../mocks/mockData";
-import {ApiManager} from "../api/ApiManager";
 import {strategyIds} from "./strategyApiModule";
 
 const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
@@ -26,9 +24,7 @@ describe("api interactions", () => {
 
     beforeEach(() => {
         render(
-            <ApiManager userId={mockId}>
-                <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
-            </ApiManager>
+            <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
         );
 
         baseInput = screen.getByRole("textbox", {name: "Base Symbol"});

@@ -3,8 +3,6 @@ import {loadCardApiModule} from "../card/cardApiModule";
 import {useApi} from "./useApi";
 import {HttpStatus} from "../common/httpStatus";
 import {waitFor} from "@testing-library/react";
-import {ApiManager} from "./ApiManager";
-import {initialId} from "../../App";
 import {mockData} from "../../mocks/mockData";
 import {load} from "./responseTemplates";
 import {failedRequest} from "../../mocks/apiMocks";
@@ -15,8 +13,7 @@ jest.mock('react-router-dom', () => ({
 }))
 
 const render = (timeToClearMs = 5000) => {
-    const wrapper = ({children}) => <ApiManager userId={initialId}>{children}</ApiManager>
-    return renderHook(() => useApi({isActive: true, timeToClearMs: timeToClearMs}), {wrapper})
+    return renderHook(() => useApi({isActive: true, timeToClearMs: timeToClearMs}))
 }
 
 const initialResponse = {status: "", message: "", body: "", isSuccess: false};
@@ -57,26 +54,6 @@ test("should return message on success response", async () => {
     await waitFor(() => {
         getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
         expect(getCurrent(result).response.message).toBe(load("Card").fail)
-    })
-})
-
-test("should do success actions on complete", async () => {
-    const {result} = render();
-
-    await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
-        expect(successResponse).toStrictEqual(getCurrent(result).response)
-    })
-})
-
-test("should do fail actions on complete", async () => {
-    failedRequest(rest.get, "api/user/card/:cardName", HttpStatus.badRequest);
-
-    const {result} = render();
-
-    await waitFor(() => {
-        getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
-        expect(failResponse).toStrictEqual(getCurrent(result).response)
     })
 })
 

@@ -1,4 +1,4 @@
-import {apiConfig, apiHandler} from "../api/apiUtil";
+import {apiConfig} from "../api/apiUtil";
 import {changeState, load} from "../api/responseTemplates";
 
 export const widgetIds = {
@@ -6,16 +6,16 @@ export const widgetIds = {
     saveCbotStatusRequest: "saveCbotStatusRequest"
 }
 
-export const changeCbotStatus = (actions, cbotStatus) => {
+export const changeCbotStatus = (cbotStatus) => {
     return {
         config: apiConfig({url: "/api/user/cbot-status", method: "put"}, cbotStatus),
-        handler: apiHandler(changeState("CbotStatus"), actions),
+        templates: changeState("CbotStatus"),
     }
 }
 
-export const getCbotStatus = (actions) => {
+export const getCbotStatus = () => {
     return {
         config: apiConfig({url: "/api/user/cbot-status", method: "get"}),
-        handler: apiHandler({...load("CbotStatus"), success: null}, actions)
+        templates: {...load("CbotStatus"), success: null}
     }
 }

@@ -1,6 +1,5 @@
 import {render, screen, waitFor} from "@testing-library/react";
-import {ApiManager} from "../api/ApiManager";
-import {mockData, mockId} from "../../mocks/mockData";
+import {mockData} from "../../mocks/mockData";
 import React from "react";
 import {DynamicSelect} from "./DynamicSelect";
 import userEvent from "@testing-library/user-event";
@@ -20,10 +19,8 @@ beforeEach(async () => {
     outcome = null;
 
     render(
-        <ApiManager userId={mockId}>
-            <DynamicSelect selectSchema={schema}
-                           onOptionsSet={(options) => allOptions = options}/>
-        </ApiManager>
+        <DynamicSelect selectSchema={schema}
+                       onOptionsSet={(options) => allOptions = options}/>
     );
     select = screen.getByRole("combobox");
     optionName = () => select.children.item(0).getAttribute("value");

@@ -1,9 +1,7 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {CardSaver} from "./CardSaver";
-import {ApiManager} from "../api/ApiManager";
 import userEvent from "@testing-library/user-event";
 import {save} from "../api/responseTemplates";
-import {mockId} from "../../mocks/mockData";
 import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
 import {failedRequest} from "../../mocks/apiMocks";
@@ -17,9 +15,9 @@ describe("save card requests", () => {
     let cardNameInput, accountInput, cardPasswordInput, brokerageInput, saveCardButton, saveCardResponse;
 
     beforeEach(() => {
-        render(<ApiManager userId={mockId}>
+        render(
             <CardSaver/>
-        </ApiManager>);
+        );
 
         cardNameInput = screen.getByRole("textbox", {name: "Card Name"});
         accountInput = screen.getByRole("textbox", {name: "Account"});

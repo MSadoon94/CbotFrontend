@@ -4,7 +4,6 @@ import ReactModal from "react-modal";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
 import "./home.css"
-import {useHistory} from "react-router-dom";
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
 import {loadStrategiesModule} from "../strategy/strategyApiModule";
 import {StatusWidget} from "../widgets/StatusWidget";
@@ -14,12 +13,11 @@ import {logoutApiModule} from "./homeApiModule";
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
-    const history = useHistory();
     const [isStale, setStale] = useState(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
     const activeStrategiesRef = useRef([]);
-    const [sendLogoutRequest, ,] = useApi();
+    const [sendLogoutRequest, , , setSession] = useApi();
 
     useEffect(() => {
         const staleTimer = setTimeout(() => {
@@ -33,16 +31,13 @@ export const Home = () => {
         }
     })
 
-    const logoutUser = () => {
-        sendLogoutRequest(logoutApiModule({
-            idAction: {
-                type: "logout",
-                execute: (response) => {
-                    window.alert(`${response.message} Redirecting to start page.`)
-                    history.push("/start");
-                }
-            }
-        }))
+    const logoutUser = async () => {
+        await sendLogoutRequest(logoutApiModule())
+            .finally(() => {
+                window.alert("Logout was successful. Redirecting to start page.");
+                localStorage.setItem("session", JSON.stringify({isExpired: false, isLoggedIn: false}));
+                setSession({isExpired: false, isLoggedIn: false});
+            })
     };
 
     return (

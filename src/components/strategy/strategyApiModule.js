@@ -1,4 +1,4 @@
-import {apiConfig, apiHandler} from "../api/apiUtil";
+import {apiConfig} from "../api/apiUtil";
 import {load, loadGroup, save, validation} from "../api/responseTemplates";
 
 export const strategyIds = {
@@ -8,32 +8,31 @@ export const strategyIds = {
     getAssetPairData: "getAssetPairDataResponse"
 }
 
-export const loadStrategiesModule = (actions) => {
+export const loadStrategiesModule = () => {
     return {
         config: apiConfig({url: "/api/user/strategies", method: "get"}, null),
-        handler: apiHandler(loadGroup("Strategies"), actions)
+        templates: loadGroup("Strategies")
     }
 }
 
-export const loadStrategyModule = (strategyName, actions) => {
+export const loadStrategyModule = (strategyName) => {
     return {
         config: apiConfig({url: `/api/user/strategy/${strategyName}`, method: "get"}),
-        handler: apiHandler(load("Strategy"), actions)
+        templates: load("Strategy")
     }
 }
 
-export const saveStrategyModule = (strategy, actions) => {
+export const saveStrategyModule = (strategy) => {
     return {
         config: apiConfig({url: "/api/user/strategy", method: "post"}, strategy),
-        handler: apiHandler(save("Strategy"), actions),
-        actions
+        templates: save("Strategy")
     }
 }
 
 export const getAssetPair = (assetPair) => {
     return {
         config: apiConfig({url: `/api/asset-pair/${assetPair}/kraken`, method: "get"}, null),
-        handler: apiHandler(validation(assetPair))
+        templates: validation(assetPair)
     }
 }
 

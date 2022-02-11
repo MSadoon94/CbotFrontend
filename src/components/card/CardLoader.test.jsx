@@ -1,17 +1,13 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {CardLoader} from "./CardLoader";
-import {mockId} from "../../mocks/mockData";
-import {ApiManager} from "../api/ApiManager";
-import userEvent from "@testing-library/user-event";
 import {mockData} from "../../mocks/mockData";
+import userEvent from "@testing-library/user-event";
 
 let cardSelect, optionName, loadSingleCardButton;
 
 beforeEach(async () => {
     render(
-        <ApiManager userId={mockId}>
-            <CardLoader hasUpdate={true}/>
-        </ApiManager>
+        <CardLoader hasUpdate={true}/>
     );
 
     cardSelect = screen.getByRole("combobox");
@@ -20,10 +16,6 @@ beforeEach(async () => {
     await waitFor(() => userEvent.selectOptions(cardSelect, "mockCard1"));
     loadSingleCardButton = screen.getByRole("button", {name: "Load Card"});
 });
-
-jest.mock('react-router-dom', () => ({
-    useHistory: () => ({push: jest.fn(),})
-}))
 
 describe("multiple card loading", () => {
 

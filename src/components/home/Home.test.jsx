@@ -3,16 +3,12 @@ import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Home} from "./Home";
 import ReactModal from 'react-modal'
-import {ApiManager} from "../api/ApiManager";
-import {mockId} from "../../mocks/mockData";
 
 ReactModal.setAppElement(document.createElement('div'));
 
 beforeEach(() => {
     render(
-        <ApiManager userId={mockId}>
-            <Home/>
-        </ApiManager>
+        <Home/>
     );
 });
 
@@ -23,11 +19,12 @@ jest.mock("../common/DynamicSelect", () => {
     return {
         DynamicSelect: ({onOptionsSet}) =>
             <div>
-            <button id={"mockOptionsSetButton"}
-                    onClick={() => {
-                        console.log(onOptionsSet);
-                        onOptionsSet(mockStrategies())
-                    }}>MockOptionsSet</button>
+                <button id={"mockOptionsSetButton"}
+                        onClick={() => {
+                            console.log(onOptionsSet);
+                            onOptionsSet(mockStrategies())
+                        }}>MockOptionsSet
+                </button>
             </div>
     }
 })

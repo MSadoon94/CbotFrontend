@@ -1,34 +1,34 @@
 import {useContext, useState} from "react";
-import {ApiContext} from "./ApiManager";
 import {HttpRange} from "../common/httpStatus";
+import {apiRequest} from "./apiRequest";
+import {SessionContext} from "../../App";
 
 export const useApi = (clearOptions = {isActive: true, timeToClearMs: 10000}) => {
+    const setSession = useContext(SessionContext);
     const initialResponse = {status: "", message: "", body: "", isSuccess: false};
-    const {addRequest, addIdAction} = useContext(ApiContext);
     const [response, setResponse] = useState(initialResponse);
 
     let clearResponseTimeout;
 
-    const sendRequest = async ({config, handler}) => {
+    const sendRequest = async ({config, templates}) => {
         if ((clearOptions.isActive) && (clearResponseTimeout)) {
             clearTimeout(clearResponseTimeout);
         }
-        let request = {config, handler};
-        addRequest(request);
-        await request.handler.checkProgress()
+        return apiRequest(config, templates, setSession)
             .then(
-                (res) => finishRequest(request, {...res, isFulfilled: true}),
-                (err) => finishRequest(request, {...err, isFulfilled: false})
-            )
-
+                (res) => {
+                    finishRequest({...res, isFulfilled: true})
+                    return res;
+                },
+                (err) => {
+                    finishRequest({...err, isFulfilled: false})
+                    return err;
+                }
+            );
     }
-    const finishRequest = async (request, apiResponse) => {
+    const finishRequest = async (apiResponse) => {
         apiResponse.isSuccess = HttpRange.success.test(apiResponse.status);
         setResponse(apiResponse);
-        if (request.handler.actions) {
-            addIdAction(request.handler.actions.idAction)
-            doComplete(request.handler, apiResponse)
-        }
         if (clearOptions.isActive) {
             clearResponseTimeout = setTimeout(() => {
                 clearResponse();
@@ -36,16 +36,9 @@ export const useApi = (clearOptions = {isActive: true, timeToClearMs: 10000}) =>
         }
     }
 
-    const doComplete = ({actions}, apiResponse) => {
-        if (actions.onComplete) {
-            apiResponse.isSuccess ?
-                actions.onComplete.success(apiResponse) : actions.onComplete.fail(apiResponse);
-        }
-    };
-
     const clearResponse = () => {
         setResponse(initialResponse);
     }
 
-    return [sendRequest, response, clearResponse]
+    return [sendRequest, response, clearResponse, setSession]
 }

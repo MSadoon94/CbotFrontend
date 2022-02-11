@@ -24,15 +24,11 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         refinements
     });
     const [sendStrategyRequest, strategyResponse,] = useApi()
-    const [sendSaveRequest,saveResponse, ] = useApi();
+    const [sendSaveRequest, saveResponse,] = useApi();
 
-    const handleSelectChange = (selection) => {
-        sendStrategyRequest(loadStrategyModule(selection, {
-            onComplete: {
-                success: (response) => setModalChanges(response),
-                fail: () => null
-            }
-        }));
+    const handleSelectChange = async (selection) => {
+        await sendStrategyRequest(loadStrategyModule(selection))
+            .then((res) => setModalChanges(res));
     }
 
     const setModalChanges = (response) => {
@@ -57,7 +53,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
     const refineUpdate = () => {
         let update = {};
         Object.keys(refinements).forEach(
-            (type) => update[type] = ((value) => setStrategy({...strategy, [type]: value })))
+            (type) => update[type] = ((value) => setStrategy({...strategy, [type]: value})))
         return update;
     }
 

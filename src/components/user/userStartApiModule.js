@@ -1,4 +1,4 @@
-import {apiHandler, publicConfig} from "../api/apiUtil";
+import {publicConfig} from "../api/apiUtil";
 import {create, load} from "../api/responseTemplates";
 
 export const userStartIds = {
@@ -6,16 +6,16 @@ export const userStartIds = {
     signupResponse: "signupResponse"
 }
 
-export const loginApiModule = (user, actions) => {
+export const loginApiModule = (user) => {
     return {
         config: publicConfig({url: "/api/login", method: "post"}, user),
-        handler: apiHandler(load("User"), actions)
+        templates: load("User")
     }
 }
 
 export const signupApiModule = (user) => {
     return {
         config: publicConfig({url: "/api/sign-up", method: "post"}, user),
-        handler: apiHandler(create("User"))
+        templates: create("User")
     }
 }

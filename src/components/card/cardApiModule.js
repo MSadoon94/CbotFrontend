@@ -1,4 +1,4 @@
-import {apiConfig, apiHandler} from "../api/apiUtil";
+import {apiConfig} from "../api/apiUtil";
 import {load, save, validation} from "../api/responseTemplates";
 
 export const cardIds = {
@@ -11,20 +11,20 @@ export const cardIds = {
 export const saveCardApiModule = (card) => {
     return {
         config: apiConfig({url: "api/user/card", method: "post"}, card),
-        handler: apiHandler(save("Card"))
+        templates: save("Card")
     }
 }
 
-export const loadCardApiModule = (cardName, actions) => {
+export const loadCardApiModule = (cardName) => {
     return {
         config: apiConfig({url: `/api/user/card/${cardName}`, method: "get"}),
-        handler: apiHandler(load("Card"), actions),
+        templates: load("Card")
     }
 }
 
-export const cardPasswordApiModule = (cardData, actions) => {
+export const cardPasswordApiModule = (cardData) => {
     return {
         config: apiConfig({url: "/api/user/card-password", method: "post"}, cardData),
-        handler: apiHandler(validation("Card Password"), actions)
+        templates: validation("Card Password")
     }
 }

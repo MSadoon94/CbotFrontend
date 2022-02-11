@@ -1,8 +1,7 @@
 import {render, screen, waitFor} from "@testing-library/react";
 import {CheckboxWidget} from "./CheckboxWidget";
-import {mockData, mockId} from "../../mocks/mockData";
+import {mockData} from "../../mocks/mockData";
 import {loadStrategiesModule} from "../strategy/strategyApiModule";
-import {ApiManager} from "../api/ApiManager";
 import userEvent from "@testing-library/user-event";
 
 let isStale = false;
@@ -59,11 +58,10 @@ test("should return checked options to parent", async () => {
 
 const cleanRender = () => {
     render(
-        <ApiManager userId={mockId}>
-            <CheckboxWidget type={"strategies"}
-                            apiModule={loadStrategiesModule()}
-                            isStale={() => isStale}
-                            onRequest={() => onRequest}
-            />
-        </ApiManager>)
+        <CheckboxWidget type={"strategies"}
+                        apiModule={loadStrategiesModule()}
+                        isStale={() => isStale}
+                        onRequest={() => onRequest}
+        />
+    )
 }

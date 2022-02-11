@@ -1,24 +1,20 @@
 import React, {useRef} from "react";
 import {useApi} from "../api/useApi";
-import {apiHandler} from "../api/apiUtil";
 import {loadGroup} from "../api/responseTemplates";
 
 export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
     const defaultOption = `-- Load ${selectSchema.type} --`;
     const options = useRef([{name: defaultOption}]);
-    const [sendRequest,response, ] = useApi({isActive: false});
+    const [sendRequest, response,] = useApi({isActive: false});
 
-    const handleClick = () => {
-        let actions = {
-            onComplete: {
-                success: (res) => {
-                    options.current = mapResponse(res);
-                    onOptionsSet(res.body);
-                },
-                fail: () => null
-            }
-        };
-        sendRequest({config: selectSchema.config, handler: apiHandler(loadGroup(selectSchema.type), actions)});
+    const handleClick = async () => {
+        await sendRequest({
+            config: selectSchema.config,
+            templates: loadGroup(selectSchema.type)
+        }).then((res) => {
+            options.current = mapResponse(res);
+            onOptionsSet(res.body);
+        })
     }
 
     const mapResponse = (res) => {
@@ -29,7 +25,7 @@ export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
     }
 
     const handleChange = (selection) => {
-        if(selection.target.value === defaultOption){
+        if (selection.target.value === defaultOption) {
             selectSchema.doDefault();
         } else {
             selectSchema.doAction(selection.target.value);
