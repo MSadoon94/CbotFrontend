@@ -8,14 +8,14 @@ export const userStartIds = {
 
 export const loginApiModule = (user) => {
     return {
-        config: publicConfig({url: "/api/login", method: "post"}, user),
+        config: publicConfig({url: "/login", method: "post"}, user),
         templates: load("User")
     }
 }
 
 export const signupApiModule = (user) => {
     return {
-        config: publicConfig({url: "/api/sign-up", method: "post"}, user),
+        config: publicConfig({url: "/sign-up", method: "post"}, user),
         templates: create("User")
     }
 }

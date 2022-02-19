@@ -13,6 +13,8 @@ export const initialId = {
 };
 export const SessionContext = createContext({});
 
+export const SOCKET_URI = "http://localhost:8080/socket"
+
 function App() {
     const [setSession] = useSessionManager();
 

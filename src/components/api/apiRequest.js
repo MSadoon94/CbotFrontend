@@ -37,7 +37,7 @@ const retryRequest = async (config, templates) => {
 export const refresh = async (setSession) => {
 
     let config = {
-        url: "/api/refresh-jwt",
+        url: "/refresh-jwt",
         method: "post",
         headers: {
             "Content-Type": "application/json",

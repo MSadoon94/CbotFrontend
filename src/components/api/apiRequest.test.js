@@ -1,27 +1,20 @@
 import {apiRequest, refresh} from "./apiRequest";
 import {changeState, create, load, save, validation} from "./responseTemplates";
-import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {HttpStatus} from "../common/httpStatus";
 import {apiConfig, publicConfig} from "./apiUtil";
 import {mockData, mockId} from "../../mocks/mockData";
 import {waitFor} from "@testing-library/react";
+import {failedRequest} from "../../mocks/apiMocks";
 
 let templates = create("Account");
-let commonConfig = {...apiConfig({url: "api/user/card", method: "post"}, mockData.card), id: mockId};
-
-const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest, message) => {
-    testServer.use(restMethod(`http://localhost/${endpoint}`,
-        (req, res, context) => {
-            return res(context.status(statusCode), context.json({message}));
-        }))
-};
+let commonConfig = {...apiConfig({url: "/user/card", method: "post"}, mockData.card), id: mockId};
 
 describe("common error behavior", () => {
 
     test("should return error message when internal server error is received", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.internalServerError);
-        failedRequest(rest.post, "api/user/card", HttpStatus.internalServerError);
+        failedRequest(rest.post, "/refresh-jwt", HttpStatus.internalServerError);
+        failedRequest(rest.post, "/user/card", HttpStatus.internalServerError);
 
         let apiResponse;
         await waitFor(() =>
@@ -37,11 +30,11 @@ describe("common error behavior", () => {
     test("should return response message for http conflict status rejections", async () => {
         failedRequest(
             rest.post,
-            "api/sign-up",
+            "/sign-up",
             HttpStatus.conflict,
             "A user already exists with the username 'User', please choose another username."
         )
-        let config = {...publicConfig({url: "api/sign-up", method: "post"}, mockData.user)};
+        let config = {...publicConfig({url: "/sign-up", method: "post"}, mockData.user)};
 
         let apiResponse;
         await waitFor(() =>
@@ -63,8 +56,8 @@ describe("refresh behavior", () => {
     };
 
     test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
-        failedRequest(rest.post, "api/user/card", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/refresh-jwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/user/card", HttpStatus.unauthorized);
 
         let apiResponse;
         await waitFor(() =>
@@ -84,7 +77,7 @@ describe("refresh behavior", () => {
 describe("local storage behavior", () => {
 
     test("should set session as expired when refresh fails", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/refresh-jwt", HttpStatus.unauthorized);
 
         await refresh(() => null).catch(() => null);
 
@@ -102,7 +95,7 @@ describe("local storage behavior", () => {
         expect(JSON.parse(localStorage.getItem("session")).isLoggedIn).toBe(true);
     });
     test("should set logged in as false when refresh succeeds", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/refresh-jwt", HttpStatus.unauthorized);
 
         await refresh(() => null).catch(() => null);
 
@@ -115,8 +108,8 @@ describe("public endpoint behavior", () => {
 
     test.concurrent.each`
     api                              |method    |data                       |templates         
-    ${"api/login"}                   |${"post"} |${mockData.user}           |${load("User")}
-    ${"api/sign-up"}                  |${"post"} |${mockData.user}           |${save("User")}
+    ${"/login"}                   |${"post"} |${mockData.user}           |${load("User")}
+    ${"/sign-up"}                 |${"post"} |${mockData.user}           |${save("User")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
             let config = publicConfig({url: api, method}, data);
@@ -127,8 +120,8 @@ describe("public endpoint behavior", () => {
 
     test.concurrent.each`
    api             |method    |data             |templates              |failMethod
-   ${"api/login"}  |${"post"} |${mockData.user} |${load("User")}  |${rest.post}
-   ${"api/sign-up"} |${"post"} |${mockData.user} |${create("User")}  |${rest.post}
+   ${"/login"}  |${"post"} |${mockData.user} |${load("User")}  |${rest.post}
+   ${"/sign-up"}|${"post"} |${mockData.user} |${create("User")}  |${rest.post}
    `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
 
@@ -145,9 +138,9 @@ describe("specific api actions", () => {
 
     test.concurrent.each`
     api                              |method     |data                       |templates         
-    ${"api/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
-    ${"api/user/strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
-    ${"api/log-out"}                  |${"delete"}|${null}                    |${changeState("Logout")}
+    ${"/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
+    ${"/user/strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
+    ${"/log-out"}                 |${"delete"}|${null}                   |${changeState("Logout")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
 
@@ -159,10 +152,10 @@ describe("specific api actions", () => {
 
     test.concurrent.each`
     api                                 |method     |data                       |templates                     |failMethod
-    ${"api/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
-    ${"api/user/strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
-    ${"api/login"}                      |${"post"}  |${mockData.user}           |${load("User")}         |${rest.post}
-    ${"api/log-out"}                     |${"delete"}|${null}                    |${changeState("Logout")}     |${rest.delete}
+    ${"/asset-pair/BTCUS/kraken"}    |${"get"}   |${mockData.assetPair}      |${validation("BTC:US")} |${rest.get}
+    ${"/user/strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}     |${rest.post}
+    ${"/login"}                      |${"post"}  |${mockData.user}           |${load("User")}         |${rest.post}
+    ${"/log-out"}                    |${"delete"}|${null}                    |${changeState("Logout")}|${rest.delete}
     `("should send invalid $api request and receive rejected response",
         async ({api, method, data, templates, failMethod}) => {
 
@@ -172,5 +165,4 @@ describe("specific api actions", () => {
             await apiRequest(config, templates)
                 .then((res) => expect(res.message).toBe(templates.fail));
         });
-
 });

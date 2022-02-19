@@ -10,28 +10,28 @@ export const strategyIds = {
 
 export const loadStrategiesModule = () => {
     return {
-        config: apiConfig({url: "/api/user/strategies", method: "get"}, null),
+        config: apiConfig({url: "/user/strategies", method: "get"}, null),
         templates: loadGroup("Strategies")
     }
 }
 
 export const loadStrategyModule = (strategyName) => {
     return {
-        config: apiConfig({url: `/api/user/strategy/${strategyName}`, method: "get"}),
+        config: apiConfig({url: `/user/strategy/${strategyName}`, method: "get"}),
         templates: load("Strategy")
     }
 }
 
 export const saveStrategyModule = (strategy) => {
     return {
-        config: apiConfig({url: "/api/user/strategy", method: "post"}, strategy),
+        config: apiConfig({url: "/user/strategy", method: "post"}, strategy),
         templates: save("Strategy")
     }
 }
 
 export const getAssetPair = (assetPair) => {
     return {
-        config: apiConfig({url: `/api/asset-pair/${assetPair}/kraken`, method: "get"}, null),
+        config: apiConfig({url: `/asset-pair/${assetPair}/kraken`, method: "get"}, null),
         templates: validation(assetPair)
     }
 }

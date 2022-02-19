@@ -9,25 +9,6 @@ button[data-power-status=active] {
     transition: background-color 1s;
 }
 
-.button-progress{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-.button-progress[data-transition=true] {
-    background: rgba(0, 0, 0, 0.25);
-    height: 100%;
-    width: 100%;
-    transition: height 0.5s;
-}
-.button-progress[data-transition=false] {
-    background-color: rgba(0, 0, 0, 0.25);
-    height: 0;
-    width: 100%;
-    transition: height 0.5s;
-}
-
 #cbotPowerButton {
 position: relative;
 justify-self: center;

@@ -37,7 +37,7 @@ describe("save card requests", () => {
     });
 
     test("should respond to failed card saving by displaying fail message", async () => {
-        failedRequest(rest.post, "api/user/card", HttpStatus.badRequest);
+        failedRequest(rest.post, "/user/card", HttpStatus.badRequest);
 
         userEvent.click(saveCardButton);
 

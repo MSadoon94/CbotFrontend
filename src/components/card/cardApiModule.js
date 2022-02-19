@@ -10,21 +10,21 @@ export const cardIds = {
 
 export const saveCardApiModule = (card) => {
     return {
-        config: apiConfig({url: "api/user/card", method: "post"}, card),
+        config: apiConfig({url: "/user/card", method: "post"}, card),
         templates: save("Card")
     }
 }
 
 export const loadCardApiModule = (cardName) => {
     return {
-        config: apiConfig({url: `/api/user/card/${cardName}`, method: "get"}),
+        config: apiConfig({url: `/user/card/${cardName}`, method: "get"}),
         templates: load("Card")
     }
 }
 
 export const cardPasswordApiModule = (cardData) => {
     return {
-        config: apiConfig({url: "/api/user/card-password", method: "post"}, cardData),
+        config: apiConfig({url: "/user/card-password", method: "post"}, cardData),
         templates: validation("Card Password")
     }
 }

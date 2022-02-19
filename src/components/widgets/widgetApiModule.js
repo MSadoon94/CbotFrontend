@@ -8,14 +8,14 @@ export const widgetIds = {
 
 export const changeCbotStatus = (cbotStatus) => {
     return {
-        config: apiConfig({url: "/api/user/cbot-status", method: "put"}, cbotStatus),
+        config: apiConfig({url: "/user/cbot-status", method: "put"}, cbotStatus),
         templates: changeState("CbotStatus"),
     }
 }
 
 export const getCbotStatus = () => {
     return {
-        config: apiConfig({url: "/api/user/cbot-status", method: "get"}),
+        config: apiConfig({url: "/user/cbot-status", method: "get"}),
         templates: {...load("CbotStatus"), success: null}
     }
 }

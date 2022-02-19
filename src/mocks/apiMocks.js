@@ -3,11 +3,11 @@ import {HttpStatus} from "../components/common/httpStatus";
 import {mockData, mockStatus} from "./mockData";
 import {testServer} from "./testServer";
 
-const URL = "http://localhost/api";
-export const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
-    testServer.use(restMethod(`http://localhost/${endpoint}`,
+const URL = "http://localhost";
+export const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest, message = null) => {
+    testServer.use(restMethod(`${URL}${endpoint}`,
         (req, res, context) => {
-            return res(context.status(statusCode));
+            return res(context.status(statusCode), context.json({message}));
         }))
 };
 export const apiMocks = [

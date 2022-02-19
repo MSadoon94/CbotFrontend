@@ -7,7 +7,7 @@ export const homeIds = {
 
 export const logoutApiModule = () => {
     return {
-        config: apiConfig({url: "/api/log-out", method: "delete"}, null),
+        config: apiConfig({url: "/log-out", method: "delete"}, null),
         templates: changeState("Logout")
     }
 }

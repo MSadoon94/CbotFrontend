@@ -46,7 +46,7 @@ describe("refresh features", () => {
     });
 
     test("should display alert when session expired", async () => {
-        failedRequest(rest.post, "api/refresh-jwt", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/refresh-jwt", HttpStatus.unauthorized);
         window.alert = jest.fn();
         localStorage.setItem("session", JSON.stringify({isExpired: true, isLoggedIn: true}))
         cleanRender();

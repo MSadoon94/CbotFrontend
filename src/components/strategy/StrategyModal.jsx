@@ -23,8 +23,8 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         assets: {base: "", quote: ""},
         refinements
     });
-    const [sendStrategyRequest, strategyResponse,] = useApi()
-    const [sendSaveRequest, saveResponse,] = useApi();
+    const [sendStrategyRequest, strategyResponse,,] = useApi()
+    const [sendSaveRequest, saveResponse,,] = useApi();
 
     const handleSelectChange = async (selection) => {
         await sendStrategyRequest(loadStrategyModule(selection))

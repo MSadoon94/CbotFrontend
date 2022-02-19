@@ -1,84 +1,41 @@
-import React, {useEffect, useReducer} from "react";
+import React, {useRef, useState} from "react";
 import "./widgets.css";
-import {changeCbotStatus, getCbotStatus, widgetIds} from "./widgetApiModule";
-import {useApi} from "../api/useApi";
-
-const reducer = (state, action) => {
-    switch (action.type) {
-        case "getStatus":
-            return {
-                type: action.type,
-                isTransition: true,
-            }
-        case "changeStatus":
-            return {
-                type: action.type,
-                isActive: !state.isActive,
-                isTransition: true,
-                strategies: state.strategies,
-            }
-        case "active":
-            return {
-                type: action.type,
-                isActive: true,
-                isTransition: false,
-                strategies: action.strategies
-            }
-        case "inactive":
-            return {
-                type: action.type,
-                isActive: false,
-                isTransition: false,
-                strategies: action.strategies
-            }
-    }
-}
+import {SOCKET_URI} from "../../App";
+import SockJsClient from "react-stomp"
 
 export const StatusWidget = () => {
     const powerButtonStates = {true: "active", false: "inactive"}
-    const apiStates = {put: "changeStatus", get: "getStatus"}
-    const [state, dispatch] = useReducer(reducer, {type: apiStates.get, isTransition: true});
-    const [sendGetStatusRequest, getStatusResponse,] = useApi();
-    const [sendSaveStatusRequest, ,] = useApi();
-
-    useEffect(() => {
-        if (state.type === apiStates.get) {
-            getStatus();
-        } else if (state.type === apiStates.put) {
-            changeStatus();
-        }
-    }, [state.type])
+    const [status, setStatus] = useState({isActive: "", strategies: {}})
+    const ws = useRef();
 
     const togglePower = () => {
-        dispatch({type: apiStates.put});
+        ws.current.sendMessage(
+            "/app/cbot-status",
+            JSON.stringify({isActive: !status.isActive, activeStrategies: status.strategies})
+        )
     }
 
-    const getStatus = async () => {
-        await sendGetStatusRequest(getCbotStatus())
-            .then(({body}) =>
-                dispatch({type: powerButtonStates[body.isActive], strategies: body.activeStrategies}))
-    }
-    const changeStatus = async () => {
-        await sendSaveStatusRequest(changeCbotStatus({
-            isActive: state.isActive,
-            activeStrategies: state.strategies
-        })).then(() => dispatch({type: powerButtonStates[state.isActive], strategies: state.strategies}))
-
+    let onMessageReceived = (message) => {
+        setStatus({isActive: message.isActive, strategies: message.activeStrategies});
     }
 
     return (
         <div className={"statusWidget"}>
-            <output id={widgetIds.getCbotStatusRequest} data-testid={widgetIds.getCbotStatusRequest}
-                    data-issuccess={getStatusResponse.isSuccess}>{getStatusResponse.message}</output>
-
 
             <button type={"button"}
                     id={"cbotPowerButton"}
-                    data-power-status={powerButtonStates[state.isActive]}
-                    disabled={state.isTransition}
+                    data-power-status={powerButtonStates[status.isActive]}
                     onClick={togglePower}>
-                <div className={"button-progress"} data-transition={state.isTransition}></div>
             </button>
+
+            <div>
+                <SockJsClient
+                    url={SOCKET_URI}
+                    topics={["/app/cbot-status", "/topic/cbot-status"]}
+                    onMessage={msg => onMessageReceived(msg)}
+                    ref={(client) => ws.current = client}
+                />
+            </div>
 
         </div>
     )

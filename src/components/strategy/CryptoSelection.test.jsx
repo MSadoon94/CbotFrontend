@@ -3,16 +3,9 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {CryptoSelection} from "./CryptoSelection";
 import userEvent from "@testing-library/user-event";
 import {HttpStatus} from "../common/httpStatus";
-import {testServer} from "../../mocks/testServer";
 import {rest} from "msw";
 import {strategyIds} from "./strategyApiModule";
-
-const failedRequest = (restMethod, endpoint, statusCode = HttpStatus.badRequest) => {
-    testServer.use(restMethod(`http://localhost/api/${endpoint}`,
-        (req, res, context) => {
-            return res(context.status(statusCode), context.json({error: "error information"}));
-        }))
-};
+import {failedRequest} from "../../mocks/apiMocks";
 
 jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
@@ -38,7 +31,7 @@ describe("api interactions", () => {
         await waitFor(() => expect(assetsResponse).toHaveTextContent("✔"));
     });
     test("should display error for invalid asset pairs", async () => {
-        failedRequest(rest.get, "asset-pair/:assets/:brokerage", HttpStatus.notFound);
+        failedRequest(rest.get, "/asset-pair/:assets/:brokerage", HttpStatus.notFound);
         userEvent.type(baseInput, "BTC");
         userEvent.type(quoteInput, "UD");
 

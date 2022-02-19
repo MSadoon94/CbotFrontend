@@ -48,7 +48,7 @@ test("should return message on success response", async () => {
 })
 
 test("should return message on success response", async () => {
-    failedRequest(rest.get, "api/user/card/:cardName", HttpStatus.badRequest);
+    failedRequest(rest.get, "/user/card/:cardName", HttpStatus.badRequest);
     const {result} = render();
 
     await waitFor(() => {
