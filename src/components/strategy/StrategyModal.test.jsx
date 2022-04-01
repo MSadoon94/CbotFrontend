@@ -5,6 +5,7 @@ import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
 import {mockData} from "../../mocks/mockData";
 import {strategyIds} from "./strategyApiModule";
+import {validation} from "../api/responseTemplates";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -24,12 +25,14 @@ beforeEach(() => {
 
 
 describe("modal actions", () => {
-    let closeButton, saveButton, response;
+    let closeButton, saveButton, response, exchangeInput, exchangeStatus;
 
     beforeEach(() => {
         closeButton = screen.getByRole("button", {name: "X"});
         saveButton = screen.getByRole("button", {name: "Save Strategy"});
         response = screen.getByTestId(strategyIds.saveStrategy);
+        exchangeInput = screen.getByRole("textbox", {name: "Exchange"});
+        exchangeStatus = screen.getByTestId("exchangeResponse");
     });
 
     test("should close modal when exit button is clicked", async () => {
@@ -45,6 +48,24 @@ describe("modal actions", () => {
 
         await waitFor(() => expect(response).toHaveTextContent("Strategy was saved successfully."));
     });
+
+    test("should return success response when exchange is valid", async () => {
+        userEvent.type(exchangeInput, "kraken");
+
+        await waitFor(() => expect(exchangeStatus).toHaveTextContent(validation("Exchange").success));
+    })
+
+    test("should return error message when exchange is not entered", async () => {
+        userEvent.type(exchangeInput, "")
+
+        await waitFor(() => expect(exchangeStatus).toHaveTextContent("Exchange must be entered."))
+    })
+
+    test("should return error message when exchange is not compatible", async () => {
+        userEvent.type(exchangeInput, "krake")
+
+        await waitFor(() => expect(exchangeStatus).toHaveTextContent("krake is invalid."))
+    })
 });
 
 describe("dynamic select related behavior", () => {

@@ -7,8 +7,10 @@ import {loadStrategyModule, saveStrategyModule, strategyIds} from "./strategyApi
 import {RefineStrategy} from "./RefineStrategy";
 import "./modal.css"
 import {useApi} from "../api/useApi";
+import {validation} from "../api/responseTemplates";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
+    const exchanges = {kraken: "KRAKEN"};
     const timeUnits = ["Second", "Minute", "Hour", "Day", "Week", "Month", "Year"];
     let refinements = {
         stopLoss: "",
@@ -62,6 +64,26 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         return update;
     }
 
+    const isValidExchange = (exchange) => {
+        if (exchange) {
+            return Object.keys(exchanges).includes(exchange.trim().toLowerCase());
+        } else {
+            return false;
+        }
+    }
+
+    const checkExchange = (exchange) => {
+        let response = validation(strategy.exchange);
+
+        if (!strategy.exchange) {
+            return "Exchange must be entered.";
+        } else if (isValidExchange(strategy.exchange)) {
+            return response.success;
+        } else {
+            return response.fail;
+        }
+    }
+
     return (
         <Modal id="strategyModal" data-testid="strategyModal"
                isOpen={isOpen}
@@ -103,6 +125,10 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                 <label htmlFor="strategyExchangeInput">Exchange</label>
                 <input id="strategyExchangeInput" value={strategy.exchange}
                        onChange={e => setStrategy({...strategy, exchange: e.target.value})}/>
+                <output id="exchangeResponse" data-testid="exchangeResponse"
+                        data-issuccess={isValidExchange(strategy.exchange)}>
+                    {checkExchange(strategy.exchange)}
+                </output>
 
                 <label htmlFor="strategyTypeSelect">Strategy Type</label>
                 <select id="strategyTypeSelect">
