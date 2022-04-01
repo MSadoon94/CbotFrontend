@@ -7,7 +7,7 @@ import {useApi} from "../api/useApi";
 export const UserStart = () => {
     const [valid, setValid] = useState({username: null, password: null});
     const [sendLoginRequest, loginResponse, , setSession] = useApi();
-    const [sendSignupRequest, signupResponse,] = useApi();
+    const [sendSignupRequest, signupResponse,,] = useApi();
 
     const [user, setUser] = useState(
         {
@@ -46,15 +46,21 @@ export const UserStart = () => {
     };
 
     const handleSignup = () => {
-        sendSignupRequest(signupApiModule(user));
+        const {confirmPassword, outcome, ...rest} = user;
+        sendSignupRequest(signupApiModule(rest));
     };
 
     const handleLogin = async () => {
-        await sendLoginRequest(loginApiModule(user))
-            .then(() => {
+        const {username, password, ...rest} = user;
+        await sendLoginRequest(loginApiModule({username, password}))
+            .then(
+                () => {
                 localStorage.setItem("session", JSON.stringify({isExpired: false, isLoggedIn: true}));
                 setSession({isExpired: false, isLoggedIn: true});
-            });
+            }, () => {
+                    localStorage.setItem("session", JSON.stringify({isExpired: false, isLoggedIn: false}));
+                    setSession({isExpired: false, isLoggedIn: false});
+                });
     };
 
     const isNotValidUsername = () => {

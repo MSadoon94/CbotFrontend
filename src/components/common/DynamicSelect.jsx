@@ -34,7 +34,7 @@ export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
 
     return (
         <>
-            <select id={selectSchema.id} onClick={handleClick}
+            <select id={selectSchema.id} data-testid={selectSchema.id} onClick={handleClick}
                     onChange={e => handleChange(e)}>
                 {mapResponse(response).map((option) =>
                     <option key={option.name} value={option.name}>{option.name}</option>

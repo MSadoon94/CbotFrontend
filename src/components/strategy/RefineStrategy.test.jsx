@@ -9,7 +9,7 @@ const assignOutput = (value) => {
     output = value;
 }
 let refinements = ["stopLoss", "maxPosition", "targetProfit",
-    "movingStopLoss", "maxLoss", "longEntry"]
+    "movingStopLoss", "maxLoss", "entry"]
 let update = {};
 
 beforeEach(() => {
@@ -24,7 +24,7 @@ test.concurrent.each`
     ${"target profit"}      | ${"Target Profit"}    
     ${"moving stop loss"}   | ${"Moving Stop-Loss"} 
     ${"max loss"}           | ${"Max Loss"}         
-    ${"long entry"}         | ${"Long Entry"}       
+    ${"entry"}              | ${"Entry %"}       
     `("should return $refinement on change", async ({inputName}) => {
         let input = screen.getByRole("spinbutton", {name: inputName});
 

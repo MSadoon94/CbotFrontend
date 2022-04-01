@@ -11,8 +11,8 @@ export const CardLoader = () => {
     const cardPassword = useRef({password: ""});
     const [cardSelected, setCardSelected] = useState(initialSelected)
     const [displayedCards, setDisplayedCards] = useState([]);
-    const [sendPasswordRequest, passwordResponse,] = useApi();
-    const [sendCardRequest, cardResponse,] = useApi();
+    const [sendPasswordRequest, passwordResponse, ,] = useApi();
+    const [sendCardRequest, cardResponse, ,] = useApi();
 
     const getCard = async () => {
         await sendCardRequest(loadCardApiModule(cardSelected.cardName))
@@ -28,7 +28,10 @@ export const CardLoader = () => {
         let cardData = {cardName: cardSelected.cardName, password: cardPassword.current};
 
         await sendPasswordRequest(cardPasswordApiModule(cardData))
-            .then(() => getCard())
+            .then(
+                () => getCard(),
+                () => null
+            );
     };
 
     const handleSelection = () => {

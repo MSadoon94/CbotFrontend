@@ -3,35 +3,32 @@ import {HttpStatus} from "../common/httpStatus";
 
 const response = (status, message, body = null) => {
     return {status, message, body}
-};
+}
 
 export const apiRequest = async (config, templates, setSession = () => null) => {
     return axios.request(config)
         .then(
-            (res) => {
-                return response(res.status, templates.success, res.data)
-            }, (error) => {
+            (res) => response(res.status, templates.success, res.data),
+            (error) => {
                 if (error.response.status === HttpStatus.unauthorized) {
-                    return refresh(setSession).then(
-                        () => retryRequest(config, templates),
-                        (refreshError) => {
-                            console.log(refreshError.message);
-                            return response(refreshError.status, "Session expired, logging out.");
-                        }
-                    )
+                    return refresh(setSession)
+                        .then(
+                            () => retryRequest(config, templates),
+                            () => response(HttpStatus.unauthorized, "Session expired, logging out.")
+                        )
                 } else {
-                    return failSafe(error, templates);
+                    return failSafe(error.response, templates);
                 }
             }
         )
+
 };
 
 const retryRequest = async (config, templates) => {
     return axios.request(config)
-        .then((res) => {
-                return response(res.status, templates.success, res.data)
-            }
-        )
+        .then((res) => Promise.resolve(response(res.status, templates.success, res.data)),
+            (error) => Promise.reject(failSafe(error.response, templates))
+        );
 }
 
 export const refresh = async (setSession) => {
@@ -61,7 +58,7 @@ export const refresh = async (setSession) => {
 };
 
 const failSafe = (error, templates) => {
-    let {status, data} = error.response;
+    let {status, data} = error;
     let failResponse;
     if (status >= HttpStatus.internalServerError) {
         failResponse = response(

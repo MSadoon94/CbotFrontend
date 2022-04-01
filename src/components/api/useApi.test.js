@@ -25,8 +25,8 @@ let onComplete = {
 }
 
 const getCurrent = (result) => {
-    let [sendRequest, response, clearResponse] = result.current;
-    return {sendRequest, response, clearResponse}
+    let [sendRequest, response, clearResponse, setSession] = result.current;
+    return {sendRequest, response, clearResponse, setSession}
 }
 
 test("should return status in response", async () => {
@@ -47,13 +47,13 @@ test("should return message on success response", async () => {
     })
 })
 
-test("should return message on success response", async () => {
+test("should return message on fail response", async () => {
     failedRequest(rest.get, "/user/card/:cardName", HttpStatus.badRequest);
     const {result} = render();
 
     await waitFor(() => {
         getCurrent(result).sendRequest(loadCardApiModule(mockData.card.account, {onComplete}));
-        expect(getCurrent(result).response.message).toBe(load("Card").fail)
+        expect(getCurrent(result).response.message).toBe(load("Card").fail);
     })
 })
 

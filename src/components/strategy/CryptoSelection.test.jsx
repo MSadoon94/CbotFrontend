@@ -11,19 +11,46 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
+describe("exchange interactions", () => {
+    let baseInput, quoteInput, exchangeResponse;
+    let updateAssets = (assets) => ({base: assets.base, quote: assets.quote});
+
+    test("should display error when exchange has not been set", async () => {
+        render(
+            <CryptoSelection exchange={""}
+                             updateAssets={updateAssets}
+                             loadedAssets={{base: "", quote: ""}}/>
+        );
+
+        exchangeResponse = screen.getByTestId("exchangeStatus");
+        baseInput = screen.getByRole("textbox", {name: "Base Symbol"});
+        quoteInput = screen.getByRole("textbox", {name: "Quote Symbol"});
+
+        userEvent.type(baseInput, "BTC");
+        userEvent.type(quoteInput, "USD");
+
+        await waitFor(() => expect(exchangeResponse).toHaveTextContent("Exchange is not valid."))
+    })
+})
+
 describe("api interactions", () => {
     let baseInput, quoteInput, assetsResponse;
     let updateAssets = (assets) => ({base: assets.base, quote: assets.quote});
 
     beforeEach(() => {
         render(
-            <CryptoSelection updateAssets={updateAssets} loadedAssets={{base: "", quote: ""}}/>
+            <CryptoSelection exchange="exchange"
+                             updateAssets={updateAssets}
+                             loadedAssets={{base: "", quote: ""}}/>
         );
 
         baseInput = screen.getByRole("textbox", {name: "Base Symbol"});
         quoteInput = screen.getByRole("textbox", {name: "Quote Symbol"});
         assetsResponse = screen.getByTestId(strategyIds.getAssetPairData);
     });
+
+
+
     test("should display checkmark for valid asset pairs", async () => {
         userEvent.type(baseInput, "BTC");
         userEvent.type(quoteInput, "USD");
@@ -31,7 +58,7 @@ describe("api interactions", () => {
         await waitFor(() => expect(assetsResponse).toHaveTextContent("✔"));
     });
     test("should display error for invalid asset pairs", async () => {
-        failedRequest(rest.get, "/asset-pair/:assets/:brokerage", HttpStatus.notFound);
+        failedRequest(rest.get, "/asset-pair/:base/:quote/:brokerage", HttpStatus.notFound);
         userEvent.type(baseInput, "BTC");
         userEvent.type(quoteInput, "UD");
 

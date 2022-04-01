@@ -29,10 +29,10 @@ export const saveStrategyModule = (strategy) => {
     }
 }
 
-export const getAssetPair = (assetPair) => {
+export const getAssetPair = (base, quote, exchange) => {
     return {
-        config: apiConfig({url: `/asset-pair/${assetPair}/kraken`, method: "get"}, null),
-        templates: validation(assetPair)
+        config: apiConfig({url: `/asset-pair/${base}/${quote}/${exchange}`, method: "get"}, null),
+        templates: validation(base.concat(quote))
     }
 }
 

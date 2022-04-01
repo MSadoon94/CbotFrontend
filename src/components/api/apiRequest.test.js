@@ -17,9 +17,7 @@ describe("common error behavior", () => {
         failedRequest(rest.post, "/user/card", HttpStatus.internalServerError);
 
         let apiResponse;
-        await waitFor(() =>
-            apiRequest(commonConfig, templates).then((res) => apiResponse = res)
-        );
+        await waitFor(() => apiRequest(commonConfig, templates).then((res) => apiResponse = res));
 
         await waitFor(() => {
             expect(apiResponse.message).toBe("Sorry, the server did not respond, please try again later.");
@@ -138,9 +136,9 @@ describe("specific api actions", () => {
 
     test.concurrent.each`
     api                              |method     |data                       |templates         
-    ${"/asset-pair/BTCUSD/kraken"}|${"get"}   |${null}                    |${validation("BTC:USD")}
-    ${"/user/strategy"}           |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
-    ${"/log-out"}                 |${"delete"}|${null}                   |${changeState("Logout")}
+    ${"/asset-pair/BTC/USD/kraken"}  |${"get"}   |${null}                    |${validation("BTC:USD")}
+    ${"/user/strategy"}              |${"post"}  |${mockData.saveStrategy}   |${save("Strategy")}
+    ${"/log-out"}                    |${"delete"}|${null}                    |${changeState("Logout")}
     `("should send valid $api request and receive successful response",
         async ({api, method, data, templates}) => {
 

@@ -21,7 +21,7 @@ export const mockData = {
         targetProfit: "100",
         movingStopLoss: "100",
         maxLoss: "100",
-        longEntry: "100"
+        entry: "100"
     },
 
 };

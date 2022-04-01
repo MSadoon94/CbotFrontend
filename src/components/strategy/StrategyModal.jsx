@@ -9,22 +9,27 @@ import "./modal.css"
 import {useApi} from "../api/useApi";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
+    const timeUnits = ["Second", "Minute", "Hour", "Day", "Week", "Month", "Year"];
     let refinements = {
         stopLoss: "",
         maxPosition: "",
         targetProfit: "",
         movingStopLoss: "",
         maxLoss: "",
-        longEntry: ""
+        entry: ""
     }
 
     const [strategy, setStrategy] = useState({
         name: "",
+        type: "long",
+        exchange: "",
+        timeFrame: "",
+        timeUnit: "",
         assets: {base: "", quote: ""},
         refinements
     });
-    const [sendStrategyRequest, strategyResponse,,] = useApi()
-    const [sendSaveRequest, saveResponse,,] = useApi();
+    const [sendStrategyRequest, strategyResponse, ,] = useApi()
+    const [sendSaveRequest, saveResponse, ,] = useApi();
 
     const handleSelectChange = async (selection) => {
         await sendStrategyRequest(loadStrategyModule(selection))
@@ -58,41 +63,74 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
     }
 
     return (
-        <div id={"strategyModal"} data-testid={"strategyModal"}>
-            <Modal isOpen={isOpen}
-                   onRequestClose={() => {
-                       onRequestClose()
-                   }}
-                   appElement={document.getElementById('app')}
-                   className={"modal"} overlayClassName={"overlay"}>
+        <Modal id="strategyModal" data-testid="strategyModal"
+               isOpen={isOpen}
+               onRequestClose={() => {
+                   onRequestClose()
+               }}
+               appElement={document.getElementById('app')}
+               className="modal" overlayClassName="overlay">
 
-                <h2>Strategy Creator</h2>
+            <h2>Strategy Creator</h2>
 
-                <CryptoSelection updateAssets={handleAssetUpdate}
-                                 loadedAssets={strategy.assets}/>
+            <CryptoSelection
+                exchange={strategy.exchange}
+                updateAssets={handleAssetUpdate}
+                loadedAssets={strategy.assets}
+            />
 
-                <div id={"strategyManagement"}>
-                    <label htmlFor={"strategyName"}>Strategy Name</label>
-                    <input id={"strategyName"} value={strategy.name}
-                           onChange={e => setStrategy({...strategy, name: e.target.value})}/>
+            <div id="strategyManagement">
+                <label htmlFor="strategyName">Strategy Name</label>
+                <input id="strategyName" value={strategy.name}
+                       onChange={e => setStrategy({...strategy, name: e.target.value})}/>
 
-                    <button type={"button"} id={"saveStrategyButton"}
-                            onClick={() => sendSaveRequest(saveStrategyModule(strategy))}
-                    >Save Strategy
-                    </button>
-                    <output id={strategyIds.saveStrategy} data-testid={strategyIds.saveStrategy}
-                            data-issuccess={saveResponse.isSuccess}>{saveResponse.message}</output>
+                <button type="button" id="saveStrategyButton"
+                        onClick={() => sendSaveRequest(saveStrategyModule(strategy))}
+                >Save Strategy
+                </button>
+                <output id={strategyIds.saveStrategy} data-testid={strategyIds.saveStrategy}
+                        data-issuccess={saveResponse.isSuccess}>{saveResponse.message}</output>
 
-                    <DynamicSelect selectSchema={strategySelectSchema(handleSelectChange)}/>
+                <DynamicSelect selectSchema={strategySelectSchema(handleSelectChange)}/>
 
-                    <output id={strategyIds.loadStrategy} data-testid={strategyIds.loadStrategy}
-                            data-issuccess={strategyResponse.isSuccess}>{strategyResponse.message}</output>
-                </div>
+                <output id={strategyIds.loadStrategy} data-testid={strategyIds.loadStrategy}
+                        data-issuccess={strategyResponse.isSuccess}>{strategyResponse.message}</output>
+            </div>
 
-                <button type={"button"} id={"closeButton"} onClick={() => onRequestClose()}>X</button>
+            <div className="strategyDetails">
+                <h3>Strategy Details</h3>
 
-                <RefineStrategy update={refineUpdate()} overwrite={strategy.refinements}/>
-            </Modal>
-        </div>
+                <label htmlFor="strategyExchangeInput">Exchange</label>
+                <input id="strategyExchangeInput" value={strategy.exchange}
+                       onChange={e => setStrategy({...strategy, exchange: e.target.value})}/>
+
+                <label htmlFor="strategyTypeSelect">Strategy Type</label>
+                <select id="strategyTypeSelect">
+                    <option onClick={() => setStrategy({...strategy, type: "long"})}>Long</option>
+                    <option onClick={() => setStrategy({...strategy, type: "short"})}>Short</option>
+                </select>
+
+
+                <label htmlFor="strategyTimeFrameInput">Time Frame</label>
+                <input type="number" min="0" id="strategyTimeFrameInput" value={strategy.timeFrame}
+                       onChange={e => setStrategy({...strategy, timeFrame: e.target.value})}/>
+
+                <label htmlFor="timeUnitSelect">Time Unit</label>
+                <select id="timeUnitSelect">
+                    {timeUnits.map(
+                        unit =>
+                            <option
+                                onClick={() => setStrategy({...strategy, timeUnit: unit.toLowerCase()})}>
+                                {unit}
+                            </option>
+                    )}
+
+                </select>
+            </div>
+
+            <button type="button" id="closeButton" onClick={() => onRequestClose()}>X</button>
+
+            <RefineStrategy update={refineUpdate()} overwrite={strategy.refinements}/>
+        </Modal>
     )
 };

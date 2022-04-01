@@ -13,6 +13,9 @@ export const StatusWidget = () => {
             "/app/cbot-status",
             JSON.stringify({isActive: !status.isActive, activeStrategies: status.strategies})
         )
+        ws.current.sendMessage(
+            "/app/ticker"
+        )
     }
 
     let onMessageReceived = (message) => {
@@ -31,7 +34,7 @@ export const StatusWidget = () => {
             <div>
                 <SockJsClient
                     url={SOCKET_URI}
-                    topics={["/app/cbot-status", "/topic/cbot-status"]}
+                    topics={["/app/cbot-status", "/topic/cbot-status", "/topic/ticker", "/app/ticker"]}
                     onMessage={msg => onMessageReceived(msg)}
                     ref={(client) => ws.current = client}
                 />

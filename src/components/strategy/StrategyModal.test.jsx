@@ -47,18 +47,6 @@ describe("modal actions", () => {
     });
 });
 
-describe("sections", () => {
-
-    test("should have crypto selection section", () => {
-        screen.getByRole("heading", {name: "Crypto Selection"});
-    })
-
-    test("should have dynamic select section", () => {
-        screen.getByRole("combobox");
-    })
-
-});
-
 describe("dynamic select related behavior", () => {
 
     let strategySelect;
@@ -69,11 +57,11 @@ describe("dynamic select related behavior", () => {
         targetProfit: "Target Profit",
         movingStopLoss: "Moving Stop-Loss",
         maxLoss: "Max Loss",
-        longEntry: "Long Entry"
+        entry: "Entry %"
     }
 
     beforeEach(async () => {
-        strategySelect = screen.getByRole("combobox");
+        strategySelect = screen.getByTestId("loadStrategiesSelect");
         userEvent.click(strategySelect);
         await waitFor(() => userEvent.selectOptions(strategySelect, mockStrategy.name));
     });

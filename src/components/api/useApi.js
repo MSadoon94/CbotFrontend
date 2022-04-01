@@ -18,13 +18,14 @@ export const useApi = (clearOptions = {isActive: true, timeToClearMs: 10000}) =>
             .then(
                 (res) => {
                     finishRequest({...res, isFulfilled: true})
-                    return res;
+                    return Promise.resolve(res);
                 },
                 (err) => {
                     finishRequest({...err, isFulfilled: false})
-                    return err;
+                    return Promise.reject(err);
                 }
-            );
+            )
+            .catch(err => console.log(err));
     }
     const finishRequest = async (apiResponse) => {
         apiResponse.isSuccess = HttpRange.success.test(apiResponse.status);

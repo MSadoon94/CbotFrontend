@@ -3,7 +3,9 @@ import {DynamicTextBox} from "../common/DynamicTextBox";
 import {getAssetPair, strategyIds} from "./strategyApiModule";
 import {useApi} from "../api/useApi";
 
-export const CryptoSelection = ({updateAssets, loadedAssets}) => {
+export const CryptoSelection = ({exchange, updateAssets, loadedAssets}) => {
+    const [exchangeStatus, setExchangeStatus]
+        = useState({isExchangeValid: true, response: ""})
     const [base, setBase] = useState({isTyping: false, entry: ""});
     const [quote, setQuote] = useState({isTyping: false, entry: ""});
     const [sendAssetPairRequest, response,] = useApi();
@@ -15,10 +17,13 @@ export const CryptoSelection = ({updateAssets, loadedAssets}) => {
         updateAssets({base: base.entry, quote: quote.entry});
     }, [base, quote]);
 
-    let assetPair = () => base.entry + quote.entry;
-
     const validateAssetPair = () => {
-        sendAssetPairRequest(getAssetPair(assetPair()));
+        if(exchange){
+            setExchangeStatus({isExchangeValid: true, response: ""})
+            sendAssetPairRequest(getAssetPair(base.entry, quote.entry, exchange));
+        } else {
+            setExchangeStatus({isExchangeValid: false, response: "Exchange is not valid."})
+        }
     };
 
     return (
@@ -42,6 +47,8 @@ export const CryptoSelection = ({updateAssets, loadedAssets}) => {
             </div>
             <output id={strategyIds.getAssetPairData} data-testid={strategyIds.getAssetPairData}
                     data-issuccess={response.isSuccess}>{response.message}</output>
+            <output id="exchangeStatus" data-testid="exchangeStatus"
+                    data-issuccess={exchangeStatus.isExchangeValid}>{exchangeStatus.response}</output>
         </div>
     )
 

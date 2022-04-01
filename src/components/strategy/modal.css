@@ -1,5 +1,6 @@
 .modal {
-    width: 1000px;
+    width: 75%;
+    min-width: border-box;
     height: 500px;
     position: fixed;
     top: 50%;
@@ -37,15 +38,48 @@
         "bottom-left bottom-center bottom-right";
 }
 
+#strategyModal input {
+    width: 75%;
+}
+
 h2 {
     grid-area: header;
     margin: 5px;
     justify-self: center;
 }
 
+.strategyDetails {
+    grid-area: mid-right;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-self: start;
+}
+
+.strategyDetails h3 {
+    grid-column: 1 / 5;
+    justify-self: center;
+    align-self: start;
+}
+
+.strategyDetails label {
+    grid-column: 1;
+    justify-self: start;
+    align-self: center;
+}
+
+.strategyDetails input {
+    grid-column: 2;
+    justify-self: end;
+}
+
+.strategyDetails select {
+    grid-column: 2;
+    justify-self: start;
+}
 
 #cryptoSelection {
-    grid-area: mid-left;
+    grid-area: mid-center;
 }
 
 #cryptoSelection input {
@@ -53,7 +87,7 @@ h2 {
 }
 
 #strategyManagement {
-    grid-area: mid-right;
+    grid-area: mid-left;
 }
 
 #loadStrategiesSelect {

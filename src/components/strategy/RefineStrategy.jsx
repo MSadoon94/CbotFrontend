@@ -7,7 +7,7 @@ export const RefineStrategy = ({update, overwrite = ""}) => {
         targetProfit: "Target Profit",
         movingStopLoss: "Moving Stop-Loss",
         maxLoss: "Max Loss",
-        longEntry: "Long Entry"
+        entry: "Entry %"
     }
     return (
         <>
@@ -16,9 +16,9 @@ export const RefineStrategy = ({update, overwrite = ""}) => {
 
                 {Object.keys(refinements).map((type) =>
                     <div key={type}>
-                            <label htmlFor={`${type}Input`}>{refinements[type]}</label>
-                            <DynamicTextBox id={`${type}Input`} overwrite={overwrite[type]}
-                                            onTyping={(res) => update[type](res.entry)} options={{type: "number"}}/>
+                        <label htmlFor={`${type}Input`}>{refinements[type]}</label>
+                        <DynamicTextBox id={`${type}Input`} overwrite={overwrite[type]}
+                                        onTyping={(res) => update[type](res.entry)} options={{type: "number"}}/>
                     </div>
                 )}
             </details>
