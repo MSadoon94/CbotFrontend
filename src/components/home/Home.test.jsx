@@ -20,10 +20,8 @@ jest.mock("../common/DynamicSelect", () => {
         DynamicSelect: ({onOptionsSet}) =>
             <div>
                 <button id={"mockOptionsSetButton"}
-                        onClick={() => {
-                            console.log(onOptionsSet);
-                            onOptionsSet(mockStrategies())
-                        }}>MockOptionsSet
+                        onClick={() => onOptionsSet(mockStrategies())}>
+                    MockOptionsSet
                 </button>
             </div>
     }

@@ -24,6 +24,17 @@ export const mockData = {
         entry: "100"
     },
 
+    trade: {
+        id: "1BTC/USD100Long",
+        status: "Searching",
+        pair: "BTC/USD",
+        allNames: ["BTC/USD", "BTCUSD"],
+        targetPrice: "100",
+        currentPrice: "1",
+        entryPercentage: "5",
+        fees: {},
+        type: "LONG"
+    }
 };
 
 export const mockId = {

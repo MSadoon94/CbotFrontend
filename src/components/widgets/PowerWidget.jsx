@@ -3,7 +3,7 @@ import "./widgets.css";
 import {SOCKET_URI} from "../../App";
 import SockJsClient from "react-stomp"
 
-export const StatusWidget = () => {
+export const PowerWidget = () => {
     const powerButtonStates = {true: "active", false: "inactive"}
     const [status, setStatus] = useState({isActive: "", strategies: {}})
     const ws = useRef();
@@ -35,8 +35,8 @@ export const StatusWidget = () => {
                 <SockJsClient
                     url={SOCKET_URI}
                     topics={["/app/cbot-status", "/topic/cbot-status", "/topic/ticker", "/app/ticker"]}
-                    onMessage={msg => onMessageReceived(msg)}
-                    ref={(client) => ws.current = client}
+                    onMessage={message => onMessageReceived(message)}
+                    ref={client => ws.current = client}
                 />
             </div>
 

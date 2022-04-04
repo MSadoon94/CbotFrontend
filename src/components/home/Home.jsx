@@ -6,7 +6,7 @@ import {CardSaver} from "../card/CardSaver";
 import "./home.css"
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
 import {loadStrategiesModule} from "../strategy/strategyApiModule";
-import {StatusWidget} from "../widgets/StatusWidget";
+import {PowerWidget} from "../widgets/PowerWidget";
 import {useApi} from "../api/useApi";
 import {logoutApiModule} from "./homeApiModule";
 
@@ -85,7 +85,7 @@ export const Home = () => {
                 </details>
             </div>
 
-            <StatusWidget/>
+            <PowerWidget/>
 
             <button
                 type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
