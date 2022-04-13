@@ -8,9 +8,9 @@ import {RefineStrategy} from "./RefineStrategy";
 import "./modal.css"
 import {useApi} from "../api/useApi";
 import {validation} from "../api/responseTemplates";
+import {exchanges} from "../common/exchanges";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
-    const exchanges = {kraken: "KRAKEN"};
     const timeUnits = ["Second", "Minute", "Hour", "Day", "Week", "Month", "Year"];
     let refinements = {
         stopLoss: "",
@@ -27,8 +27,9 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         exchange: "",
         timeFrame: "",
         timeUnit: "",
-        assets: {base: "", quote: ""},
-        refinements
+        base: "",
+        quote: "",
+        ...refinements
     });
     const [sendStrategyRequest, strategyResponse, ,] = useApi()
     const [sendSaveRequest, saveResponse, ,] = useApi();
@@ -42,8 +43,9 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         let {body} = response;
         setStrategy({
             name: body.name,
-            assets: {base: body.base, quote: body.quote},
-            refinements: getRefinements(body)
+            base: body.base,
+            quote: body.quote,
+            ...getRefinements(body),
         })
     }
 
@@ -98,7 +100,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
             <CryptoSelection
                 exchange={strategy.exchange}
                 updateAssets={handleAssetUpdate}
-                loadedAssets={strategy.assets}
+                loadedAssets={{base: strategy.base, quote: strategy.quote}}
             />
 
             <div id="strategyManagement">
@@ -156,7 +158,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
             <button type="button" id="closeButton" onClick={() => onRequestClose()}>X</button>
 
-            <RefineStrategy update={refineUpdate()} overwrite={strategy.refinements}/>
+            <RefineStrategy update={refineUpdate()} overwrite={getRefinements(strategy)}/>
         </Modal>
     )
 };

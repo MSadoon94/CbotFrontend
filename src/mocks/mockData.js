@@ -1,3 +1,5 @@
+import {websocketMappings} from "../components/api/websocketMappings";
+
 export const mockData = {
     assetPair: {base: "BTC", quote: "USD"},
     saveStrategy: {strategy: {}},
@@ -25,7 +27,8 @@ export const mockData = {
     },
 
     trade: {
-        id: "1BTC/USD100Long",
+        id: "KRAKEN1BTC/USD100Long",
+        exchange: "KRAKEN",
         status: "Searching",
         pair: "BTC/USD",
         allNames: ["BTC/USD", "BTCUSD"],
@@ -34,6 +37,12 @@ export const mockData = {
         entryPercentage: "5",
         fees: {},
         type: "LONG"
+    },
+
+    credentials: {
+        exchange: "kraken",
+        account: "mockAccount",
+        password: "mockPassword"
     }
 };
 
@@ -47,5 +56,20 @@ export const mockStatus = () => {
     return {
         isActive: true,
         activeStrategies: Object.keys(mockData.strategies)
+    }
+}
+
+export const messages = () => {
+    let wsMessages = {...websocketMappings};
+    wsMessages["/topic/strategies/names"] = {payload: Object.keys(mockData.strategies), headers: {}}
+    wsMessages["/app/strategies/names"] = {payload: Object.keys(mockData.strategies), headers: {}}
+    return wsMessages;
+}
+
+export const wsClient = (expectedMessage) => {
+    return {
+        current: {
+            sendMessage: (endpoint, message) => expectedMessage({endpoint, message})
+        }
     }
 }

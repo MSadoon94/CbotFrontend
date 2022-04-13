@@ -1,0 +1,62 @@
+.innerSideBar {
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+}
+
+.credentialManager {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    justify-items: start;
+    align-items: center;
+}
+
+.credentialManager label {
+    margin-left: 2vw;
+}
+
+.credentialManager select {
+    margin: 0;
+    width: 9vw;
+}
+
+.credentialManager input {
+    margin: 0;
+    width: 8vw;
+}
+
+.credentialManager button {
+    grid-column-start: 2;
+    margin: 0;
+}
+
+.innerSideBar[data-is_side_bar_open=false] {
+    width: 0;
+}
+
+.innerSideBar[data-is_side_bar_open=true] {
+    width: 30vw;
+}
+
+#sideBarButton {
+    text-align: start;
+    background-color: darkslategrey;
+    border: none;
+    padding-left: 0;
+    margin-left: 0;
+    color: silver;
+    transition: 0.25s;
+    opacity: 25%;
+    font-size: 5vw;
+}
+
+#sideBarButton:hover {
+    opacity: 100%;
+}

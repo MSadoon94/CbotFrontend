@@ -1,50 +1,43 @@
-import {Fragment, useEffect, useRef, useState} from "react";
-import {useApi} from "../api/useApi";
+import {Fragment, useContext, useEffect, useState} from "react";
+import {WebSocketContext} from "../../App";
 
 export const CheckboxWidget = ({
-                                   type, apiModule, isStale = () => false,
-                                   onRequest = () => ({isReady: false, getRequest: () => null})
+                                   type,
+                                   websocket = null
                                }) => {
-    const [checked, setChecked] = useState({});
-    const [sendOptionsRequest, optionsResponse, ] = useApi();
-    const isStaleRef = useRef(isStale)
+    const {wsMessages, wsClient} = useContext(WebSocketContext);
+    const [options, setOptions] = useState([]);
 
     useEffect(() => {
-        if (onRequest().isReady) {
-            let values = Object.entries(checked).filter(value => value);
-            onRequest().getRequest(values.map(value => value[0]));
+        let messages = websocket.topic
+            .flatMap(topic => wsMessages[topic].payload)
+            .filter(Boolean);
+
+        if (messages !== []) {
+            setOptions(messages);
         }
-
-    }, [onRequest().isReady])
-
-    useEffect(() => {
-        sendOptionsRequest(apiModule);
-    }, [])
-
-    useEffect(() => {
-        isStaleRef.current = isStale;
-        if (isStaleRef.current()) {
-            sendOptionsRequest(apiModule);
-            isStaleRef.current = () => false;
-        }
-    }, [isStale()])
+    }, [wsMessages]);
 
     return (
         <div id={`${type}checkboxWidget`}>
-            <output id={`get${type}Options`} data-testid={`get${type}Options`}
-                    data-issuccess={optionsResponse.isSuccess}/>
-            {Object.keys(optionsResponse.body).map((option) => {
-                let optionTag = `${option}Checkbox`;
-                return (
-                    <Fragment key={optionTag}>
-                        <input type={"checkbox"} id={optionTag} name={option}
-                               onChange={(e) =>
-                                   setChecked({...checked, [e.target.name]: e.target.checked})
-                               }/>
-                        <label htmlFor={optionTag}>{option}</label>
-                    </Fragment>
-                )
-            })}
+            {options.map(option => {
+                    let optionTag = `${option}Checkbox`;
+                    return (
+                        <Fragment key={optionTag}>
+                            <input type="checkbox" id={optionTag} name={option}
+                                   onChange={e => {
+                                       if (e.target.checked) {
+                                           websocket.sendTo
+                                               .forEach(endpoint =>
+                                                   wsClient.current.sendMessage(endpoint, e.target.name))
+                                       }
+                                   }}
+                            />
+                            <label htmlFor={optionTag}>{option}</label>
+                        </Fragment>
+                    )
+                }
+            )}
         </div>
     )
 }

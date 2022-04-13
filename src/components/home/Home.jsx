@@ -1,14 +1,15 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
 import {CardLoader} from "../card/CardLoader";
 import {CardSaver} from "../card/CardSaver";
 import "./home.css"
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
-import {loadStrategiesModule} from "../strategy/strategyApiModule";
 import {PowerWidget} from "../widgets/PowerWidget";
 import {useApi} from "../api/useApi";
 import {logoutApiModule} from "./homeApiModule";
+import {TradeWidget} from "../widgets/TradeWidget";
+import {SideBar} from "../side_bar/SideBar";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -16,7 +17,6 @@ export const Home = () => {
     const [isStale, setStale] = useState(false);
     const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
-    const activeStrategiesRef = useRef([]);
     const [sendLogoutRequest, , , setSession] = useApi();
 
     useEffect(() => {
@@ -42,6 +42,7 @@ export const Home = () => {
 
     return (
         <div className={"homePage"}>
+            <SideBar/>
             <h1 className={"title"}>User Home</h1>
 
             <div hidden={newCardForm.isHidden} className={"cardForm"}>
@@ -71,16 +72,11 @@ export const Home = () => {
             <div id={"strategyDetailsBox"}>
                 <details id={"strategyDetails"} onToggle={() => setStale(true)}>
                     <summary>Strategies</summary>
-                    <CheckboxWidget type={"strategies"}
-                                    apiModule={loadStrategiesModule()}
-                                    isStale={() => isStale}
-                                    onRequest={() => (
-                                        {
-                                            isReady: false,
-                                            getRequest: (checked) =>
-                                                activeStrategiesRef.current = checked
-                                        }
-                                    )}
+                    <CheckboxWidget type="strategies"
+                                    websocket={{
+                                        topic: ["/topic/strategies/names", "/app/strategies/names"],
+                                        sendTo: "/app/strategies/active"
+                                    }}
                     />
                 </details>
             </div>
@@ -91,6 +87,8 @@ export const Home = () => {
                 type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
                 Log Out
             </button>
+
+            <TradeWidget/>
 
         </div>
     )

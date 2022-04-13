@@ -3,17 +3,20 @@ import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Home} from "./Home";
 import ReactModal from 'react-modal'
+import {WebSocketContext} from "../../App";
+import {messages, wsClient} from "../../mocks/mockData";
 
 ReactModal.setAppElement(document.createElement('div'));
 
+let expectedMessage, mockStrategies;
+
 beforeEach(() => {
     render(
-        <Home/>
+        <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(expectedMessage)}}>
+            <Home/>
+        </WebSocketContext.Provider>
     );
 });
-
-
-let mockStrategies;
 
 jest.mock("../common/DynamicSelect", () => {
     return {

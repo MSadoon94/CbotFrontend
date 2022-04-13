@@ -35,7 +35,7 @@ export const PowerWidget = () => {
                 <SockJsClient
                     url={SOCKET_URI}
                     topics={["/app/cbot-status", "/topic/cbot-status", "/topic/ticker", "/app/ticker"]}
-                    onMessage={message => onMessageReceived(message)}
+                    onMessage={msg => onMessageReceived(msg)}
                     ref={client => ws.current = client}
                 />
             </div>

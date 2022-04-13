@@ -15,8 +15,8 @@ export const TradeWidget = () => {
         <div className="tradeWidget">
             <SockJsClient
                 url={SOCKET_URI}
-                topics={["/app/trade", "/topic/trade"]}
-                onMessage={message => onMessageReceived(message)}
+                topics={["/app/trade-feed"]}
+                onMessage={msg => onMessageReceived(msg)}
                 ref={client => ws.current = client}
             />
             {trades.map(trade =>

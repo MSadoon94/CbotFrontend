@@ -22,7 +22,6 @@
     justify-self: end;
     align-self: start;
     margin-right: 10px;
-
 }
 
 .newItemButtons {
@@ -67,4 +66,22 @@
     justify-self: end;
     align-self: start;
 }
+
+.outerSideBar {
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    margin-left: 0;
+    padding-left: 0;
+    transition: 0.5s;
+}
+
+.outerSideBar:hover {
+    left: 5px;
+}
+
+.outerSideBar[data-is_side_bar_open=true] {
+    left: 30%;
+}
+
 
