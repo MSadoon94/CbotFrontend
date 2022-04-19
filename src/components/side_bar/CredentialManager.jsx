@@ -6,8 +6,8 @@ import {exchanges} from "../common/exchanges";
 export const CredentialManager = () => {
     const [credentials, setCredentials] = useState({exchange: "", account: "", password: ""})
     const [messages, setMessages] = useState({
-        "/app/add-credentials": {payload: "", headers: {}},
-        "/topic/rejected-credentials": {payload: "", headers: {}}
+        "/app/add-credentials": "",
+        "/topic/rejected-credentials": ""
     })
     const ws = useRef();
 
@@ -44,13 +44,13 @@ export const CredentialManager = () => {
             </button>
 
             <output id="addCredentialsResponse" data-testid="addCredentialsResponse"
-                    data-issuccess={Object.keys(messages["/app/add-credentials"].headers).includes("Error")}>
-                {messages["/app/add-credentials"].payload}
+                    data-issuccess={messages["/app/add-credentials"].includes("Error")}>
+                {messages["/app/add-credentials"]}
             </output>
 
             <output id="rejectedCredentialsResponse" data-testid="rejectedCredentialsResponse"
-                    data-issuccess={!messages["/topic/rejected-credentials"].payload}>
-                {messages["/topic/rejected-credentials"].payload}
+                    data-issuccess={!messages["/topic/rejected-credentials"].includes("Error")}>
+                {messages["/topic/rejected-credentials"]}
             </output>
         </div>
     )

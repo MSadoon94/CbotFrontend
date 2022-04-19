@@ -8,10 +8,10 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
-const endpoint = "/app/strategies/names"
+const endpoint = "/app/strategies"
 let mockStrategies = {...mockData.strategies};
 let expectedMessage;
-let getExpectedMessage = (msg) => expectedMessage = msg;
+const getExpectedMessage = (msg) => expectedMessage = msg;
 
 /* If the render function goes in the beforeEach section, the same document.body is used for each test and the previous
 *   results will fail the next test. More details:

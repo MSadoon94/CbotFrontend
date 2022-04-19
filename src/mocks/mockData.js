@@ -15,6 +15,8 @@ export const mockData = {
         "MockStrategy2": {strategyName: "MockStrategy2"}
     },
     strategy: {
+        exchange: "KRAKEN",
+        type: "long",
         name: "MockStrategy1",
         base: "USD",
         quote: "BTC",
@@ -60,9 +62,14 @@ export const mockStatus = () => {
 }
 
 export const messages = () => {
+    let mockStrategy1 = mockData.strategies.MockStrategy1.strategyName;
+    let mockStrategy2 = mockData.strategies.MockStrategy2.strategyName;
     let wsMessages = {...websocketMappings};
-    wsMessages["/topic/strategies/names"] = {payload: Object.keys(mockData.strategies), headers: {}}
-    wsMessages["/app/strategies/names"] = {payload: Object.keys(mockData.strategies), headers: {}}
+    wsMessages["/topic/strategies/names"] = Object.keys(mockData.strategies);
+    wsMessages[`/topic/${mockStrategy1}/true`] = {mockStrategy1: true};
+    wsMessages[`/topic/${mockStrategy2}/false`] = {mockStrategy1: false};
+    wsMessages[`/topic/${mockStrategy1}/create-trade`] = {id: "mockTradeId", status: mockData.trade.status};
+    wsMessages["/topic/trades"] = {id: mockData.trade.id, status: mockData.trade.status};
     return wsMessages;
 }
 

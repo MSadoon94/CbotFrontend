@@ -10,7 +10,7 @@ export const CheckboxWidget = ({
 
     useEffect(() => {
         let messages = websocket.topic
-            .flatMap(topic => wsMessages[topic].payload)
+            .flatMap(topic => wsMessages[topic])
             .filter(Boolean);
 
         if (messages !== []) {
@@ -26,11 +26,11 @@ export const CheckboxWidget = ({
                         <Fragment key={optionTag}>
                             <input type="checkbox" id={optionTag} name={option}
                                    onChange={e => {
-                                       if (e.target.checked) {
-                                           websocket.sendTo
-                                               .forEach(endpoint =>
-                                                   wsClient.current.sendMessage(endpoint, e.target.name))
-                                       }
+                                       websocket.sendTo
+                                           .forEach(endpoint =>
+                                               wsClient.current.sendMessage(
+                                                   endpoint.concat(`/${e.target.name}/${e.target.checked}`)
+                                               ))
                                    }}
                             />
                             <label htmlFor={optionTag}>{option}</label>

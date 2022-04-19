@@ -1,31 +1,29 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import {TradeWidget} from "./TradeWidget";
-import userEvent from "@testing-library/user-event";
-import {mockData} from "../../mocks/mockData";
+import {messages, mockData, wsClient} from "../../mocks/mockData";
+import {WebSocketContext} from "../../App";
 
-let messageButton;
-
-jest.mock("react-stomp", () => ({
-    __esModule: true,
-    default: (props) => {
-        return <button id="mockReceiveMessage"
-                onClick={() => {
-                    props.onMessage(mockData.trade)
-                }}>
-            MockReceiveMessage
-        </button>
-    }
-}))
+let expectedMessage;
+const getExpectedMessage = (msg) => expectedMessage = msg;
 
 beforeEach(() => {
     render(
-        <TradeWidget/>
+        <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
+            <TradeWidget/>
+        </WebSocketContext.Provider>
     );
-    messageButton = screen.getByRole("button", {name: "MockReceiveMessage"});
 })
 
-test("should create trade element on message received",  () => {
-    userEvent.click(messageButton);
-
+test("should create trade elements on start", () => {
     expect(screen.getByText(mockData.trade.id)).toBeInTheDocument();
+})
+
+test("should send trade creation messages on active strategy update", async () => {
+    await waitFor(() => expect(expectedMessage.endpoint)
+        .toBe(`/app/${mockData.strategies.MockStrategy1.strategyName}/create-trade`))
+})
+
+test("should add trade elements on successful trade creation", () => {
+    let expectedTradeId = "mockTradeId"
+    expect(screen.getByText(expectedTradeId)).toBeInTheDocument();
 })

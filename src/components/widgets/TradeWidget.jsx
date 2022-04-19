@@ -1,25 +1,35 @@
-import {useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Trade} from "../trade/Trade";
-import SockJsClient  from "react-stomp";
-import {SOCKET_URI} from "../../App";
+import {WebSocketContext} from "../../App";
 
 export const TradeWidget = () => {
-    const [trades, setTrades] = useState([]);
-    const ws = useRef();
+    const {wsMessages, wsClient} = useContext(WebSocketContext);
+    const [trades, setTrades] = useState({});
 
-    const onMessageReceived = (message) => {
-        setTrades([...trades, message]);
-    }
+    useEffect(() => {
+        let trade = wsMessages["/topic/trades"];
+        let tradesReceived = {}
+        if ((trade) && (!trades[trade.id])) {
+            tradesReceived[trade.id] = trade;
+        }
+
+        if (wsMessages["/topic/strategies/names"]) {
+            wsMessages["/topic/strategies/names"].forEach(name => {
+                if (wsMessages[`/topic/${name}/true`]) {
+                    wsClient.current.sendMessage(`/app/${name}/create-trade`);
+                    tradesReceived[wsMessages[`/topic/${name}/create-trade`].id]
+                        = wsMessages[`/topic/${name}/create-trade`];
+                }
+            })
+        }
+        setTrades({...trades, ...tradesReceived})
+
+    }, [wsMessages]);
 
     return (
         <div className="tradeWidget">
-            <SockJsClient
-                url={SOCKET_URI}
-                topics={["/app/trade-feed"]}
-                onMessage={msg => onMessageReceived(msg)}
-                ref={client => ws.current = client}
-            />
-            {trades.map(trade =>
+
+            {Object.values(trades).map(trade =>
                 <Trade body={trade}/>)
             }
         </div>
