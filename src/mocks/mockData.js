@@ -11,10 +11,11 @@ export const mockData = {
         "mockCard2": {cardName: "mockCard2", balances: {"ZUSD": 150}}
     },
     strategies: {
-        "MockStrategy1": {strategyName: "MockStrategy1"},
-        "MockStrategy2": {strategyName: "MockStrategy2"}
+        "MockStrategy1": {name: "MockStrategy1", isActive: true},
+        "MockStrategy2": {name: "MockStrategy2", isActive: false}
     },
     strategy: {
+        isActive: false,
         exchange: "KRAKEN",
         type: "long",
         name: "MockStrategy1",
@@ -62,10 +63,13 @@ export const mockStatus = () => {
 }
 
 export const messages = () => {
-    let mockStrategy1 = mockData.strategies.MockStrategy1.strategyName;
-    let mockStrategy2 = mockData.strategies.MockStrategy2.strategyName;
+    let mockStrategy1 = mockData.strategies.MockStrategy1.name;
+    let mockStrategy2 = mockData.strategies.MockStrategy2.name;
     let wsMessages = {...websocketMappings};
-    wsMessages["/topic/strategies/names"] = Object.keys(mockData.strategies);
+    wsMessages["/app/strategies/names"] = Object.values(mockData.strategies)
+        .map(strategy => ({name: strategy.name, isActive: strategy.isActive}));
+    wsMessages["/topic/strategies/names"] = Object.values(mockData.strategies)
+        .map(strategy => ({name: strategy.name, isActive: strategy.isActive}));
     wsMessages[`/topic/${mockStrategy1}/true`] = {mockStrategy1: true};
     wsMessages[`/topic/${mockStrategy2}/false`] = {mockStrategy1: false};
     wsMessages[`/topic/${mockStrategy1}/create-trade`] = {id: "mockTradeId", status: mockData.trade.status};

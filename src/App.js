@@ -27,7 +27,7 @@ function App() {
         <SessionContext.Provider value={setSession}>
             <SockJsClient
                 url={SOCKET_URI}
-                topics={Object.keys(messages)}
+                topics={Object.keys(websocketMappings)}
                 onMessage={(msg, destination) => setMessages({...messages, [destination]: msg})}
                 ref={client => wsClient.current = client}
                 debug={true}

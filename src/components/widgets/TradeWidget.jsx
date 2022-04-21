@@ -13,18 +13,26 @@ export const TradeWidget = () => {
             tradesReceived[trade.id] = trade;
         }
 
+        if (wsMessages["/topic/create-trade"]) {
+            tradesReceived[wsMessages["/topic/create-trade"].strategyName]
+                = wsMessages["/topic/create-trade"];
+        }
+
+        setTrades({...trades, ...tradesReceived})
+
+    }, [wsMessages["/topic/trades"], wsMessages["/topic/create-trade"]]);
+
+    useEffect(() => {
         if (wsMessages["/topic/strategies/names"]) {
-            wsMessages["/topic/strategies/names"].forEach(name => {
-                if (wsMessages[`/topic/${name}/true`]) {
-                    wsClient.current.sendMessage(`/app/${name}/create-trade`);
-                    tradesReceived[wsMessages[`/topic/${name}/create-trade`].id]
-                        = wsMessages[`/topic/${name}/create-trade`];
+            wsMessages["/topic/strategies/names"].forEach(strategy => {
+                if (strategy.isActive) {
+                    setTrades({...trades, [strategy.name]: {strategyName: strategy.name}})
+                    wsClient.current.sendMessage("/app/create-trade", strategy.name)
                 }
             })
         }
-        setTrades({...trades, ...tradesReceived})
 
-    }, [wsMessages]);
+    }, [wsMessages["/topic/strategies/names"]])
 
     return (
         <div className="tradeWidget">

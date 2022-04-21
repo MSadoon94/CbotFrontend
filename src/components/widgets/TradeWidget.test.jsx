@@ -20,7 +20,7 @@ test("should create trade elements on start", () => {
 
 test("should send trade creation messages on active strategy update", async () => {
     await waitFor(() => expect(expectedMessage.endpoint)
-        .toBe(`/app/${mockData.strategies.MockStrategy1.strategyName}/create-trade`))
+        .toBe(`/app/${mockData.strategies.MockStrategy1.name}/create-trade`))
 })
 
 test("should add trade elements on successful trade creation", () => {

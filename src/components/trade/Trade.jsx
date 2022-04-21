@@ -3,11 +3,9 @@ import {useState} from "react";
 export const Trade = ({body}) => {
     const [trade, setTrade] = useState({...body})
 
-    console.log(body)
-
     return (
         <details key={trade.id} className="tradeDetails">
-            <summary>{trade.id}</summary>
+            <summary>{trade.label ? trade.label : trade.strategyName}</summary>
             <table>
                <tbody>
                <tr>
