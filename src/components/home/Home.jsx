@@ -74,8 +74,8 @@ export const Home = () => {
                     <summary>Strategies</summary>
                     <CheckboxWidget type="strategies"
                                     websocket={{
-                                        initial: "/app/strategies/names",
-                                        topic: "/app/strategies/names",
+                                        initial: "/app/strategies/details",
+                                        topic: "/app/strategies/details",
                                         sendTo: "/app/strategies"
                                     }}
                                     fields={{option: "name", isChecked: "isActive"}}

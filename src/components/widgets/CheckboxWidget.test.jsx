@@ -21,8 +21,8 @@ const cleanRender = () => {
         <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
             <CheckboxWidget type="strategies"
                             websocket={{
-                                initial: "/app/strategies/names",
-                                topic: "/topic/strategies/names",
+                                initial: "/app/strategies/details",
+                                topic: "/topic/strategies/details",
                                 sendTo: endpoint
                             }}
                             fields={{option: "name", isChecked: "isActive"}}

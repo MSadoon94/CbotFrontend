@@ -23,16 +23,16 @@ export const TradeWidget = () => {
     }, [wsMessages["/topic/trades"], wsMessages["/topic/create-trade"]]);
 
     useEffect(() => {
-        if (wsMessages["/topic/strategies/names"]) {
-            wsMessages["/topic/strategies/names"].forEach(strategy => {
-                if (strategy.isActive) {
+        if (wsMessages["/topic/strategies/details"]) {
+            wsMessages["/topic/strategies/details"].forEach(strategy => {
+                if (strategy.isActive && !Object.keys(trades).includes(strategy.name)) {
                     setTrades({...trades, [strategy.name]: {strategyName: strategy.name}})
                     wsClient.current.sendMessage("/app/create-trade", strategy.name)
                 }
             })
         }
 
-    }, [wsMessages["/topic/strategies/names"]])
+    }, [wsMessages["/topic/strategies/details"]])
 
     return (
         <div className="tradeWidget">

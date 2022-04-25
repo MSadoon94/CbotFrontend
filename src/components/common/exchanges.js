@@ -1,1 +1,1 @@
-export const exchanges = {kraken: "KRAKEN"};
+export const exchanges = {Kraken: "KRAKEN"};

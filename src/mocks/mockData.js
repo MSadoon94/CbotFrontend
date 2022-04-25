@@ -66,9 +66,9 @@ export const messages = () => {
     let mockStrategy1 = mockData.strategies.MockStrategy1.name;
     let mockStrategy2 = mockData.strategies.MockStrategy2.name;
     let wsMessages = {...websocketMappings};
-    wsMessages["/app/strategies/names"] = Object.values(mockData.strategies)
+    wsMessages["/app/strategies/details"] = Object.values(mockData.strategies)
         .map(strategy => ({name: strategy.name, isActive: strategy.isActive}));
-    wsMessages["/topic/strategies/names"] = Object.values(mockData.strategies)
+    wsMessages["/topic/strategies/details"] = Object.values(mockData.strategies)
         .map(strategy => ({name: strategy.name, isActive: strategy.isActive}));
     wsMessages[`/topic/${mockStrategy1}/true`] = {mockStrategy1: true};
     wsMessages[`/topic/${mockStrategy2}/false`] = {mockStrategy1: false};

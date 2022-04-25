@@ -26,6 +26,7 @@ export const CredentialManager = () => {
                     onClick={e => setCredentials({...credentials, exchange: e.target.value})}>
                 {Object.keys(exchanges)
                     .map(exchange => <option id={`${exchange}Option`} key={`${exchange}Option`}
+                                             selected={exchanges[exchange] === exchanges.Kraken}
                                              value={exchanges[exchange]}>{exchange}</option>)
                 }
             </select>
