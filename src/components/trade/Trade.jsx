@@ -12,11 +12,12 @@ export const Trade = ({body}) => {
 
     useEffect(() => {
         if (trade.id) {
-            setRealtimeData();
+            realtimePrice();
+            tradeUpdates();
         }
     }, [wsMessages]);
 
-    const setRealtimeData = () => {
+    const realtimePrice = () => {
         let pair = body.pair.trim().replace("/", "");
         let currentPrice = `/topic/price/${trade.exchange.toLowerCase()}/${pair.toLowerCase()}`;
         if (wsMessages[currentPrice]) {
@@ -24,9 +25,16 @@ export const Trade = ({body}) => {
         }
     };
 
+    const tradeUpdates = () => {
+        let update = `/topic/trade/${trade.id}/update`;
+        if(wsMessages[update]){
+            setTrade(wsMessages[update]);
+        }
+    }
+
     return (
         <details key={trade.id} className="tradeDetails">
-            <summary>{trade.label ? trade.label : trade.strategyName}</summary>
+            <summary>{trade.strategyName}</summary>
             <table>
                 <tbody>
                 <tr>

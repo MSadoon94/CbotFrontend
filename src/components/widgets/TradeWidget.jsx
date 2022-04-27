@@ -7,39 +7,25 @@ export const TradeWidget = () => {
     const [trades, setTrades] = useState({});
 
     useEffect(() => {
-        let trade = wsMessages["/topic/trades"];
-        let tradesReceived = {}
-        if ((trade) && (!trades[trade.id])) {
-            tradesReceived[trade.id] = trade;
+        let initialTrades = wsMessages["/app/trades"];
+        if (initialTrades) {
+            setTrades(Object.values(initialTrades));
         }
-
-        if (wsMessages["/topic/create-trade"]) {
-            tradesReceived[wsMessages["/topic/create-trade"].strategyName]
-                = wsMessages["/topic/create-trade"];
-        }
-
-        setTrades({...trades, ...tradesReceived})
-
-    }, [wsMessages["/topic/trades"], wsMessages["/topic/create-trade"]]);
+    }, [wsMessages["/app/trades"]])
 
     useEffect(() => {
-        if (wsMessages["/topic/strategies/details"]) {
-            wsMessages["/topic/strategies/details"].forEach(strategy => {
-                if (strategy.isActive && !Object.keys(trades).includes(strategy.name)) {
-                    setTrades({...trades, [strategy.name]: {strategyName: strategy.name}})
-                    wsClient.current.sendMessage("/app/create-trade", strategy.name)
-                }
-            })
+        let createdTrade = wsMessages["/topic/trades"];
+        if (createdTrade) {
+            setTrades(Object.values(createdTrade))
         }
 
-    }, [wsMessages["/topic/strategies/details"]])
+    }, [wsMessages["/topic/trades"]]);
 
     return (
         <div className="tradeWidget">
 
             {Object.values(trades).map(trade =>
-                <Trade body={trade}/>)
-            }
+                <Trade body={trade}/>)}
         </div>
     )
 }

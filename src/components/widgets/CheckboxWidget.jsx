@@ -7,40 +7,47 @@ export const CheckboxWidget = ({
                                    fields = {option: "option", isChecked: "isChecked"}
                                }) => {
     const {wsMessages, wsClient} = useContext(WebSocketContext);
-    const [options, setOptions] = useState(([{option: null, isChecked: false}]));
+    const [options, setOptions] = useState([{[fields.option]: null, [fields.isChecked]: false}]);
 
     useEffect(() => {
         if (wsMessages[websocket.initial]) {
-            let messages = [...new Set(wsMessages[websocket.initial]
-                .filter(Boolean)
-                .map(message => ({option: message[fields.option], isChecked: message[fields.isChecked]})))]
-            setOptions(messages);
+            addOptions(wsMessages[websocket.initial]);
         }
-    }, [])
+    }, [wsMessages[websocket.initial]])
 
     useEffect(() => {
         if (wsMessages[websocket.topic]) {
-            setOptions(wsMessages[websocket.topic])
+            addOptions(wsMessages[websocket.topic]);
         }
-    }, [wsMessages]);
+    }, [wsMessages[websocket.topic]]);
+
+    const addOptions = (wsPayload) => {
+        let messages = wsPayload
+            .map(message => ({[fields.option]: message[fields.option], [fields.isChecked]: message[fields.isChecked]}));
+        setOptions(messages)
+    }
 
     return (
         <div id={`${type}checkboxWidget`}>
-            {options.map(entry => {
-                    let optionTag = `${entry[fields.option]}Checkbox`;
-                    return (
-                        <Fragment key={optionTag}>
-                            <input type="checkbox" id={optionTag} name={entry[fields.option]}
-                                   onChange={e => wsClient.current.sendMessage(
-                                       websocket.sendTo.concat(`/${e.target.name}/${e.target.checked}`))
-                                   }
-                            />
-                            <label htmlFor={optionTag}>{entry[fields.option]}</label>
+            {options.filter(entry => entry[fields.option])
+                .map(entry => {
+                        let optionTag = `${entry[fields.option]}Checkbox`;
+                        return (
+                            <Fragment key={optionTag}>
+                                <input type="checkbox" id={optionTag} name={entry[fields.option]}
+                                       onChange={e => {
+                                           wsClient.current.sendMessage(
+                                               websocket.sendTo,
+                                               JSON.stringify({...entry, [fields.isChecked]: e.target.checked})
+                                           )
+                                       }}
+                                />
+                                <label htmlFor={optionTag}>{entry[fields.option]}</label>
 
-                        </Fragment>
-                    )
-                }
-            )}
+                            </Fragment>
+                        )
+                    }
+                )}
         </div>
     )
 }
