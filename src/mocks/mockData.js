@@ -74,6 +74,7 @@ export const messages = () => {
     wsMessages[`/topic/${mockStrategy2}/false`] = {mockStrategy1: false};
     wsMessages[`/topic/${mockStrategy1}/create-trade`] = {id: "mockTradeId", status: mockData.trade.status};
     wsMessages["/topic/trades"] = {id: mockData.trade.id, status: mockData.trade.status};
+    wsMessages["/topic/asset-pairs"] = {error: []}
     return wsMessages;
 }
 

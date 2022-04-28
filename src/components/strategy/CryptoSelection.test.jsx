@@ -2,14 +2,16 @@ import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
 import {CryptoSelection} from "./CryptoSelection";
 import userEvent from "@testing-library/user-event";
-import {HttpStatus} from "../common/httpStatus";
-import {rest} from "msw";
 import {strategyIds} from "./strategyApiModule";
-import {failedRequest} from "../../mocks/apiMocks";
+import {messages, wsClient} from "../../mocks/mockData";
+import {WebSocketContext} from "../../App";
 
 jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
+
+let expectedMessage;
+const getExpectedMessage = (msg) => expectedMessage = msg;
 
 describe("exchange interactions", () => {
     let baseInput, quoteInput, exchangeResponse;
@@ -17,9 +19,11 @@ describe("exchange interactions", () => {
 
     test("should display error when exchange has not been set", async () => {
         render(
-            <CryptoSelection exchange={""}
-                             updateAssets={updateAssets}
-                             loadedAssets={{base: "", quote: ""}}/>
+            <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
+                <CryptoSelection exchange={""}
+                                 updateAssets={updateAssets}
+                                 loadedAssets={{base: "", quote: ""}}/>
+            </WebSocketContext.Provider>
         );
 
         exchangeResponse = screen.getByTestId("exchangeStatus");
@@ -37,31 +41,32 @@ describe("api interactions", () => {
     let baseInput, quoteInput, assetsResponse;
     let updateAssets = (assets) => ({base: assets.base, quote: assets.quote});
 
-    beforeEach(() => {
+    const cleanRender = (messages) => {
         render(
-            <CryptoSelection exchange="exchange"
-                             updateAssets={updateAssets}
-                             loadedAssets={{base: "", quote: ""}}/>
+            <WebSocketContext.Provider value={{wsMessages: messages, wsClient: wsClient(getExpectedMessage)}}>
+                <CryptoSelection exchange="exchange"
+                                 updateAssets={updateAssets}
+                                 loadedAssets={{base: "", quote: ""}}/>
+            </WebSocketContext.Provider>
         );
 
         baseInput = screen.getByRole("textbox", {name: "Base Symbol"});
         quoteInput = screen.getByRole("textbox", {name: "Quote Symbol"});
         assetsResponse = screen.getByTestId(strategyIds.getAssetPairData);
-    });
-
-
+    };
 
     test("should display checkmark for valid asset pairs", async () => {
+        cleanRender(messages())
         userEvent.type(baseInput, "BTC");
         userEvent.type(quoteInput, "USD");
 
         await waitFor(() => expect(assetsResponse).toHaveTextContent("✔"));
     });
     test("should display error for invalid asset pairs", async () => {
-        failedRequest(rest.get, "/asset-pair/:base/:quote/:brokerage", HttpStatus.notFound);
-        userEvent.type(baseInput, "BTC");
-        userEvent.type(quoteInput, "UD");
+        let wsMessages = {...messages()};
+        wsMessages["/topic/asset-pairs"] = {error: ["error"]};
+        cleanRender(wsMessages);
 
-        await waitFor(() => expect(assetsResponse).toHaveTextContent("BTCUD is invalid."));
+        await waitFor(() => expect(assetsResponse).toHaveTextContent("is invalid."));
     });
 });

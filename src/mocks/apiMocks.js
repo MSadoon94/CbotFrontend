@@ -31,10 +31,6 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.ok))
     ),
-    rest.get(`${URL}/asset-pair/:base/:quote/:brokerage`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json({result: "asset pair information"}))
-    ),
     rest.post(`${URL}/user/strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))

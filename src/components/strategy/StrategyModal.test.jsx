@@ -3,9 +3,10 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {StrategyModal} from "./StrategyModal";
 import ReactModal from "react-modal";
 import userEvent from "@testing-library/user-event";
-import {mockData} from "../../mocks/mockData";
+import {messages, mockData, wsClient} from "../../mocks/mockData";
 import {strategyIds} from "./strategyApiModule";
 import {validation} from "../api/responseTemplates";
+import {WebSocketContext} from "../../App";
 
 ReactModal.setAppElement(document.createElement('div'));
 
@@ -15,11 +16,16 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
+let expectedMessage;
+const getExpectedMessage = (msg) => expectedMessage = msg;
+
 beforeEach(() => {
     isOpen = true;
     render(
-        <StrategyModal isOpen={isOpen}
-                       onRequestClose={() => isOpen = false}/>
+        <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
+            <StrategyModal isOpen={isOpen}
+                           onRequestClose={() => isOpen = false}/>
+        </WebSocketContext.Provider>
     );
 });
 

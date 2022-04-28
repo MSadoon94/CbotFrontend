@@ -6,4 +6,5 @@ export const websocketMappings = {
     "/app/trades": null,
     "/topic/trade/**/update": null,
     "/topic/price/**": null,
+    "/topic/asset-pairs": null
 }

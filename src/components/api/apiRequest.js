@@ -10,7 +10,9 @@ export const apiRequest = async (config, templates, setSession = () => null) => 
         .then(
             (res) => response(res.status, templates.success, res.data),
             (error) => {
-                if (error.response.status === HttpStatus.unauthorized) {
+                if(config.isPublic){
+                    return Promise.reject(failSafe(error.response, templates));
+                } else if ((error.response.status === HttpStatus.unauthorized)) {
                     return refresh(setSession)
                         .then(
                             () => retryRequest(config, templates),

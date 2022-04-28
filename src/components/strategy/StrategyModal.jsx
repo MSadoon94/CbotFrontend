@@ -68,13 +68,15 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
     const isValidExchange = (exchange) => {
         if (exchange) {
-            return Object.keys(exchanges).includes(exchange.trim().toLowerCase());
+            return Object.keys(exchanges)
+                .map(key => key.toLowerCase())
+                .includes(exchange.trim().toLowerCase());
         } else {
             return false;
         }
     }
 
-    const checkExchange = (exchange) => {
+    const checkExchange = () => {
         let response = validation(strategy.exchange);
 
         if (!strategy.exchange) {
@@ -129,7 +131,7 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                        onChange={e => setStrategy({...strategy, exchange: e.target.value})}/>
                 <output id="exchangeResponse" data-testid="exchangeResponse"
                         data-issuccess={isValidExchange(strategy.exchange)}>
-                    {checkExchange(strategy.exchange)}
+                    {checkExchange()}
                 </output>
 
                 <label htmlFor="strategyTypeSelect">Strategy Type</label>
