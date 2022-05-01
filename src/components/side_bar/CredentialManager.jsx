@@ -1,25 +1,32 @@
-import {useRef, useState} from "react";
-import {SOCKET_URI} from "../../App";
-import SockJsClient from "react-stomp";
+import {useContext, useEffect, useState} from "react";
+import {WebSocketContext} from "../../App";
 import {exchanges} from "../common/exchanges";
 
 export const CredentialManager = () => {
+    const {wsMessages, wsClient} = useContext(WebSocketContext);
     const [credentials, setCredentials] = useState({exchange: "", account: "", password: ""})
-    const [messages, setMessages] = useState({
-        "/app/add-credentials": "",
-        "/topic/rejected-credentials": ""
-    })
-    const ws = useRef();
+    const [response, setResponse] = useState("");
+    const [rejectCredentials, setRejectCredentials] = useState();
+
+    useEffect(() => {
+        let message = wsMessages["/topic/rejected-credentials"];
+        if (message) {
+            setRejectCredentials(message);
+            setTimeout(() => setRejectCredentials(null), 3000);
+        }
+
+    }, [wsMessages["/topic/rejected-credentials"]])
+
+    useEffect(() => {
+        let message = wsMessages["/topic/add-credentials"];
+        if (message) {
+            setResponse(message);
+            setTimeout(() => setResponse(""), 3000);
+        }
+    }, [wsMessages["/topic/add-credentials"]])
 
     return (
         <div className="credentialManager">
-
-            <SockJsClient
-                url={SOCKET_URI}
-                topics={["/topic/rejected-credentials"]}
-                onMessage={(msg, topic) => setMessages({...messages, [topic]: msg})}
-                ref={client => ws.current = client}
-            />
 
             <label htmlFor="exchangeNameSelect">Exchange Name</label>
             <select id="exchangeNameSelect"
@@ -40,18 +47,20 @@ export const CredentialManager = () => {
                    onChange={e => setCredentials({...credentials, password: e.target.value})}/>
 
             <button type="button" id="addCredentialsButton"
-                    onClick={() => ws.current.sendMessage("/app/add-credentials", JSON.stringify(credentials))}>
+                    onClick={() => wsClient.current.sendMessage(
+                        "/app/add-credentials",
+                        JSON.stringify(credentials))}>
                 Add Credentials
             </button>
 
             <output id="addCredentialsResponse" data-testid="addCredentialsResponse"
-                    data-issuccess={messages["/app/add-credentials"].includes("Error")}>
-                {messages["/app/add-credentials"]}
+                    data-issuccess={!rejectCredentials}>
+                {response}
             </output>
 
             <output id="rejectedCredentialsResponse" data-testid="rejectedCredentialsResponse"
-                    data-issuccess={!messages["/topic/rejected-credentials"].includes("Error")}>
-                {messages["/topic/rejected-credentials"]}
+                    data-issuccess={!rejectCredentials}>
+                {rejectCredentials ? rejectCredentials.message : ""}
             </output>
         </div>
     )
