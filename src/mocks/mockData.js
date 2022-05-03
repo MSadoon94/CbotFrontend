@@ -3,12 +3,12 @@ import {websocketMappings} from "../components/api/websocketMappings";
 export const mockData = {
     assetPair: {base: "BTC", quote: "USD"},
     saveStrategy: {strategy: {}},
-    card: {cardName: "mockCard1", balances: {currency: "ZUSD", amount: 100}},
+    exchange: {name: "exchange1", balances: {currency: "ZUSD", amount: 100}},
     user: {username: "user", password: "pass", authority: "USER"},
-    formattedCard: {cardName: "mockCard1", balances: [[{currency: "ZUSD", amount: 100}]], isHidden: false},
-    cards: {
-        "mockCard1": {cardName: "mockCard1", balances: {"ZUSD": 100}},
-        "mockCard2": {cardName: "mockCard2", balances: {"ZUSD": 150}}
+    formattedExchange: {name: "exchange1", balances: [[{currency: "ZUSD", amount: 100}]], isHidden: false},
+    exchanges: {
+        "exchange1": {name: "exchange1", balances: {"ZUSD": 100}},
+        "exchange2": {name: "exchange2", balances: {"ZUSD": 150}}
     },
     strategies: {
         "MockStrategy1": {name: "MockStrategy1", isActive: true},
@@ -31,6 +31,7 @@ export const mockData = {
 
     trade: {
         id: "KRAKEN1BTC/USD100Long",
+        strategyName: "Strategy1",
         exchange: "KRAKEN",
         status: "Searching",
         pair: "BTC/USD",
@@ -73,8 +74,10 @@ export const messages = () => {
     wsMessages[`/topic/${mockStrategy1}/true`] = {mockStrategy1: true};
     wsMessages[`/topic/${mockStrategy2}/false`] = {mockStrategy1: false};
     wsMessages[`/topic/${mockStrategy1}/create-trade`] = {id: "mockTradeId", status: mockData.trade.status};
-    wsMessages["/topic/trades"] = {id: mockData.trade.id, status: mockData.trade.status};
+    wsMessages["/app/trades"] = {[mockData.trade.id]: mockData.trade};
+    wsMessages["/topic/trades"] = {[mockData.trade.id]: mockData.trade};
     wsMessages["/topic/asset-pairs"] = {error: []}
+    wsMessages["/topic/add-credentials"] = "KRAKEN added successfully."
     return wsMessages;
 }
 

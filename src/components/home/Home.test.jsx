@@ -34,26 +34,6 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => ({push: jest.fn(),})
 }))
 
-describe("card saving features", () => {
-    let newCardButton;
-
-    beforeEach(() => {
-        newCardButton = screen.getByRole("button", {name: "New Card"});
-    });
-    test("should show save card component when new card button is clicked", async () => {
-        userEvent.click(newCardButton);
-
-        await screen.findByText("Card Name");
-    });
-
-    test("should hide save card component when cancel card button is clicked", async () => {
-        userEvent.click(newCardButton);
-        userEvent.click(screen.getByRole("button", {name: "Close Card"}));
-
-        await expect(screen.getByText("Card Name")).not.toBeVisible();
-    });
-
-});
 
 describe("strategy modal features", () => {
 

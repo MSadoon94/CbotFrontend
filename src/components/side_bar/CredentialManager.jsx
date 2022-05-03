@@ -6,7 +6,7 @@ export const CredentialManager = () => {
     const {wsMessages, wsClient} = useContext(WebSocketContext);
     const [credentials, setCredentials] = useState({exchange: "", account: "", password: ""})
     const [response, setResponse] = useState("");
-    const [rejectCredentials, setRejectCredentials] = useState();
+    const [rejectCredentials, setRejectCredentials] = useState({exchange: null, message: null});
 
     useEffect(() => {
         let message = wsMessages["/topic/rejected-credentials"];
@@ -33,7 +33,7 @@ export const CredentialManager = () => {
                     onClick={e => setCredentials({...credentials, exchange: e.target.value})}>
                 {Object.keys(exchanges)
                     .map(exchange => <option id={`${exchange}Option`} key={`${exchange}Option`}
-                                             selected={exchanges[exchange] === exchanges.Kraken}
+                                             defaultValue={exchanges[exchange] === exchanges.Kraken}
                                              value={exchanges[exchange]}>{exchange}</option>)
                 }
             </select>
@@ -55,7 +55,7 @@ export const CredentialManager = () => {
 
             <output id="addCredentialsResponse" data-testid="addCredentialsResponse"
                     data-issuccess={!rejectCredentials}>
-                {response}
+                {rejectCredentials.message ? "" : response}
             </output>
 
             <output id="rejectedCredentialsResponse" data-testid="rejectedCredentialsResponse"

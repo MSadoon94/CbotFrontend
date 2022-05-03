@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
-import {CardLoader} from "../card/CardLoader";
-import {CardSaver} from "../card/CardSaver";
 import "./home.css"
 import {CheckboxWidget} from "../widgets/CheckboxWidget";
 import {PowerWidget} from "../widgets/PowerWidget";
@@ -15,7 +13,6 @@ ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
     const [isStale, setStale] = useState(false);
-    const [newCardForm, setNewCardForm] = useState({isHidden: true});
     const [strategyModal, setStrategyModal] = useState({isOpen: false});
     const [sendLogoutRequest, , , setSession] = useApi();
 
@@ -45,23 +42,11 @@ export const Home = () => {
             <SideBar/>
             <h1 className={"title"}>User Home</h1>
 
-            <div hidden={newCardForm.isHidden} className={"cardForm"}>
-                <CardSaver/>
-                <button type={"button"} id={"closeCardButton"} onClick={() =>
-                    setNewCardForm({...newCardForm, isHidden: true})}>Close Card
-                </button>
-            </div>
-
             <StrategyModal isOpen={strategyModal.isOpen}
                            onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
             />
-            <CardLoader/>
 
             <div className={"newItemButtons"}>
-
-                <button type={"button"} id={"newCardButton"} className={"homeButton"} onClick={() =>
-                    setNewCardForm({...newCardForm, isHidden: false})}>New Card
-                </button>
 
                 <button type={"button"} id={"newStrategyButton"} className={"homeButton"} onClick={() =>
                     setStrategyModal({...strategyModal, isOpen: true})}>New Strategy

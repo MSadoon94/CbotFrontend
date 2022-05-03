@@ -8,15 +8,5 @@ export const strategySelectSchema = (onChange) => {
         doDefault: () => null,
         doAction: (selection) => onChange(selection)
     }
-}
-
-export const cardSelectSchema = ({onDefault, onChange}) => {
-    return {
-        type: "Cards",
-        id: "loadCardsSelect",
-        config: apiConfig({url: "/user/cards", method: "get"}, null),
-        doDefault: () => onDefault(),
-        doAction: (selection) => onChange(selection)
-    }
 
 }

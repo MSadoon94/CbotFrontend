@@ -40,6 +40,5 @@ test("should create strategy checkboxes on message received", async () => {
 test("should send to specified endpoint on checkbox select", async () => {
     cleanRender();
     userEvent.click(screen.getByRole("checkbox", {name: mockStrategies.MockStrategy1.name}));
-    await waitFor(() => expect(expectedMessage.endpoint)
-        .toBe(`${endpoint}/${mockStrategies.MockStrategy1.name}/true`));
+    await waitFor(() => expect(expectedMessage.endpoint).toBe(endpoint));
 })

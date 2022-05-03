@@ -8,13 +8,13 @@ import {waitFor} from "@testing-library/react";
 import {failedRequest} from "../../mocks/apiMocks";
 
 let templates = create("Account");
-let commonConfig = {...apiConfig({url: "/user/card", method: "post"}, mockData.card), id: mockId};
+let commonConfig = {...apiConfig({url: "/user/strategy", method: "post"}, mockData.strategy), id: mockId};
 
 describe("common error behavior", () => {
 
     test("should return error message when internal server error is received", async () => {
         failedRequest(rest.post, "/refresh-jwt", HttpStatus.internalServerError);
-        failedRequest(rest.post, "/user/card", HttpStatus.internalServerError);
+        failedRequest(rest.post, "/user/strategy", HttpStatus.internalServerError);
 
         let apiResponse;
         await waitFor(() => apiRequest(commonConfig, templates).then((res) => apiResponse = res));
@@ -55,7 +55,7 @@ describe("refresh behavior", () => {
 
     test("should cancel request when jwt is expired and refresh attempt has failed", async () => {
         failedRequest(rest.post, "/refresh-jwt", HttpStatus.unauthorized);
-        failedRequest(rest.post, "/user/card", HttpStatus.unauthorized);
+        failedRequest(rest.post, "/user/strategy", HttpStatus.unauthorized);
 
         let apiResponse;
         await waitFor(() =>

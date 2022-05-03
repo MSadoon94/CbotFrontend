@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import "./card.css"
+import "./exchange.css"
 
-export const Card = ({cardData}) => {
-    const [card, setCard] = useState(cardData);
+export const Exchange = ({initial}) => {
+    const [exchange, setExchange] = useState(initial);
 
     return (
-        <details id={card.name}>
-            <summary>{card.name}</summary>
+        <details id={exchange.name}>
+            <summary>{exchange.name}</summary>
             <table>
                 <thead>
                 <tr>
@@ -15,8 +15,8 @@ export const Card = ({cardData}) => {
                 </tr>
                 </thead>
                 <tbody>
-                {card.balances.map(([{currency, amount}]) =>
-                    <React.Fragment key={card.name + currency}>
+                {exchange.balances.map(([{currency, amount}]) =>
+                    <React.Fragment key={exchange.name + currency}>
                         <tr>
                             <th>{currency}</th>
                             <td>{amount}</td>

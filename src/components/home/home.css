@@ -17,32 +17,10 @@
     margin: 10px;
 }
 
-.cardLoader {
-    grid-area: top-right1;
-    justify-self: end;
-    align-self: start;
-    margin-right: 10px;
-}
-
 .newItemButtons {
     grid-area: top-left1;
     align-self: start;
     margin-bottom: 50px;
-}
-
-.loadedCards {
-    grid-area: bottom-right1 / bottom-right1 / bottom-right2 / bottom-right2;
-    justify-self: center;
-    margin-right: 10px;
-}
-
-.cardForm {
-    width: border-box;
-    grid-area: bottom-main;
-    justify-self: center;
-    align-self: center;
-    padding-bottom: 5px;
-    border-style: solid;
 }
 
 .statusWidget {
@@ -53,12 +31,6 @@
 
 #strategyDetailsBox {
     grid-area: top-left2;
-}
-
-#cardPasswordVerify {
-    grid-area: bottom-main;
-    justify-self: center;
-    align-self: start;
 }
 
 #logoutButton {

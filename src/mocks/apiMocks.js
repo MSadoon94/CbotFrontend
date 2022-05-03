@@ -19,10 +19,6 @@ export const apiMocks = [
         (req, res, context) =>
             res(context.status(HttpStatus.created))
     ),
-    rest.post(`${URL}/user/card`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.created))
-    ),
     rest.post(`${URL}/refresh-jwt`,
         (req, res, context) =>
             res(context.status(HttpStatus.ok), context.json({expiration: "newExpiration"}))
@@ -34,18 +30,6 @@ export const apiMocks = [
     rest.post(`${URL}/user/strategy`,
         (req, res, context) =>
             res(context.status(HttpStatus.created))
-    ),
-    rest.get(`${URL}/user/cards`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json(mockData.cards))
-    ),
-    rest.post(`${URL}/user/card-password`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.ok))
-    ),
-    rest.get(`${URL}/user/card/:cardName`,
-        (req, res, context) =>
-            res(context.status(HttpStatus.ok), context.json(mockData.card))
     ),
     rest.get(`${URL}/user/strategies`,
         (req, res, context) =>

@@ -3,7 +3,7 @@ import {mockData} from "../../mocks/mockData";
 import React from "react";
 import {DynamicSelect} from "./DynamicSelect";
 import userEvent from "@testing-library/user-event";
-import {cardSelectSchema} from "./selectSchemas";
+import {strategySelectSchema} from "./selectSchemas";
 
 let select, optionName, outcome, schema, allOptions;
 
@@ -12,9 +12,8 @@ jest.mock('react-router-dom', () => ({
 }))
 
 beforeEach(async () => {
-    let onDefault = () => outcome = "default";
     let onChange = (selection) => outcome = selection;
-    schema = cardSelectSchema({onDefault, onChange});
+    schema = strategySelectSchema(onChange);
 
     outcome = null;
 
@@ -28,24 +27,18 @@ beforeEach(async () => {
 });
 
 test("should return all options to parent component", async () => {
-    await waitFor(() => expect(allOptions).toStrictEqual(mockData.cards));
+    await waitFor(() => expect(allOptions).toStrictEqual(mockData.strategies));
 })
 
 test("should load options on click", async () => {
-    await waitFor(() => userEvent.selectOptions(select, "mockCard1"));
+    await waitFor(() => userEvent.selectOptions(select, "MockStrategy1"));
 
-    expect(optionName()).toBe("mockCard1");
-})
-
-test("should do default action when default option is clicked", async () => {
-    await waitFor(() => userEvent.selectOptions(select, `-- Load ${schema.type} --`));
-
-    expect(outcome).toStrictEqual("default");
+    expect(optionName()).toBe("MockStrategy1");
 })
 
 test("should do action from schema when option is selected", async () => {
 
-    await waitFor(() => userEvent.selectOptions(select, "mockCard1"));
+    await waitFor(() => userEvent.selectOptions(select, "MockStrategy1"));
 
-    expect(outcome).toStrictEqual(schema.doAction("mockCard1"));
+    expect(outcome).toStrictEqual(schema.doAction("MockStrategy1"));
 })

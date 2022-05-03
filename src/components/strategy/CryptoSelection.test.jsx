@@ -13,14 +13,14 @@ jest.mock('react-router-dom', () => ({
 let expectedMessage;
 const getExpectedMessage = (msg) => expectedMessage = msg;
 
-describe("exchange interactions", () => {
+describe("exchangeUtil interactions", () => {
     let baseInput, quoteInput, exchangeResponse;
     let updateAssets = (assets) => ({base: assets.base, quote: assets.quote});
 
-    test("should display error when exchange has not been set", async () => {
+    test("should display error when exchangeUtil has not been set", async () => {
         render(
             <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
-                <CryptoSelection exchange={""}
+                <CryptoSelection exchangeUtil={""}
                                  updateAssets={updateAssets}
                                  loadedAssets={{base: "", quote: ""}}/>
             </WebSocketContext.Provider>
@@ -44,7 +44,7 @@ describe("api interactions", () => {
     const cleanRender = (messages) => {
         render(
             <WebSocketContext.Provider value={{wsMessages: messages, wsClient: wsClient(getExpectedMessage)}}>
-                <CryptoSelection exchange="exchange"
+                <CryptoSelection exchangeUtil="exchangeUtil"
                                  updateAssets={updateAssets}
                                  loadedAssets={{base: "", quote: ""}}/>
             </WebSocketContext.Provider>
