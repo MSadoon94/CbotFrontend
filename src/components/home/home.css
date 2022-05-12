@@ -56,4 +56,8 @@
     left: 30%;
 }
 
+.tradeWidget {
+    grid-area: top-right1;
+}
+
 

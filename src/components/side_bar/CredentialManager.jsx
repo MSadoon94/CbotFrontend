@@ -29,7 +29,7 @@ export const CredentialManager = () => {
         <div className="credentialManager">
 
             <label htmlFor="exchangeNameSelect">Exchange Name</label>
-            <select id="exchangeNameSelect"
+            <select id="exchangeNameSelect" defaultValue={exchanges.Kraken}
                     onClick={e => setCredentials({...credentials, exchange: e.target.value})}>
                 {Object.keys(exchanges)
                     .map(exchange => <option id={`${exchange}Option`} key={`${exchange}Option`}
