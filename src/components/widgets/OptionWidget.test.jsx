@@ -1,5 +1,5 @@
 import {render, screen, waitFor} from "@testing-library/react";
-import {CheckboxWidget} from "./CheckboxWidget";
+import {OptionWidget} from "./OptionWidget";
 import {messages, mockData, wsClient} from "../../mocks/mockData";
 import userEvent from "@testing-library/user-event";
 import {WebSocketContext} from "../../App";
@@ -19,13 +19,13 @@ const getExpectedMessage = (msg) => expectedMessage = msg;
 const cleanRender = () => {
     render(
         <WebSocketContext.Provider value={{wsMessages: messages(), wsClient: wsClient(getExpectedMessage)}}>
-            <CheckboxWidget type="strategies"
-                            websocket={{
+            <OptionWidget category="strategies"
+                          websocket={{
                                 initial: "/app/strategies/details",
                                 topic: "/topic/strategies/details",
                                 sendTo: endpoint
                             }}
-                            fields={{option: "name", isChecked: "isActive"}}
+                          fields={{option: "name", isChecked: "isActive"}}
 
             />
         </WebSocketContext.Provider>

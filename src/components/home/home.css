@@ -1,16 +1,68 @@
 .homePage {
     display: grid;
-    grid-template-columns: 1fr 1fr 5fr 1fr 1fr;
-    grid-template-rows: 1fr 2fr 8fr;
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-rows: 2fr 3fr 2fr 1fr;
     grid-template-areas:
-        "header-left1 header-left2 header-main header-right1 header-right2"
-        "top-left1 top-left2 top-main top-right1 top-right2"
-        "bottom-left1 bottom-left2 bottom-main bottom-right1 bottom-right2";
+        "topNav  topNav  topNav"
+        "header-left header-main header-right"
+        "top-left top-main top-right"
+        "bottom-left bottom-main bottom-right";
+}
+
+.topNav {
+    grid-area: 1/1/1/6;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr;
+    
+    background: var(--dark-box-bg-color) radial-gradient(circle at center,
+    hsl(230, 25%, 80%, 100%),
+    var(--dark-box-bg-color) 100%);
+    border: thin inset var(--light-border);
+    box-shadow: 0 2px 4px var(--dark-box-bg-color),
+    inset 0 1px 3px var(--dark-box-bg-color);
+}
+
+.topNavButton{
+    background: transparent;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 20px;
+    color: var(--light-border);
+    justify-self: center;
+    align-self: center;
+}
+
+#strategyManagerButton {
+    grid-column-start: 1;
+}
+
+#strategiesButton {
+    grid-column-start: 2;
+    background: transparent;
+    border: none;
+}
+
+.statusWidget {
+    grid-column-start: 3;
+    justify-self: center;
+    align-self: center;
+}
+
+
+#strategySliderList {
+    grid-column-start: 4;
+}
+
+#logOutButton{
+    grid-column-start: 5;
 }
 
 .title {
-    grid-area: header-main;
+    grid-area: header-left;
+    font-size: 4vw;
     justify-self: center;
+    align-self: start;
 }
 
 .homeButton {
@@ -18,25 +70,10 @@
 }
 
 .newItemButtons {
-    grid-area: top-left1;
+    grid-area: top-left;
     align-self: start;
-    margin-bottom: 50px;
-}
-
-.statusWidget {
-    grid-area: top-main;
     justify-self: center;
-    align-self: start;
-}
-
-#strategyDetailsBox {
-    grid-area: top-left2;
-}
-
-#logoutButton {
-    grid-area: header-right2;
-    justify-self: end;
-    align-self: start;
+    margin-bottom: 50px;
 }
 
 .outerSideBar {
@@ -57,7 +94,8 @@
 }
 
 .tradeWidget {
-    grid-area: top-right1;
+    grid-area: bottom-right;
+    justify-self: center;
 }
 
 

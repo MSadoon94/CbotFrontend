@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {StrategyModal} from "../strategy/StrategyModal";
 import ReactModal from "react-modal";
 import "./home.css"
-import {CheckboxWidget} from "../widgets/CheckboxWidget";
+import {OptionWidget} from "../widgets/OptionWidget";
 import {PowerWidget} from "../widgets/PowerWidget";
 import {useApi} from "../api/useApi";
 import {logoutApiModule} from "./homeApiModule";
@@ -12,21 +12,9 @@ import {SideBar} from "../side_bar/SideBar";
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
-    const [isStale, setStale] = useState(false);
-    const [strategyModal, setStrategyModal] = useState({isOpen: false});
+    const [topNavState, setTopNavState] = useState({strategyManager: false, strategies: false});
     const [sendLogoutRequest, , , setSession] = useApi();
 
-    useEffect(() => {
-        const staleTimer = setTimeout(() => {
-            setStale(true);
-        }, 30000)
-        return () => {
-            clearTimeout(staleTimer)
-            if (isStale) {
-                setStale(false);
-            }
-        }
-    })
 
     const logoutUser = async () => {
         await sendLogoutRequest(logoutApiModule())
@@ -39,41 +27,34 @@ export const Home = () => {
 
     return (
         <div className={"homePage"}>
-            <SideBar/>
-            <h1 className={"title"}>User Home</h1>
-
-            <StrategyModal isOpen={strategyModal.isOpen}
-                           onRequestClose={() => setStrategyModal({...strategyModal, isOpen: false})}
-            />
-
-            <div className={"newItemButtons"}>
-
-                <button type={"button"} id={"newStrategyButton"} className={"homeButton"} onClick={() =>
-                    setStrategyModal({...strategyModal, isOpen: true})}>New Strategy
+            <div className="topNav">
+                <button id="strategyManagerButton" className="topNavButton"
+                        onClick={() => setTopNavState({...topNavState, strategyManager: !topNavState.strategyManager})}>
+                    Strategy Manager
                 </button>
-
-            </div>
-
-            <div id={"strategyDetailsBox"}>
-                <details id={"strategyDetails"} onToggle={() => setStale(true)}>
-                    <summary>Strategies</summary>
-                    <CheckboxWidget type="strategies"
-                                    websocket={{
+                <button id="strategiesButton" className="topNavButton"
+                        onClick={() => setTopNavState({...topNavState, strategies: !topNavState.strategies})}
+                >Strategies
+                </button>
+                <PowerWidget/>
+                <div id="strategySliderList" hidden={topNavState.strategies}>
+                    <OptionWidget category="strategies"
+                                  format="range"
+                                  websocket={{
                                         initial: "/app/strategies/details",
                                         topic: "/topic/strategies/details",
                                         sendTo: "/app/create-trade"
                                     }}
-                                    fields={{option: "name", isChecked: "isActive"}}
+                                  fields={{option: "name", isChecked: "isActive"}}
                     />
-                </details>
+                </div>
+                <button id="logOutButton" className="topNavButton" onClick={logoutUser}>Log Out</button>
             </div>
+            <SideBar/>
 
-            <PowerWidget/>
-
-            <button
-                type={"button"} id={"logoutButton"} className={"homeButton"} onClick={logoutUser}>
-                Log Out
-            </button>
+            <StrategyModal isOpen={topNavState.strategyManager}
+                           onRequestClose={() => setTopNavState({...topNavState, strategyManager: false})}
+            />
 
             <TradeWidget/>
 

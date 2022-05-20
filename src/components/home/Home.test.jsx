@@ -40,7 +40,7 @@ describe("strategy modal features", () => {
     let strategyButton;
 
     beforeEach(() => {
-        strategyButton = screen.getByRole("button", {name: "New Strategy"});
+        strategyButton = screen.getByRole("button", {name: "Strategy Manager"});
     });
 
     test("should pop-up strategy modal after being clicked", async () => {

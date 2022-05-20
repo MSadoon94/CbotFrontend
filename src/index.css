@@ -1,18 +1,31 @@
+:root {
+    --main-bg-color: hsl(230, 23%, 95%, 100%);
+    --dark-box-bg-color: hsl(235, 25%, 20%, 100%);
+    --status-off-bg-color: hsl(9, 100%, 70%, 100%);
+    --light-border: hsl(44, 100%, 95%, 100%);
+}
 body {
-    background-color: darkslategrey;
-    color: silver;
+    background-color: var(--main-bg-color);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #EFFDF5;
     font-size: 2vw;
+    font-family: 'Jost', sans-serif;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-button {
-    font-size: 1.3vw;
+input[type="range"]{
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
 }
+
+h1 {
+    text-shadow: 2px 2px #9BAEBC;
+}
+
 
 select {
     font-size: 1.3vw;
@@ -28,5 +41,5 @@ output[data-issuccess="true"] {
 }
 
 output[data-issuccess="false"] {
-    color: red;
+    color: var(--status-off-bg-color);
 }

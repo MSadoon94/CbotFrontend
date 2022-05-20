@@ -4,7 +4,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: #2F4858;
     overflow-x: hidden;
     padding-top: 60px;
     transition: 0.5s;
@@ -35,6 +35,8 @@
 .credentialManager button {
     grid-column-start: 2;
     margin: 0;
+    font-size: 1.2vw;
+    box-sizing: content-box;
 }
 
 .innerSideBar[data-is_side_bar_open=false] {
@@ -47,11 +49,12 @@
 
 #sideBarButton {
     text-align: start;
-    background-color: darkslategrey;
+    box-shadow: none;
+    background-color: transparent;
     border: none;
     padding-left: 0;
     margin-left: 0;
-    color: silver;
+    color: var(--dark-box-bg-color);
     transition: 0.25s;
     opacity: 25%;
     font-size: 5vw;
