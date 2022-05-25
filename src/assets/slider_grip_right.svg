@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="103.593" height="53" viewBox="0 0 103.593 53">
+  <defs>
+    <path id="path-1" fill-rule="evenodd" d="M4 11c0-2.76142375 2.23857625-5 5-5h85.5847158c3.90464876 0 6.3024883 4.2754842 4.26640917 7.60725005l-21.38888889 35C76.5539579 50.09352343 74.93765865 51 73.19582691 51H9c-2.76142375 0-5-2.23857625-5-5V11z"/>
+    <filter id="filter-2" width="200%" height="200%" x="-50%" y="-50%" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="-2" in="SourceAlpha" result="shadow-1-feOffset-shadow"/>
+      <feGaussianBlur in="shadow-1-feOffset-shadow" result="shadow-1-feGaussianBlur-shadow" stdDeviation="2.41"/>
+      <feColorMatrix in="shadow-1-feGaussianBlur-shadow" result="shadow-1-feColorMatrix-shadow" type="matrix" values="0 0 0 0 0.14901960784313725  0 0 0 0 0.1568627450980392  0 0 0 0 0.25098039215686274  0 0 0 1 0"/>
+    </filter>
+    <filter id="filter-3" width="200%" height="200%" x="-50%" y="-50%" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceAlpha" result="innershadow-1-feGaussianBlur-innershadow" stdDeviation="1.807"/>
+      <feOffset dx="0" dy="-1" in="innershadow-1-feGaussianBlur-innershadow" result="innershadow-1-feOffset-innershadow"/>
+      <feComposite in="innershadow-1-feOffset-innershadow" in2="SourceAlpha" k2="-1" k3="1" operator="arithmetic" result="innershadow-1-feOffset-innershadow"/>
+      <feColorMatrix in="innershadow-1-feOffset-innershadow" result="innershadow-1-feColorMatrix-innershadow" type="matrix" values="0 0 0 0 0.14901960784313725  0 0 0 0 0.1568627450980392  0 0 0 0 0.25098039215686274  0 0 0 1 0"/>
+    </filter>
+    <mask id="mask-4" x="0" y="0" maskContentUnits="userSpaceOnUse" maskUnits="userSpaceOnUse">
+      <rect width="103.593" height="53" x="0" y="0" fill="black"/>
+      <use fill="white" xlink:href="#path-1"/>
+    </mask>
+  </defs>
+  <g transform="rotate(-179.999936 51.79628076 28.5)">
+    <use fill="black" stroke="black" stroke-width="1" filter="url(#filter-2)" xlink:href="#path-1"/>
+    <use fill="rgb(239,240,245)" xlink:href="#path-1"/>
+    <use fill="black" filter="url(#filter-3)" xlink:href="#path-1"/>
+    <use fill-opacity="0" stroke="rgb(255,248,229)" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2" mask="url(#mask-4)" xlink:href="#path-1"/>
+  </g>
+</svg>

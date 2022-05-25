@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {WebSocketContext} from "../../App";
 
 export const Trade = ({body}) => {
@@ -30,9 +30,11 @@ export const Trade = ({body}) => {
     }
 
     return (
-        <details id={name.concat("TradeDetails")} className="tradeDetails">
-            <summary>{name}</summary>
+        <div className="tradeBox">
             <table>
+                <tr>
+                    <th className="tradeName" id={name.concat("TradeHeading")} colSpan="1">{name}</th>
+                </tr>
                 <tbody>
                 <tr>
                     <th>Status</th>
@@ -40,7 +42,7 @@ export const Trade = ({body}) => {
                 </tr>
                 <tr>
                     <th>Current Price</th>
-                    <td id={name.concat("TradeCurrent")}>{realtime.price || trade.price}</td>
+                    <td id={name.concat("TradeCurrent")}>{realtime.price || trade.currentPrice}</td>
                 </tr>
                 <tr>
                     <th>Target Price</th>
@@ -48,6 +50,6 @@ export const Trade = ({body}) => {
                 </tr>
                 </tbody>
             </table>
-        </details>
+        </div>
     )
 }

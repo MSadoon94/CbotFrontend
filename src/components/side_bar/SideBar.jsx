@@ -6,7 +6,7 @@ import {WebSocketContext} from "../../App";
 
 export const SideBar = () => {
     const {wsMessages, wsClient} = useContext(WebSocketContext)
-    const [sideBarState, setSideBarState] = useState({isOpen: false, buttonText: "⮞"});
+    const [sideBarState, setSideBarState] = useState({isOpen: false, buttonText: ">"});
     const [exchanges, setExchanges] = useState({});
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export const SideBar = () => {
                     onClick={() => {
                         setSideBarState({...sideBarState,
                             isOpen: !sideBarState.isOpen,
-                            buttonText: sideBarState.isOpen ? "⮞" : "⮜"
+                            buttonText: sideBarState.isOpen ? ">" : "<"
                         });
                     }}>{sideBarState.buttonText}</button>
         </div>

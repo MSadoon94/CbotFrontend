@@ -48,13 +48,14 @@
 }
 
 #sideBarButton {
+    z-index: 100;
     text-align: start;
     box-shadow: none;
     background-color: transparent;
     border: none;
     padding-left: 0;
     margin-left: 0;
-    color: var(--dark-box-bg-color);
+    color: var(--side-bar-button);
     transition: 0.25s;
     opacity: 25%;
     font-size: 5vw;

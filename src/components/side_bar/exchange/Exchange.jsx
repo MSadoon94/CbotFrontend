@@ -5,7 +5,7 @@ export const Exchange = ({initial}) => {
     const [exchange, setExchange] = useState(initial);
 
     return (
-        <details id={exchange.name}>
+        <details className="exchangeDetails" id={exchange.name}>
             <summary>{exchange.name}</summary>
             <table>
                 <thead>
