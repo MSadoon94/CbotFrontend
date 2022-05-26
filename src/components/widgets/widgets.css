@@ -3,9 +3,8 @@ button[data-power-status=inactive] {
 
     transition: background-color 1s;
 }
-
 button[data-power-status=active] {
-    background: var(--status-on-bg-color);
+    background-color: var(--status-on-bg-color);
     transition: background-color 1s;
 }
 

@@ -12,7 +12,7 @@ import {SideBar} from "../side_bar/SideBar";
 ReactModal.setAppElement(document.createElement('div'));
 
 export const Home = () => {
-    const [topNavState, setTopNavState] = useState({strategyManager: false, strategies: false});
+    const [topNavState, setTopNavState] = useState({strategyManager: false, strategies: true});
     const [sendLogoutRequest, , , setSession] = useApi();
 
 
@@ -27,7 +27,7 @@ export const Home = () => {
 
     return (
 
-        <div className={"homePage"}>
+        <div id="homePage" className="homePage">
             <div className="topNav">
                 <button id="strategyManagerButton" className="topNavButton"
                         onClick={() => setTopNavState({

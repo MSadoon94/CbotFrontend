@@ -4,7 +4,7 @@ import {exchanges} from "../common/exchanges";
 
 export const CredentialManager = () => {
     const {wsMessages, wsClient} = useContext(WebSocketContext);
-    const [credentials, setCredentials] = useState({exchange: "", account: "", password: ""})
+    const [credentials, setCredentials] = useState({exchange: exchanges.Kraken, account: "", password: ""})
     const [response, setResponse] = useState("");
     const [rejectCredentials, setRejectCredentials] = useState({exchange: null, message: null});
 
@@ -29,11 +29,11 @@ export const CredentialManager = () => {
         <div className="credentialManager">
 
             <label htmlFor="exchangeNameSelect">Exchange Name</label>
-            <select id="exchangeNameSelect" defaultValue={exchanges.Kraken}
+            <select id="exchangeNameSelect"
                     onClick={e => setCredentials({...credentials, exchange: e.target.value})}>
                 {Object.keys(exchanges)
                     .map(exchange => <option id={`${exchange}Option`} key={`${exchange}Option`}
-                                             defaultValue={exchanges[exchange] === exchanges.Kraken}
+                                             selected={exchanges[exchange] === exchanges.Kraken}
                                              value={exchanges[exchange]}>{exchange}</option>)
                 }
             </select>
