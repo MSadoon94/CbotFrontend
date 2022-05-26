@@ -9,6 +9,7 @@ import "./modal.css"
 import {useApi} from "../api/useApi";
 import {validation} from "../api/responseTemplates";
 import {exchanges} from "../common/exchanges";
+import {DynamicTextBox} from "../common/DynamicTextBox";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
     const timeUnits = ["Second", "Minute", "Hour", "Day", "Week", "Month", "Year"];
@@ -17,14 +18,15 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         maxPosition: "",
         targetProfit: "",
         movingStopLoss: "",
-        maxLoss: "",
-        entry: ""
+        maxLoss: ""
     }
 
     const [strategy, setStrategy] = useState({
         name: "",
         type: "long",
         exchange: "",
+        entry: "",
+        targetPrice: "",
         timeFrame: "",
         timeUnit: "",
         base: "",
@@ -43,6 +45,12 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
         let {body} = response;
         setStrategy({
             name: body.name,
+            type: body.type,
+            exchange: body.exchange,
+            entry: body.entry,
+            targetPrice: body.targetPrice,
+            timeFrame: body.timeFrame,
+            timeUnit: body.timeUnit,
             base: body.base,
             quote: body.quote,
             ...getRefinements(body),
@@ -97,15 +105,58 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                appElement={document.getElementById('app')}
                className="modal" overlayClassName="overlay">
 
-            <h2>Strategy Creator</h2>
+            <div className="strategyRequiredBox">
+                <label htmlFor="strategyExchangeInput">Exchange</label>
+                <input id="strategyExchangeInput" value={strategy.exchange}
+                       onChange={e => setStrategy({...strategy, exchange: e.target.value})}/>
+                <output id="exchangeResponse" data-testid="exchangeResponse"
+                        data-issuccess={isValidExchange(strategy.exchange)}>
+                    {checkExchange()}
+                </output>
 
-            <CryptoSelection
-                exchange={strategy.exchange}
-                updateAssets={handleAssetUpdate}
-                loadedAssets={{base: strategy.base, quote: strategy.quote}}
-            />
+                <CryptoSelection
+                    exchange={strategy.exchange}
+                    updateAssets={handleAssetUpdate}
+                    loadedAssets={{base: strategy.base, quote: strategy.quote}}/>
 
-            <div id="strategyManagement">
+                <select id="strategyTypeSelect">
+                    <option value="" disabled selected>Strategy Type</option>
+                    <option onClick={() => setStrategy({...strategy, type: "long"})}>Long</option>
+                    <option onClick={() => setStrategy({...strategy, type: "short"})}>Short</option>
+                </select>
+
+                <label htmlFor="entryInput">Entry %</label>
+                <DynamicTextBox id="entryInput" overwrite={strategy.entry}
+                                options={{type: "number", disabled: strategy.targetPrice !== ""}}
+                                onTyping={res => setStrategy({...strategy, entry: res.entry})}/>
+
+                <div className="orDivider">Or</div>
+
+                <label htmlFor="targetPriceInput">Target Price</label>
+                <DynamicTextBox id="targetPriceInput" overwrite={strategy.targetPrice}
+                                options={{type: "text", disabled: strategy.entry !== ""}}
+                                onTyping={res => setStrategy({...strategy, targetPrice: res.entry})}/>
+
+
+                <label htmlFor="strategyTimeFrameInput">Time Frame</label>
+                <input type="number" min="0" id="strategyTimeFrameInput" value={strategy.timeFrame}
+                       onChange={e => setStrategy({...strategy, timeFrame: e.target.value})}/>
+
+                <select id="timeUnitSelect">
+                    <option value="" disabled selected>Time Unit</option>
+                    {timeUnits.map(
+                        unit =>
+                            <option
+                                onClick={() => setStrategy({...strategy, timeUnit: unit.toLowerCase()})}>
+                                {unit}
+                            </option>
+                    )}
+
+                </select>
+
+            </div>
+
+            <div className="strategyManagement">
                 <label htmlFor="strategyName">Strategy Name</label>
                 <input id="strategyName" value={strategy.name}
                        onChange={e => setStrategy({...strategy, name: e.target.value})}/>
@@ -121,41 +172,6 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
 
                 <output id={strategyIds.loadStrategy} data-testid={strategyIds.loadStrategy}
                         data-issuccess={strategyResponse.isSuccess}>{strategyResponse.message}</output>
-            </div>
-
-            <div className="strategyDetails">
-                <h3>Strategy Details</h3>
-
-                <label htmlFor="strategyExchangeInput">Exchange</label>
-                <input id="strategyExchangeInput" value={strategy.exchange}
-                       onChange={e => setStrategy({...strategy, exchange: e.target.value})}/>
-                <output id="exchangeResponse" data-testid="exchangeResponse"
-                        data-issuccess={isValidExchange(strategy.exchange)}>
-                    {checkExchange()}
-                </output>
-
-                <label htmlFor="strategyTypeSelect">Strategy Type</label>
-                <select id="strategyTypeSelect">
-                    <option onClick={() => setStrategy({...strategy, type: "long"})}>Long</option>
-                    <option onClick={() => setStrategy({...strategy, type: "short"})}>Short</option>
-                </select>
-
-
-                <label htmlFor="strategyTimeFrameInput">Time Frame</label>
-                <input type="number" min="0" id="strategyTimeFrameInput" value={strategy.timeFrame}
-                       onChange={e => setStrategy({...strategy, timeFrame: e.target.value})}/>
-
-                <label htmlFor="timeUnitSelect">Time Unit</label>
-                <select id="timeUnitSelect">
-                    {timeUnits.map(
-                        unit =>
-                            <option
-                                onClick={() => setStrategy({...strategy, timeUnit: unit.toLowerCase()})}>
-                                {unit}
-                            </option>
-                    )}
-
-                </select>
             </div>
 
             <button type="button" id="closeButton" onClick={() => onRequestClose()}>X</button>

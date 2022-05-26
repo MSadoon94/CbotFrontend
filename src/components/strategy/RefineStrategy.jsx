@@ -1,4 +1,5 @@
 import {DynamicTextBox} from "../common/DynamicTextBox";
+import {Fragment} from "react";
 
 export const RefineStrategy = ({update, overwrite = ""}) => {
     const refinements = {
@@ -7,19 +8,16 @@ export const RefineStrategy = ({update, overwrite = ""}) => {
         targetProfit: "Target Profit",
         movingStopLoss: "Moving Stop-Loss",
         maxLoss: "Max Loss",
-        entry: "Entry %"
     }
     return (
-        <details id="refineDetails">
-            <summary id="refineDetailsSummary">Refine Strategy</summary>
-
+        <div className="refineDetailsBox">
             {Object.keys(refinements).map((type) =>
-                <div key={type}>
+                <Fragment key={type}>
                     <label htmlFor={`${type}Input`}>{refinements[type]}</label>
                     <DynamicTextBox id={`${type}Input`} overwrite={overwrite[type]}
                                     onTyping={(res) => update[type](res.entry)} options={{type: "number"}}/>
-                </div>
+                </Fragment>
             )}
-        </details>
+        </div>
     )
 }

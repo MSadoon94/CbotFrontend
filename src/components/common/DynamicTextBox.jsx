@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {value} from "lodash/seq";
 
-export const DynamicTextBox = ({onTyping, timeout = 500,
-                                   id, overwrite, options = {type: "text"}}) => {
+export const DynamicTextBox = ({
+                                   onTyping, timeout = 500,
+                                   className = null,
+                                   id, overwrite, options = {type: "text", disabled: false}
+                               }) => {
     const [overwriteState, setOverwriteState] = useState({isChanging: false, value: ""})
     const [isTyping, setIsTyping] = useState(false);
     const [entry, setEntry] = useState("");
 
     useEffect(() => {
-        if(overwrite && overwrite !== "") {
+        if (overwrite && overwrite !== "") {
             setOverwriteState({isChanging: false, value: overwrite})
         }
     }, [overwrite])
@@ -33,20 +36,21 @@ export const DynamicTextBox = ({onTyping, timeout = 500,
 
     return (
         <>
-        {(overwriteState.isChanging === false)
-            ? <input id={id} type={options.type} min={0} value={overwriteState.value}
-                     onClick={setOverwriteState({...overwriteState, isChanging: true})}/>
-            : <input id={id} type={options.type} min={0} value={overwriteState.value}
-               onChange={e => {
-                   if (entry !== e.target.value) {
-                       setIsTyping(true);
-                       setEntry(e.target.value);
-                       setOverwriteState({...overwriteState, value: e.target.value})
-                   } else {
-                       setOverwriteState({isChanging: false, value: e.target.value});
-                   }
-               }}/>
-    }
+            {(overwriteState.isChanging === false)
+                ? <input id={id} className={className} type={options.type} min={0} value={overwriteState.value}
+                         onClick={setOverwriteState({...overwriteState, isChanging: true})}
+                         disabled={options.disabled}/>
+                : <input id={id} className={className} type={options.type} min={0} value={overwriteState.value}
+                         onChange={e => {
+                             if (entry !== e.target.value) {
+                                 setIsTyping(true);
+                                 setEntry(e.target.value);
+                                 setOverwriteState({...overwriteState, value: e.target.value})
+                             } else {
+                                 setOverwriteState({isChanging: false, value: e.target.value});
+                             }
+                         }} disabled={options.disabled}/>
+            }
         </>
     )
 

@@ -26,10 +26,14 @@ export const Home = () => {
     };
 
     return (
+
         <div className={"homePage"}>
             <div className="topNav">
                 <button id="strategyManagerButton" className="topNavButton"
-                        onClick={() => setTopNavState({...topNavState, strategyManager: !topNavState.strategyManager})}>
+                        onClick={() => setTopNavState({
+                            ...topNavState,
+                            strategyManager: !topNavState.strategyManager
+                        })}>
                     Strategy Manager
                 </button>
                 <button id="strategiesButton" className="topNavButton"
@@ -41,25 +45,25 @@ export const Home = () => {
                     <OptionWidget category="strategies"
                                   format="range"
                                   websocket={{
-                                        initial: "/app/strategies/details",
-                                        topic: "/topic/strategies/details",
-                                        sendTo: "/app/create-trade"
-                                    }}
+                                      initial: "/app/strategies/details",
+                                      topic: "/topic/strategies/details",
+                                      sendTo: "/app/create-trade"
+                                  }}
                                   fields={{option: "name", isChecked: "isActive"}}
                     />
                 </div>
                 <button id="logOutButton" className="topNavButton" onClick={logoutUser}>Log Out</button>
             </div>
+
             <SideBar/>
 
             <StrategyModal isOpen={topNavState.strategyManager}
                            onRequestClose={() => setTopNavState({...topNavState, strategyManager: false})}
             />
 
-            <div className="tradeWidgetBox" >
+            <div className="tradeWidgetBox">
                 <TradeWidget/>
             </div>
-
         </div>
     )
 };

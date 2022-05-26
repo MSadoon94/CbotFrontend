@@ -1,5 +1,5 @@
 .modal {
-    width: 75vw;
+    width: 55vw;
     min-width: border-box;
     height: 500px;
     position: fixed;
@@ -7,15 +7,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
-    background: darkslategrey;
+    background: var(--main-bg-color);
     border: 1px solid #ccc;
     border-radius: 4px;
     overflow: auto;
     outline: none;
     padding: 20px;
     z-index: 9999;
-
-    font-size: 1.5vw;
 }
 
 .overlay {
@@ -29,84 +27,177 @@
 }
 
 #strategyModal {
-    padding: 5px 10px;
+    padding: 10px 10px;
 
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 2fr;
     grid-template-rows: 1fr 3fr 3fr;
-    grid-template-areas:
-        ".... header ...."
-        "mid-left mid-center mid-right"
-        "bottom-left bottom-center bottom-right";
+    width: min-content;
+    column-gap: 10px;
 }
 
-#strategyModal input {
-    width: 4vw;
-}
+.strategyRequiredBox {
+    padding: 10px;
+    background: var(--dark-box-bg-color);
+    border-radius: var(--background-border-radius);
+    border: inset var(--light-border);
+    box-shadow: 0 2px 3px var(--dark-box-bg-color);
 
-h2 {
-    grid-area: header;
-    margin: 5px;
-    justify-self: center;
-}
-
-.strategyDetails {
-    grid-area: mid-right;
-
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: -1;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    align-self: start;
-}
-
-.strategyDetails h3 {
-    grid-column: 1 / 5;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-auto-flow: column;
+    align-self: stretch;
     justify-self: center;
-    align-self: start;
 }
 
-.strategyDetails label {
-    grid-column: 1;
-    justify-self: start;
+.strategyRequiredBox label {
+    font-family: var(--fonts);
+    font-size: 16px;
+    color: var(--light-border);
+    width: max-content;
+
+    margin: 5px;
+    grid-column-start: 1;
+    justify-self: center;
     align-self: center;
 }
 
-.strategyDetails input {
-    grid-column: 2;
-    justify-self: end;
+.strategyRequiredBox input {
+    font-family: var(--fonts);
+    font-size: 14px;
+    color: var(--content-text);
+    box-shadow: 0 1px 1px var(--darkest-shadow);
+    margin: 5px;
+    width: 80px;
+    grid-column-start: 2;
+    justify-self: center;
+    align-self: center;
+    text-align: center;
 }
 
-.strategyDetails select {
-    grid-column: 2;
-    justify-self: start;
+.strategyRequiredBox select {
+    font-family: var(--fonts);
+    font-size: 16px;
+    color: var(--content-text);
+    box-shadow: 0 1px 1px var(--darkest-shadow);
+    margin: 5px;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    justify-self: stretch;
+    text-align: center;
 }
 
-#cryptoSelection {
-    grid-area: mid-center;
+.orDivider{
+    font-family: var(--fonts);
+    font-size: 18px;
+    color: var(--light-border);
+    margin: 5px;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    justify-self: center;
 }
 
-#cryptoSelection input {
-    width: 70px;
+.strategyRequiredBox output{
+    font-family: var(--fonts);
+    font-size: 14px;
+    margin: 5px;
+    grid-column-start: 3;
+    justify-self: center;
+    align-self: center;
 }
 
-#strategyManagement {
-    grid-area: mid-left;
+
+.strategyManagement {
+    grid-area: 1/1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 10px;
+    border: solid var(--dark-box-bg-color);
+    border-radius: var(--background-border-radius);
+    padding: 5px;
+    box-shadow: 0 2px 2px var(--dark-box-bg-color);
+}
+
+.strategyManagement label {
+    font-family: var(--fonts);
+    font-size: 18px;
+    color: var(--content-text);
+    justify-self: center;
+    align-self: center;
+    grid-column-start: 1;
+    width: max-content;
+}
+
+.strategyManagement input {
+    font-family: var(--fonts);
+    font-size: 18px;
+    color: var(--content-text);
+    box-shadow: 0 1px 1px var(--dark-box-bg-color);
+    text-align: center;
+    grid-column-start: 2;
+    width: 100px;
+    justify-self: center;
+    align-self: center;
+}
+
+.strategyManagement button {
+    font-family: var(--fonts);
+    font-size: 16px;
+    border-radius: var(--button-border-radius);
+    background-color: var(--dark-box-bg-color);
+    color: var(--light-border);
+    border: thin solid var(--light-border);
+    box-shadow: 0 1px 1px var(--dark-box-bg-color);
+    grid-column-start: 2;
+    justify-self: center;
+    align-self: center;
 }
 
 #loadStrategiesSelect {
-    width: 170px
+    font-family: var(--fonts);
+    font-size: 16px;
+    color: var(--content-text);
+    box-shadow: 0 1px 1px var(--dark-box-bg-color);
+    text-align: center;
+    width: fit-content;
+    grid-column-start: 2;
+    justify-self: center;
+    align-self: center;
 }
 
-#refineDetails {
-    grid-area: bottom-left;
+.refineDetailsBox {
+    grid-area: 2/1/4;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    align-self: center;
 }
 
-input[type="number"] {
-    width: 55px;
+.refineDetailsBox label{
+    grid-column-start: 1;
+    font-family: var(--fonts);
+    font-size: 16px;
+    color: var(--low-emphasis-label);
+    justify-self: center;
+    align-self: center;
 }
 
+
+.refineDetailsBox input{
+    font-family: var(--fonts);
+    font-size: 16px;
+    color: var(--content-text);
+    grid-column-start: 2;
+    margin: 10px;
+    width: 50px;
+    justify-self: start;
+    align-self: center;
+    text-align: center;
+}
 #closeButton {
+    font-family: var(--fonts);
     position: fixed;
     top: 0;
     right: 0;

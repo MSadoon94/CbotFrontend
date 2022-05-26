@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import {DynamicTextBox} from "../common/DynamicTextBox";
 import {strategyIds} from "./strategyApiModule";
 import {WebSocketContext} from "../../App";
@@ -49,29 +49,28 @@ export const CryptoSelection = ({exchange, updateAssets, loadedAssets}) => {
     };
 
     return (
-        <div id={"cryptoSelection"}>
-            <h3>Crypto Selection</h3>
-            <div>
-                <label htmlFor={"baseInput"}>Base Symbol</label>
-                <DynamicTextBox id={"baseInput"}
-                                timeout={500}
-                                onTyping={(update) => {
-                                    setBase(update)
-                                }} overwrite={loadedAssets.base}/>
-            </div>
-            <div>
-                <label htmlFor={"quoteInput"}>Quote Symbol</label>
-                <DynamicTextBox id={"quoteInput"}
-                                timeout={500}
-                                onTyping={(update) => {
-                                    setQuote(update);
-                                }} overwrite={loadedAssets.quote}/>
-            </div>
+        <Fragment id="cryptoSelection">
+
+            <label htmlFor={"baseInput"} className="cryptoSelectionLabel">Base Symbol</label>
+            <DynamicTextBox id={"baseInput"} className="cryptoSelectionInput"
+                            timeout={500}
+                            onTyping={(update) => {
+                                setBase(update)
+                            }} overwrite={loadedAssets.base}/>
+
+
+            <label htmlFor={"quoteInput"} className="cryptoSelectionLabel">Quote Symbol</label>
+            <DynamicTextBox id={"quoteInput"} className="cryptoSelectionInput"
+                            timeout={500}
+                            onTyping={(update) => {
+                                setQuote(update);
+                            }} overwrite={loadedAssets.quote}/>
+
             <output id={strategyIds.getAssetPairData} data-testid={strategyIds.getAssetPairData}
                     data-issuccess={pairResponse.isSuccess}>{pairResponse.message}</output>
             <output id="exchangeStatus" data-testid="exchangeStatus"
                     data-issuccess={exchangeStatus.isExchangeValid}>{exchangeStatus.response}</output>
-        </div>
+        </Fragment>
     )
 
 };

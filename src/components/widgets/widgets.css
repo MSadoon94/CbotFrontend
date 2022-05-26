@@ -5,7 +5,7 @@ button[data-power-status=inactive] {
 }
 
 button[data-power-status=active] {
-    background: rgba(0, 255, 0, 0.75);
+    background: var(--status-on-bg-color);
     transition: background-color 1s;
 }
 
@@ -48,7 +48,6 @@ input[type="range"].strategiesSlider{
     border-radius: 5px;
     border: thin inset var(--dark-box-bg-color);
     box-shadow: inset 0 1px 2px var(--dark-box-bg-color);
-    background: linear-gradient(90deg, hsl(0, 0%, 100%, 100%), var(--status-off-bg-color));
     height: .5rem;
 }
 
@@ -56,8 +55,23 @@ input[type="range"].strategiesSlider{
     border-radius: 5px;
     border: thin inset var(--dark-box-bg-color);
     box-shadow: inset 0 1px 2px var(--dark-box-bg-color);
-    background: linear-gradient(90deg, hsl(0, 0%, 100%, 100%), var(--status-off-bg-color));
     height: 1rem;
+}
+
+.strategiesSlider[data-isChecked=false]::-webkit-slider-runnable-track{
+    background: linear-gradient(90deg, hsl(0, 0%, 100%, 100%), var(--status-off-bg-color));
+}
+
+.strategiesSlider[data-isChecked=false]::-moz-range-track{
+    background: linear-gradient(90deg, hsl(0, 0%, 100%, 100%), var(--status-off-bg-color));
+}
+
+.strategiesSlider[data-isChecked=true]::-webkit-slider-runnable-track{
+    background: linear-gradient(90deg, var(--status-on-bg-color), hsl(0, 0%, 100%, 100%));
+}
+
+.strategiesSlider[data-isChecked=true]::-moz-range-track{
+    background: linear-gradient(90deg, var(--status-on-bg-color), hsl(0, 0%, 100%, 100%));
 }
 
 .strategiesSlider::-webkit-slider-thumb{

@@ -1,5 +1,6 @@
 h1 {
     text-align: center;
+    color: var(--dark-box-bg-color);
 }
 
 input {
@@ -15,6 +16,7 @@ button {
     text-align: center;
     width: 55%;
     margin: auto;
+    color: var(--dark-box-bg-color);
 }
 
 .startOutputs {

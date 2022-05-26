@@ -23,8 +23,7 @@ test.concurrent.each`
     ${"max position"}       | ${"Max Position"}     
     ${"target profit"}      | ${"Target Profit"}    
     ${"moving stop loss"}   | ${"Moving Stop-Loss"} 
-    ${"max loss"}           | ${"Max Loss"}         
-    ${"entry"}              | ${"Entry %"}       
+    ${"max loss"}           | ${"Max Loss"}              
     `("should return $refinement on change", async ({inputName}) => {
         let input = screen.getByRole("spinbutton", {name: inputName});
 

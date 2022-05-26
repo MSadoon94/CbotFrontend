@@ -3,7 +3,7 @@ import {useApi} from "../api/useApi";
 import {loadGroup} from "../api/responseTemplates";
 
 export const DynamicSelect = ({selectSchema, onOptionsSet = () => null}) => {
-    const defaultOption = `-- Load ${selectSchema.type} --`;
+    const defaultOption = `Load ${selectSchema.type}`;
     const options = useRef([{name: defaultOption}]);
     const [sendRequest, response,] = useApi({isActive: false});
 
