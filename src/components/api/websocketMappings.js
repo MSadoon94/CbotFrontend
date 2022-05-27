@@ -11,4 +11,5 @@ export const websocketMappings = {
     "/topic/price/**": null,
     "/topic/asset-pairs": null,
     "/topic/balance": null,
+    "/topic/metrics/candle/**": null
 }

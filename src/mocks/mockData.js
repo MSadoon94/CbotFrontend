@@ -47,7 +47,10 @@ export const mockData = {
         exchange: "kraken",
         account: "mockAccount",
         password: "mockPassword"
-    }
+    },
+
+    candle: {time: 1538856000000, open: 6593.34, high: 6600, low: 6582.63, close: 6600},
+
 };
 
 export const mockId = {
@@ -78,6 +81,7 @@ export const messages = () => {
     wsMessages["/topic/trades"] = {[mockData.trade.id]: mockData.trade};
     wsMessages["/topic/asset-pairs"] = {error: []}
     wsMessages["/topic/add-credentials"] = "KRAKEN added successfully."
+    wsMessages["/topic/metrics/candle/**"] = mockData.candle;
     return wsMessages;
 }
 

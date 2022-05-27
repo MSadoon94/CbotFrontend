@@ -61,9 +61,7 @@ export const Home = () => {
                            onRequestClose={() => setTopNavState({...topNavState, strategyManager: false})}
             />
 
-            <div className="tradeWidgetBox">
                 <TradeWidget/>
-            </div>
         </div>
     )
 };

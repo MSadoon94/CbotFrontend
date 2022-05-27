@@ -86,7 +86,7 @@
     left: 30%;
 }
 
-.tradeWidgetBox {
+.tradeWidget {
     z-index: 1;
     grid-area: 3/1/6/4;
     display: grid;
@@ -97,9 +97,10 @@
     border: thin inset var(--light-border);
     box-shadow: 0 2px 2px var(--dark-box-bg-color),
     inset 0 1px 1px var(--dark-box-bg-color);
+
 }
 
-.tradeWidget {
+#tradeScroller {
     border: solid var(--light-border);
     background: var(--dark-box-bg-color);
     box-shadow: inset 0 2px 2px var(--darkest-shadow), 0 2px 2px var(--darkest-shadow);
@@ -110,4 +111,8 @@
     align-self: stretch;
 }
 
-
+#tradeMetricDisplay {
+    grid-column-start: 2;
+    grid-row-start: 2;
+    margin-right: 30px;
+}

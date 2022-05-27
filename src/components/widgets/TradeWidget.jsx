@@ -1,10 +1,13 @@
 import {useContext, useEffect, useState} from "react";
 import {Trade} from "../trade/Trade";
 import {WebSocketContext} from "../../App";
+import {TradeMetrics} from "../trade/TradeMetrics";
 
 export const TradeWidget = () => {
     const {wsMessages, wsClient} = useContext(WebSocketContext);
     const [trades, setTrades] = useState({});
+    const [selected, setSelected] = useState({});
+
 
     useEffect(() => {
         let initialTrades = wsMessages["/app/trades"];
@@ -21,11 +24,32 @@ export const TradeWidget = () => {
 
     }, [wsMessages["/topic/trades"]]);
 
+    const onTradeClick = (trade) => {
+        if (selected === trade.strategyName) {
+            setSelected({});
+        } else {
+            setSelected(trade.strategyName)
+        }
+    }
+
     return (
         <div className="tradeWidget">
 
-            {Object.values(trades).map(trade =>
-                <Trade body={trade}/>)}
+            <div id="tradeScroller">
+                {Object.values(trades).map(trade => {
+                        return <div key={trade.strategyName.concat("Box")}
+                                    onClick={() => onTradeClick(trade)}
+                        >
+                            <Trade body={trade}/>
+                        </div>
+                    }
+                )}
+            </div>
+
+            <div id="tradeMetricDisplay">
+                {Object.values(trades).map(trade =>
+                    <TradeMetrics trade={trade} hidden={selected !== trade.strategyName}/>)}
+            </div>
         </div>
     )
 }
