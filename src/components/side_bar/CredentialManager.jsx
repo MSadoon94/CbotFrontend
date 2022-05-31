@@ -12,7 +12,7 @@ export const CredentialManager = () => {
         let message = wsMessages["/topic/rejected-credentials"];
         if (message) {
             setRejectCredentials(message);
-            setTimeout(() => setRejectCredentials(null), 3000);
+            setTimeout(() => setRejectCredentials({exchange: null, message: null}), 3000);
         }
 
     }, [wsMessages["/topic/rejected-credentials"]])
@@ -54,7 +54,7 @@ export const CredentialManager = () => {
             </button>
 
             <output id="addCredentialsResponse" data-testid="addCredentialsResponse"
-                    data-issuccess={!rejectCredentials}>
+                    data-issuccess={!rejectCredentials.message}>
                 {rejectCredentials.message ? "" : response}
             </output>
 

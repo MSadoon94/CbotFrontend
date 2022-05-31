@@ -2,6 +2,7 @@ import Chart from "react-apexcharts";
 import {useContext, useEffect, useState} from "react";
 import {WebSocketContext} from "../../App";
 import "./trade.css"
+
 export const TradeMetrics = ({trade, hidden}) => {
     const {wsMessages, wsClient} = useContext(WebSocketContext);
     const [options, setOptions] = useState({
@@ -17,10 +18,8 @@ export const TradeMetrics = ({trade, hidden}) => {
     }
 
     useEffect(() => {
-        if(wsMessages[endpoints.candle]){
-            let timestamp = JSON.parse(wsMessages[endpoints.candle][0]);
-            wsMessages[endpoints.candle][0] = JSON.parse(timestamp);
-            let message = [...series.data, wsMessages[endpoints.candle]]
+        if (wsMessages[endpoints.candle]) {
+            let message = [...series.data, Object.values(wsMessages[endpoints.candle])]
             setSeries({data: message})
         }
     }, [wsMessages[endpoints.candle]])

@@ -3,5 +3,7 @@
     border:  solid var(--medium-border);
     border-radius: var(--background-border-radius);
     box-shadow: inset 0 2px 3px var(--darkest-shadow), 0 2px 3px var(--darkest-shadow);
-
+}
+.apexcharts-tooltip{
+    color: var(--low-emphasis-label);
 }

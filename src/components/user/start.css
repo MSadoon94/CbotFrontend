@@ -1,15 +1,30 @@
 h1 {
     text-align: center;
     color: var(--dark-box-bg-color);
+    font-family: var(--fonts);
 }
 
-input {
+.inputBlock input {
     margin: 5px 25px 5px 15px ;
+    box-shadow: 0 1px 1px var(--dark-box-bg-color);
+    font-family: var(--fonts);
+    font-size: 16px;
 }
 
-button {
+.inputBlock button {
     width: 100px;
     margin: auto 10px;
+    font-family: var(--fonts);
+    box-shadow: 0 1px 1px var(--dark-box-bg-color);
+    background-color: var(--dark-box-bg-color);
+    border-radius: var(--button-border-radius);
+    color: var(--main-bg-color);
+    font-size: 14px;
+}
+
+.inputBlock button:disabled {
+    background-color: var(--main-bg-color);
+    color: var(--dark-box-bg-color);
 }
 
 .inputBlock {
@@ -17,8 +32,11 @@ button {
     width: 55%;
     margin: auto;
     color: var(--dark-box-bg-color);
+    font-family: var(--fonts);
+    font-size: 20px;
 }
 
 .startOutputs {
     text-align: center;
+    font-family: var(--fonts);
 }

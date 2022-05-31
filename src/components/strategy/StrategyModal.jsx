@@ -12,7 +12,7 @@ import {exchanges} from "../common/exchanges";
 import {DynamicTextBox} from "../common/DynamicTextBox";
 
 export const StrategyModal = ({isOpen, onRequestClose}) => {
-    const timeUnits = ["Second", "Minute", "Hour", "Day", "Week", "Month", "Year"];
+    const timeUnits = ["Seconds", "Minutes", "Hours", "Days", "Weeks", "Months", "Years"];
     let refinements = {
         stopLoss: "",
         maxPosition: "",
@@ -119,10 +119,10 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                     updateAssets={handleAssetUpdate}
                     loadedAssets={{base: strategy.base, quote: strategy.quote}}/>
 
-                <select id="strategyTypeSelect">
+                <select id="strategyTypeSelect" onClick={event => setStrategy({...strategy, type: event.target.value})}>
                     <option value="" disabled selected>Strategy Type</option>
-                    <option onClick={() => setStrategy({...strategy, type: "long"})}>Long</option>
-                    <option onClick={() => setStrategy({...strategy, type: "short"})}>Short</option>
+                    <option value="long">Long</option>
+                    <option value="short">Short</option>
                 </select>
 
                 <label htmlFor="entryInput">Entry %</label>
@@ -142,15 +142,10 @@ export const StrategyModal = ({isOpen, onRequestClose}) => {
                 <input type="number" min="0" id="strategyTimeFrameInput" value={strategy.timeFrame}
                        onChange={e => setStrategy({...strategy, timeFrame: e.target.value})}/>
 
-                <select id="timeUnitSelect">
+                <select id="timeUnitSelect"
+                        onClick={event => setStrategy({...strategy, timeUnit: event.target.value.toLowerCase()})}>
                     <option value="" disabled selected>Time Unit</option>
-                    {timeUnits.map(
-                        unit =>
-                            <option
-                                onClick={() => setStrategy({...strategy, timeUnit: unit.toLowerCase()})}>
-                                {unit}
-                            </option>
-                    )}
+                    {timeUnits.map(unit => <option value={unit}>{unit}</option>)}
 
                 </select>
 
